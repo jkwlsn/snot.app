@@ -5,4 +5,5 @@ import { ref } from 'vue'
 <template>
     <site-header/>
     <site-main/>
+    <site-footer/>
 </template>
