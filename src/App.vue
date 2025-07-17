@@ -1,9 +1,7 @@
 <script setup>
-import { ref } from 'vue'
-
-const title = ref('Hello, World!')
+import SiteHeader from './components/SiteHeader.vue';
 </script>
 
 <template>
-    <h1>{{ title }}</h1>
+  <SiteHeader />
 </template>
