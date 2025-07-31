@@ -15,7 +15,6 @@
 
 <script setup>
 import { ref, watch } from 'vue';
-import { usePollenSensitivity } from '../composables/usePollenSensitivity';
 
 const props = defineProps({
   modelValue: {
@@ -32,8 +31,11 @@ const props = defineProps({
   },
 });
 
+function clamp(value) {
+  return Math.min(Math.max(value, props.min), props.max);
+}
+
 const emit = defineEmits(['update:modelValue']);
-const { clamp, min, max } = usePollenSensitivity(props.min, props.max);
 
 const sensitivity = ref(clamp(props.modelValue));
 
