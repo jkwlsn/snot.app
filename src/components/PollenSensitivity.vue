@@ -14,51 +14,17 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { computed } from 'vue';
+import { useUserSettings } from '../composables/useUserSettings.js';
 
-const props = defineProps({
-  modelValue: {
-    type: Number,
-    required: true,
-  },
-  min: {
-    type: Number,
-    default: 1,
-  },
-  max: {
-    type: Number,
-    default: 10,
-  },
+const { settings } = useUserSettings();
+const min = 1;
+const max = 10;
+
+const sensitivity = computed({
+  get: () => settings.value.sensitivity,
+  set: (val) => (settings.value.sensitivity = val),
 });
-
-function clamp(value) {
-  return Math.min(Math.max(value, props.min), props.max);
-}
-
-const emit = defineEmits(['update:modelValue']);
-
-const sensitivity = ref(clamp(props.modelValue));
-
-watch(
-  sensitivity,
-  (newVal) => {
-    const clamped = clamp(newVal);
-    if (clamped !== newVal) {
-      sensitivity.value = clamped; // re-clamp if out of bounds
-    }
-    emit('update:modelValue', clamped);
-  },
-  { immediate: false },
-);
-
-watch(
-  () => props.modelValue,
-  (val) => {
-    if (val !== sensitivity.value) {
-      sensitivity.value = clamp(val);
-    }
-  },
-);
 </script>
 
 <style>
