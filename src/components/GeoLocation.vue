@@ -3,47 +3,24 @@
     <h2>Location</h2>
     <p v-if="loading">Getting location...</p>
     <p v-else-if="error">{{ error }}</p>
-    <p v-else-if="internalLocation">
-      Current location: {{ internalLocation.latitude }},
-      {{ internalLocation.longitude }}
+    <p v-else-if="settings.location">
+      Current location: {{ settings.location.latitude }}, {{ settings.location.longitude }}
     </p>
-    <button @click="refreshLocation">Refresh Location</button>
+    <button @click="getLocation" :disabled="loading">Refresh Location</button>
   </section>
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue';
+import { onMounted } from 'vue';
+import { useUserSettings } from '../composables/useUserSettings';
 import { useGeoLocation } from '../composables/useGeoLocation';
-const props = defineProps({
-  location: Object,
-});
-const emit = defineEmits(['update:location']);
 
-const {
-  location: internalLocation,
-  loading,
-  error,
-  getLocation,
-} = useGeoLocation();
+const { settings } = useUserSettings();
+const { loading, error, getLocation } = useGeoLocation();
 
-// Watch composable location changes, emit updates
-watch(internalLocation, (val) => {
-  if (JSON.stringify(val) !== JSON.stringify(props.location)) {
-    emit('update:location', val);
+onMounted(() => {
+  if (!settings.value.location) {
+    getLocation();
   }
 });
-
-// Sync prop changes into composable
-watch(
-  () => props.location,
-  (val) => {
-    if (JSON.stringify(val) !== JSON.stringify(internalLocation.value)) {
-      internalLocation.value = val;
-    }
-  },
-);
-
-function refreshLocation() {
-  getLocation();
-}
 </script>
