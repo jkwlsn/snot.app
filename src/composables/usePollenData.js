@@ -53,12 +53,12 @@ export function usePollenData() {
 
       parsedData.value = {
         time,
-        alderPollen: Array.from(hourly.variables(0).valuesArray()),
-        birchPollen: Array.from(hourly.variables(1).valuesArray()),
-        grassPollen: Array.from(hourly.variables(2).valuesArray()),
-        mugwortPollen: Array.from(hourly.variables(3).valuesArray()),
-        olivePollen: Array.from(hourly.variables(4).valuesArray()),
-        ragweedPollen: Array.from(hourly.variables(5).valuesArray()),
+        'Alder': Array.from(hourly.variables(0).valuesArray()),
+        'Birch': Array.from(hourly.variables(1).valuesArray()),
+        'Grass': Array.from(hourly.variables(2).valuesArray()),
+        'Mugwort': Array.from(hourly.variables(3).valuesArray()),
+        'Olive': Array.from(hourly.variables(4).valuesArray()),
+        'Ragweed': Array.from(hourly.variables(5).valuesArray()),
       };
     } catch (err) {
       fetchError.value = 'Failed to fetch pollen data';
