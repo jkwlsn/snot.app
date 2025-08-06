@@ -21,44 +21,9 @@
 </template>
 
 <script setup>
-import { reactive, watch } from 'vue';
-import { useUserSettings } from '../composables/useUserSettings.js';
+import { usePollenSelector } from '../composables/usePollenSelector.js';
 
-const rawPollens = import.meta.env.VITE_POLLENS || '';
-const pollens = rawPollens
-  .split(',')
-  .map((p) => p.trim())
-  .filter(Boolean);
-
-const { settings } = useUserSettings();
-
-const sensitivities = reactive({});
-
-// Initialize sensitivities
-pollens.forEach((pollen) => {
-  sensitivities[pollen] =
-    (settings.value.selected_pollens &&
-      settings.value.selected_pollens[pollen]) ||
-    0;
-});
-
-// Sync with settings
-watch(
-  sensitivities,
-  (newVals) => {
-    settings.value.selected_pollens = Object.fromEntries(
-      Object.entries(newVals).filter(([, val]) => val > 0),
-    );
-  },
-  { deep: true },
-);
-
-// Clear all sensitivities
-function clearAll() {
-  pollens.forEach((pollen) => {
-    sensitivities[pollen] = 0;
-  });
-}
+const { pollens, sensitivities, clearAll } = usePollenSelector();
 </script>
 
 <style>
