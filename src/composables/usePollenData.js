@@ -4,14 +4,33 @@ import { useUserSettings } from './useUserSettings';
 
 export function usePollenData() {
   const parsedData = ref(null);
+  const displayData = ref(null);
   const isLoading = ref(false);
   const fetchError = ref(null);
+
   const { settings } = useUserSettings();
+
   const location = computed(() => settings.value.location);
+  const selectedPollens = computed(() => settings.value.selectedPollens || []);
+
+  // Map API keys to friendly display names
+  const displayNameMap = {
+    alder_pollen: 'Alder',
+    birch_pollen: 'Birch',
+    grass_pollen: 'Grass',
+    mugwort_pollen: 'Mugwort',
+    olive_pollen: 'Olive',
+    ragweed_pollen: 'Ragweed',
+  };
 
   async function fetchPollen() {
-    if (!location.value?.latitude || !location.value?.longitude) {
+    if (
+      !location.value?.latitude ||
+      !location.value?.longitude ||
+      selectedPollens.value.length === 0
+    ) {
       parsedData.value = null;
+      displayData.value = null;
       return;
     }
 
@@ -24,14 +43,7 @@ export function usePollenData() {
     const params = {
       latitude: location.value.latitude,
       longitude: location.value.longitude,
-      hourly: [
-        'alder_pollen',
-        'birch_pollen',
-        'grass_pollen',
-        'mugwort_pollen',
-        'olive_pollen',
-        'ragweed_pollen',
-      ],
+      hourly: selectedPollens.value,
       start_date: today,
       end_date: today,
     };
@@ -51,28 +63,41 @@ export function usePollenData() {
         time.push(new Date((t + utcOffsetSeconds) * 1000));
       }
 
-      parsedData.value = {
-        time,
-        'Alder': Array.from(hourly.variables(0).valuesArray()),
-        'Birch': Array.from(hourly.variables(1).valuesArray()),
-        'Grass': Array.from(hourly.variables(2).valuesArray()),
-        'Mugwort': Array.from(hourly.variables(3).valuesArray()),
-        'Olive': Array.from(hourly.variables(4).valuesArray()),
-        'Ragweed': Array.from(hourly.variables(5).valuesArray()),
-      };
+      const raw = { time };
+      const display = { time };
+
+      const variableCount = hourly.variablesLength();
+
+      for (let i = 0; i < variableCount; i++) {
+        const variable = hourly.variables(i);
+        const apiFieldName = selectedPollens.value[i]; // ✅ match by index
+        const values = Array.from(variable.valuesArray());
+
+        raw[apiFieldName] = values;
+
+        const displayName = displayNameMap[apiFieldName];
+        if (displayName) {
+          display[displayName] = values;
+        }
+      }
+
+      parsedData.value = raw;
+      displayData.value = display;
     } catch (err) {
       fetchError.value = 'Failed to fetch pollen data';
       parsedData.value = null;
+      displayData.value = null;
       console.error(err);
     } finally {
       isLoading.value = false;
     }
   }
 
-  watch(location, fetchPollen, { immediate: true });
+  watch([location, selectedPollens], fetchPollen, { immediate: true });
 
   return {
     parsedData,
+    displayData,
     isLoading,
     fetchError,
     fetchPollen,

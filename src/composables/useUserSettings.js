@@ -4,6 +4,7 @@ const STORAGE_KEY = 'snotAppSettings';
 const defaultSettings = {
   location: null,
   sensitivity: 5,
+  selectedPollens: [],
 };
 
 function loadSettings() {
