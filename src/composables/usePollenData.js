@@ -2,6 +2,9 @@ import { ref, watch, computed } from 'vue';
 import { fetchWeatherApi } from 'openmeteo';
 import { useUserSettings } from './useUserSettings';
 
+const STORAGE_KEY = 'pollenDataCache';
+const CACHE_TTL = 1000 * 60 * 60 * 24; // 24 hours in ms
+
 export function usePollenData() {
   const parsedData = ref({});
   const displayData = ref({});
@@ -28,6 +31,25 @@ export function usePollenData() {
 
   let fetchTimeout;
 
+  function saveToStorage(data) {
+    const payload = {
+      timestamp: Date.now(),
+      data,
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+  }
+
+  function loadFromStorage() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      return parsed;
+    } catch {
+      return null;
+    }
+  }
+
   async function fetchPollen() {
     if (
       !location.value?.latitude ||
@@ -36,6 +58,7 @@ export function usePollenData() {
     ) {
       parsedData.value = {};
       displayData.value = {};
+      localStorage.removeItem(STORAGE_KEY);
       return;
     }
 
@@ -84,6 +107,8 @@ export function usePollenData() {
 
       parsedData.value = raw;
       displayData.value = display;
+
+      saveToStorage({ parsedData: raw, displayData: display });
     } catch (err) {
       fetchError.value = 'Failed to fetch pollen data';
       parsedData.value = {};
@@ -93,13 +118,32 @@ export function usePollenData() {
     }
   }
 
+  // Load from storage on init and check TTL
+  const cached = loadFromStorage();
+  if (cached && cached.timestamp && cached.data) {
+    const age = Date.now() - cached.timestamp;
+
+    // Load cached data anyway
+    parsedData.value = cached.data.parsedData || {};
+    displayData.value = cached.data.displayData || {};
+
+    if (age > CACHE_TTL) {
+      // Cache is stale: fetch fresh data asynchronously
+      fetchPollen();
+    }
+  } else {
+    // No valid cache, fetch immediately
+    fetchPollen();
+  }
+
+  // Watch for changes and fetch with debounce
   watch(
     [location, selectedPollens],
     () => {
       clearTimeout(fetchTimeout);
       fetchTimeout = setTimeout(fetchPollen, 100);
     },
-    { immediate: true },
+    { immediate: false },
   );
 
   return {
