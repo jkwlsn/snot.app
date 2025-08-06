@@ -1,70 +1,78 @@
 import { computed } from 'vue';
 import { useUserSettings } from './useUserSettings';
+import { ALERT_LIMIT_BASE } from './../config';
+import { POLLEN_DISPLAY_NAMES } from './../pollen';
+
+const ONE_HOUR = 60 * 60 * 1000;
+
+function formatTime(date) {
+  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
 
 export function useGroupedPollenAlerts(alerts) {
   const { settings } = useUserSettings();
 
   const getLimit = (key) => {
-    const sensitivity = settings.value.selected_pollen?.[key] || 1;
-    return Math.round(200 / sensitivity);
+    const sensitivity = settings.value.selected_pollen?.[key] ?? 1;
+    return Math.round(ALERT_LIMIT_BASE / sensitivity);
   };
 
   return computed(() => {
-    if (!alerts.value?.length) return [];
+    const alertList = alerts.value;
+    if (!alertList?.length) return [];
 
-    const sorted = [...alerts.value].sort(
+    const sorted = [...alertList].sort(
       (a, b) => a.time.getTime() - b.time.getTime(),
     );
 
-    const result = [];
-    let current = null;
+    const grouped = [];
+    let currentGroup = null;
 
-    for (const w of sorted) {
-      const limit = getLimit(w.pollenKey);
+    for (const warning of sorted) {
+      const limit = getLimit(warning.pollenKey);
 
       const isConsecutive =
-        current &&
-        w.time.getTime() === current.endTime.getTime() + 60 * 60 * 1000;
+        currentGroup &&
+        warning.time.getTime() === currentGroup.endTime.getTime() + ONE_HOUR;
 
-      if (!current || !isConsecutive) {
-        if (current) result.push(current);
-        current = {
-          startTime: w.time,
-          endTime: w.time,
+      if (!currentGroup || !isConsecutive) {
+        if (currentGroup) grouped.push(currentGroup);
+
+        currentGroup = {
+          startTime: warning.time,
+          endTime: warning.time,
           pollenDetails: {
-            [w.pollenKey]: {
-              maxPollenValue: w.pollenValue,
-              limit,
-            },
+            [warning.pollenKey]: { maxPollenValue: warning.pollenValue, limit },
           },
         };
       } else {
-        current.endTime = w.time;
-        const existing = current.pollenDetails[w.pollenKey];
+        currentGroup.endTime = warning.time;
+        const existing = currentGroup.pollenDetails[warning.pollenKey];
+
         if (!existing) {
-          current.pollenDetails[w.pollenKey] = {
-            maxPollenValue: w.pollenValue,
+          currentGroup.pollenDetails[warning.pollenKey] = {
+            maxPollenValue: warning.pollenValue,
             limit,
           };
         } else {
           existing.maxPollenValue = Math.max(
             existing.maxPollenValue,
-            w.pollenValue,
+            warning.pollenValue,
           );
         }
       }
     }
 
-    if (current) result.push(current);
+    if (currentGroup) grouped.push(currentGroup);
 
-    return result.map((range) => {
-      const format = (date) =>
-        date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return grouped.map(({ startTime, endTime, pollenDetails }) => {
+      const timeRange = `${formatTime(startTime)} - ${formatTime(endTime)}`;
 
-      const timeRange = `${format(range.startTime)} - ${format(range.endTime)}`;
-
-      const pollenInfo = Object.entries(range.pollenDetails)
-        .map(([key, val]) => `${key} (${Math.round(val.maxPollenValue)})`)
+      const pollenInfo = Object.entries(pollenDetails)
+        .map(([key, val]) => {
+          const displayName = POLLEN_DISPLAY_NAMES[key] ?? key;
+          return `${displayName} (${Math.round(val.maxPollenValue)})`;
+        })
         .join(', ');
 
       return { timeRange, pollenInfo };

@@ -1,7 +1,7 @@
-// usePollenAlerts.js
 import { computed, watch, ref } from 'vue';
 import { useUserSettings } from './useUserSettings';
 import { useNotifications } from './useNotifications';
+import { ALERT_LIMIT_BASE } from './../config';
 
 export function usePollenAlerts(parsedData) {
   const { requestPermission, sendPollenAlertNotification } = useNotifications();
@@ -9,45 +9,78 @@ export function usePollenAlerts(parsedData) {
 
   requestPermission();
 
-  const sensitivities = computed(() => settings.value.selected_pollen || {});
-  const now = () => new Date();
+  const sensitivities = computed(() => settings.value.selected_pollens || {});
 
   const warnings = ref([]);
 
-  watch(
-    [parsedData, sensitivities],
-    ([data, sensitivityMap]) => {
-      if (!data || !sensitivityMap) {
-        warnings.value = [];
-        return;
-      }
+  function calculateLimit(sensitivity) {
+    return sensitivity > 0
+      ? Math.round(ALERT_LIMIT_BASE / sensitivity)
+      : Infinity;
+  }
 
-      const entries = Object.entries(data).filter(([key]) => key !== 'time');
-      const times = data.time || [];
+  function createWarnings(data, sensitivityMap) {
+    if (!data || !sensitivityMap) return [];
 
-      const newWarnings = entries.flatMap(([pollenKey, values]) => {
+    const times = data.time || [];
+    const nowTime = Date.now();
+
+    return Object.entries(data)
+      .filter(([key]) => key !== 'time')
+      .flatMap(([pollenKey, values]) => {
         const sensitivity = sensitivityMap[pollenKey];
         if (!sensitivity || sensitivity <= 0) return [];
 
-        const limit = Math.round(200 / sensitivity);
+        const limit = calculateLimit(sensitivity);
 
         return values
           .map((value, i) => {
             const time = new Date(times[i]);
             if (isNaN(time)) return null;
 
-            return {
-              pollenKey,
-              pollenValue: value,
-              time,
-              limit,
-            };
+            // Only future times with pollen above limit trigger warnings
+            if (time.getTime() >= nowTime && value > limit) {
+              return {
+                pollenKey,
+                pollenValue: value,
+                time,
+                limit,
+              };
+            }
+            return null;
           })
-          .filter((w) => w && w.time >= now() && w.pollenValue > w.limit);
+          .filter(Boolean);
       });
+  }
 
-      warnings.value = newWarnings;
-      sendPollenAlertNotification(newWarnings, null);
+  watch(
+    [parsedData, sensitivities],
+    ([data, sensitivityMap]) => {
+      const newWarnings = createWarnings(data, sensitivityMap);
+
+      // Build limitMap: pollenKey -> calculated limit
+      const limitMap = {};
+      for (const [pollenKey, sensitivity] of Object.entries(sensitivityMap)) {
+        limitMap[pollenKey] = calculateLimit(sensitivity);
+      }
+
+      // Only update and notify if warnings have changed
+      const changed =
+        newWarnings.length !== warnings.value.length ||
+        newWarnings.some((w, i) => {
+          const old = warnings.value[i];
+          return (
+            !old ||
+            old.pollenKey !== w.pollenKey ||
+            old.pollenValue !== w.pollenValue ||
+            old.time.getTime() !== w.time.getTime()
+          );
+        });
+
+      if (changed) {
+        warnings.value = newWarnings;
+        sendPollenAlertNotification(newWarnings, limitMap);
+      }
     },
     { immediate: true },
   );

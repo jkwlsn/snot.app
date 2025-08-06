@@ -1,22 +1,23 @@
 import { ref } from 'vue';
+import { POLLEN_DISPLAY_NAMES } from '../pollen';
 
 export function useNotifications() {
   const permissionGranted = ref(false);
 
   const requestPermission = async () => {
-    if (!("Notification" in window)) {
-      console.warn("This browser does not support desktop notification");
+    if (!('Notification' in window)) {
+      console.warn('This browser does not support desktop notification');
       return;
     }
 
-    if (Notification.permission === "granted") {
+    if (Notification.permission === 'granted') {
       permissionGranted.value = true;
       return;
     }
 
-    if (Notification.permission !== "denied") {
+    if (Notification.permission !== 'denied') {
       const permission = await Notification.requestPermission();
-      permissionGranted.value = permission === "granted";
+      permissionGranted.value = permission === 'granted';
     }
   };
 
@@ -24,15 +25,15 @@ export function useNotifications() {
     if (permissionGranted.value) {
       new Notification(title, options);
     } else {
-      console.warn("Notification permission not granted.");
+      console.warn('Notification permission not granted.');
     }
   };
 
-  const sendPollenAlertNotification = (newWarnings, limit) => {
-    // Group warnings by pollenKey and summarize timestamps
+  const sendPollenAlertNotification = (newWarnings, limitMap) => {
     const summarizedNotifications = {};
+
     newWarnings.forEach(({ pollenKey, pollenValue, time }) => {
-      if (time instanceof Date && !isNaN(time.getTime())) { // Ensure time is a valid Date object
+      if (time instanceof Date && !isNaN(time.getTime())) {
         if (!summarizedNotifications[pollenKey]) {
           summarizedNotifications[pollenKey] = [];
         }
@@ -40,44 +41,40 @@ export function useNotifications() {
       }
     });
 
-    // Send summarized notifications for new warnings
     for (const pollenKey in summarizedNotifications) {
       const alerts = summarizedNotifications[pollenKey];
       if (alerts.length > 0) {
-        // Sort alerts by time
         alerts.sort((a, b) => a.time.getTime() - b.time.getTime());
-
-        const maxPollenValue = Math.max(...alerts.map(a => a.value));
-        const times = alerts.map(a => a.time);
-
-        let emoji = '🌿'; // Leaf emoji for all pollen types
-
+        const maxPollenValue = Math.max(...alerts.map((a) => a.value));
         const formattedTimeRanges = [];
-        if (alerts.length > 0) {
-          let startTime = alerts[0].time;
-          let endTime = alerts[0].time;
+        let startTime = alerts[0].time;
+        let endTime = alerts[0].time;
 
-          for (let i = 1; i < alerts.length; i++) {
-            const currentTime = alerts[i].time;
-            const prevTime = alerts[i - 1].time;
-            // Check if the current time is exactly one hour after the previous time
-            if (currentTime.getTime() === prevTime.getTime() + (60 * 60 * 1000)) {
-              endTime = currentTime;
-            } else {
-              // If not consecutive, add the previous range and start a new one
-              formattedTimeRanges.push(`${startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${endTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`);
-              startTime = currentTime;
-              endTime = currentTime;
-            }
+        for (let i = 1; i < alerts.length; i++) {
+          const currentTime = alerts[i].time;
+          const prevTime = alerts[i - 1].time;
+          if (currentTime.getTime() === prevTime.getTime() + 60 * 60 * 1000) {
+            endTime = currentTime;
+          } else {
+            formattedTimeRanges.push(
+              `${startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${endTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`,
+            );
+            startTime = currentTime;
+            endTime = currentTime;
           }
-          // Add the last range
-          formattedTimeRanges.push(`${startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${endTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`);
         }
 
-        let body = `⏰ ${formattedTimeRanges.join(', ')} ${emoji} High ${pollenKey} Pollen (max: ${Math.round(maxPollenValue)}, limit: ${limit})`;
+        formattedTimeRanges.push(
+          `${startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${endTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`,
+        );
+
+        const limit = limitMap[pollenKey];
+
+        const displayName = POLLEN_DISPLAY_NAMES?.[pollenKey] ?? pollenKey;
+        let body = `⏰ ${formattedTimeRanges.join(', ')} 🌿 High ${displayName} pollen (max: ${Math.round(maxPollenValue)}, limit: ${limit})`;
 
         sendNotification('Pollen Alert!', {
-          body: body,
+          body,
           icon: '/favicon.ico',
         });
       }
