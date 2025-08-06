@@ -1,10 +1,11 @@
 import { ref, watch } from 'vue';
 
 const STORAGE_KEY = 'snotAppSettings';
+
 const defaultSettings = {
   location: null,
   sensitivity: 5,
-  selectedPollens: [],
+  selected_pollens: {},
 };
 
 function loadSettings() {

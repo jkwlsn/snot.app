@@ -4,38 +4,44 @@ import { useNotifications } from './useNotifications';
 
 export function usePollenAlerts(parsedData) {
   const { requestPermission, sendPollenAlertNotification } = useNotifications();
-
   requestPermission();
 
   const { settings } = useUserSettings();
-  const sensitivity = computed(() => settings.value.sensitivity);
+
+  // Use the whole pollen sensitivity map
+  const pollenSensitivities = computed(
+    () => settings.value.selected_pollen || {},
+  );
 
   const warnings = ref([]);
 
   watch(
-    [parsedData, sensitivity],
-    ([newParsedData, newSensitivity]) => {
-      if (!newParsedData || !newSensitivity) {
+    [parsedData, pollenSensitivities],
+    ([newParsedData, newSensitivities]) => {
+      if (!newParsedData || !newSensitivities) {
         warnings.value = [];
         return;
       }
 
-      const limit = Math.round(200 / newSensitivity);
-      const pollenData = newParsedData;
-
       const now = new Date();
 
-      const newWarnings = Object.entries(pollenData)
+      const newWarnings = Object.entries(newParsedData)
         .filter(([key]) => key !== 'time')
-        .flatMap(([pollenKey, pollenValues]) =>
-          pollenValues
+        .flatMap(([pollenKey, pollenValues]) => {
+          const sensitivity = newSensitivities[pollenKey] || 0;
+          if (sensitivity <= 0) return []; // skip if sensitivity 0 or undefined
+
+          const limit = Math.round(200 / sensitivity);
+
+          return pollenValues
             .map((pollenValue, index) => {
-              const rawTime = pollenData.time[index];
+              const rawTime = newParsedData.time[index];
               const time = rawTime ? new Date(rawTime) : undefined;
               return {
                 pollenKey,
                 pollenValue,
                 time,
+                limit,
               };
             })
             .filter(({ pollenValue, time }) => {
@@ -48,11 +54,10 @@ export function usePollenAlerts(parsedData) {
               }
               if (pollenValue <= limit) return false;
               return time.getTime() >= now.getTime();
-            }),
-        );
+            });
+        });
 
-      sendPollenAlertNotification(newWarnings, limit);
-
+      sendPollenAlertNotification(newWarnings, null); // you can customize notification params as needed
       warnings.value = newWarnings;
     },
     { immediate: true },

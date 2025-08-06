@@ -3,17 +3,20 @@ import { fetchWeatherApi } from 'openmeteo';
 import { useUserSettings } from './useUserSettings';
 
 export function usePollenData() {
-  const parsedData = ref(null);
-  const displayData = ref(null);
+  const parsedData = ref({});
+  const displayData = ref({});
   const isLoading = ref(false);
   const fetchError = ref(null);
 
   const { settings } = useUserSettings();
-
   const location = computed(() => settings.value.location);
-  const selectedPollens = computed(() => settings.value.selectedPollens || []);
 
-  // Map API keys to friendly display names
+  const selectedPollens = computed(() =>
+    Object.entries(settings.value.selected_pollens || {})
+      .filter(([, value]) => value > 0)
+      .map(([key]) => key),
+  );
+
   const displayNameMap = {
     alder_pollen: 'Alder',
     birch_pollen: 'Birch',
@@ -23,61 +26,59 @@ export function usePollenData() {
     ragweed_pollen: 'Ragweed',
   };
 
+  let fetchTimeout;
+
   async function fetchPollen() {
     if (
       !location.value?.latitude ||
       !location.value?.longitude ||
       selectedPollens.value.length === 0
     ) {
-      parsedData.value = null;
-      displayData.value = null;
+      parsedData.value = {};
+      displayData.value = {};
       return;
     }
 
     isLoading.value = true;
     fetchError.value = null;
 
-    const url = 'https://air-quality-api.open-meteo.com/v1/air-quality';
-    const today = new Date().toISOString().slice(0, 10);
-
-    const params = {
-      latitude: location.value.latitude,
-      longitude: location.value.longitude,
-      hourly: selectedPollens.value,
-      start_date: today,
-      end_date: today,
-    };
-
     try {
-      const responses = await fetchWeatherApi(url, params);
-      const response = responses[0];
+      const [response] = await fetchWeatherApi(
+        'https://air-quality-api.open-meteo.com/v1/air-quality',
+        {
+          latitude: location.value.latitude,
+          longitude: location.value.longitude,
+          hourly: selectedPollens.value,
+          start_date: new Date().toISOString().slice(0, 10),
+          end_date: new Date().toISOString().slice(0, 10),
+        },
+      );
+
       const hourly = response.hourly();
-      const utcOffsetSeconds = response.utcOffsetSeconds();
+      const offset = response.utcOffsetSeconds();
+      const t0 = Number(hourly.time());
+      const tEnd = Number(hourly.timeEnd());
+      const interval = hourly.interval();
 
       const time = [];
-      for (
-        let t = Number(hourly.time());
-        t < Number(hourly.timeEnd());
-        t += hourly.interval()
-      ) {
-        time.push(new Date((t + utcOffsetSeconds) * 1000));
+      for (let t = t0; t < tEnd; t += interval) {
+        time.push(new Date((t + offset) * 1000));
       }
 
       const raw = { time };
       const display = { time };
+      const count = hourly.variablesLength();
 
-      const variableCount = hourly.variablesLength();
+      for (let i = 0; i < count; i++) {
+        const field = selectedPollens.value[i];
+        if (!field) continue;
 
-      for (let i = 0; i < variableCount; i++) {
-        const variable = hourly.variables(i);
-        const apiFieldName = selectedPollens.value[i]; // ✅ match by index
-        const values = Array.from(variable.valuesArray());
+        const vals = Array.from(hourly.variables(i).valuesArray());
+        raw[field] = vals;
 
-        raw[apiFieldName] = values;
-
-        const displayName = displayNameMap[apiFieldName];
+        const displayName = displayNameMap[field];
         if (displayName) {
-          display[displayName] = values;
+          display[displayName] = vals;
         }
       }
 
@@ -85,15 +86,21 @@ export function usePollenData() {
       displayData.value = display;
     } catch (err) {
       fetchError.value = 'Failed to fetch pollen data';
-      parsedData.value = null;
-      displayData.value = null;
-      console.error(err);
+      parsedData.value = {};
+      displayData.value = {};
     } finally {
       isLoading.value = false;
     }
   }
 
-  watch([location, selectedPollens], fetchPollen, { immediate: true });
+  watch(
+    [location, selectedPollens],
+    () => {
+      clearTimeout(fetchTimeout);
+      fetchTimeout = setTimeout(fetchPollen, 100);
+    },
+    { immediate: true },
+  );
 
   return {
     parsedData,
