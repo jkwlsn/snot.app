@@ -3,7 +3,62 @@ import { fetchWeatherApi } from 'openmeteo';
 import { useUserSettings } from './useUserSettings';
 
 const STORAGE_KEY = 'pollenDataCache';
-const CACHE_TTL = 1000 * 60 * 60 * 24; // 24 hours in ms
+const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
+
+function saveToStorage(data) {
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify({ timestamp: Date.now(), data }),
+  );
+}
+
+function loadFromStorage() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+function parseHourlyData(hourly, selectedPollens, displayNameMap) {
+  const offset = hourly.utcOffsetSeconds?.() ?? 0;
+  const t0 = Number(hourly.time?.());
+  const tEnd = Number(hourly.timeEnd?.());
+  const interval = hourly.interval?.();
+
+  const time = [];
+  for (let t = t0; t < tEnd; t += interval) {
+    time.push(new Date((t + offset) * 1000));
+  }
+
+  const raw = { time };
+  const display = { time };
+
+  const count = hourly.variablesLength?.() ?? 0;
+
+  for (let i = 0; i < count; i++) {
+    const field = selectedPollens[i];
+    if (!field) continue;
+
+    const vals = Array.from(hourly.variables(i).valuesArray());
+    raw[field] = vals;
+
+    const displayName = displayNameMap[field];
+    if (displayName) display[displayName] = vals;
+  }
+
+  return { raw, display };
+}
+
+function debounce(fn, delay = 100) {
+  let timeout;
+  return (...args) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => fn(...args), delay);
+  };
+}
 
 export function usePollenData() {
   const parsedData = ref({});
@@ -12,12 +67,13 @@ export function usePollenData() {
   const fetchError = ref(null);
 
   const { settings } = useUserSettings();
+
   const location = computed(() => settings.value.location);
 
   const selectedPollens = computed(() =>
     Object.entries(settings.value.selected_pollens || {})
-      .filter(([, value]) => value > 0)
-      .map(([key]) => key),
+      .filter(([, v]) => v > 0)
+      .map(([k]) => k),
   );
 
   const displayNameMap = {
@@ -28,27 +84,6 @@ export function usePollenData() {
     olive_pollen: 'Olive',
     ragweed_pollen: 'Ragweed',
   };
-
-  let fetchTimeout;
-
-  function saveToStorage(data) {
-    const payload = {
-      timestamp: Date.now(),
-      data,
-    };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-  }
-
-  function loadFromStorage() {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return null;
-      const parsed = JSON.parse(raw);
-      return parsed;
-    } catch {
-      return null;
-    }
-  }
 
   async function fetchPollen() {
     if (
@@ -78,38 +113,18 @@ export function usePollenData() {
       );
 
       const hourly = response.hourly();
-      const offset = response.utcOffsetSeconds();
-      const t0 = Number(hourly.time());
-      const tEnd = Number(hourly.timeEnd());
-      const interval = hourly.interval();
 
-      const time = [];
-      for (let t = t0; t < tEnd; t += interval) {
-        time.push(new Date((t + offset) * 1000));
-      }
-
-      const raw = { time };
-      const display = { time };
-      const count = hourly.variablesLength();
-
-      for (let i = 0; i < count; i++) {
-        const field = selectedPollens.value[i];
-        if (!field) continue;
-
-        const vals = Array.from(hourly.variables(i).valuesArray());
-        raw[field] = vals;
-
-        const displayName = displayNameMap[field];
-        if (displayName) {
-          display[displayName] = vals;
-        }
-      }
+      const { raw, display } = parseHourlyData(
+        hourly,
+        selectedPollens.value,
+        displayNameMap,
+      );
 
       parsedData.value = raw;
       displayData.value = display;
 
       saveToStorage({ parsedData: raw, displayData: display });
-    } catch (err) {
+    } catch (error) {
       fetchError.value = 'Failed to fetch pollen data';
       parsedData.value = {};
       displayData.value = {};
@@ -118,33 +133,22 @@ export function usePollenData() {
     }
   }
 
-  // Load from storage on init and check TTL
+  // Load cache and refresh if stale
   const cached = loadFromStorage();
   if (cached && cached.timestamp && cached.data) {
-    const age = Date.now() - cached.timestamp;
+    parsedData.value = cached.data.parsedData ?? {};
+    displayData.value = cached.data.displayData ?? {};
 
-    // Load cached data anyway
-    parsedData.value = cached.data.parsedData || {};
-    displayData.value = cached.data.displayData || {};
-
-    if (age > CACHE_TTL) {
-      // Cache is stale: fetch fresh data asynchronously
+    if (Date.now() - cached.timestamp > CACHE_TTL) {
       fetchPollen();
     }
   } else {
-    // No valid cache, fetch immediately
     fetchPollen();
   }
 
-  // Watch for changes and fetch with debounce
-  watch(
-    [location, selectedPollens],
-    () => {
-      clearTimeout(fetchTimeout);
-      fetchTimeout = setTimeout(fetchPollen, 100);
-    },
-    { immediate: false },
-  );
+  const debouncedFetch = debounce(fetchPollen, 100);
+
+  watch([location, selectedPollens], debouncedFetch, { immediate: false });
 
   return {
     parsedData,
