@@ -73,11 +73,14 @@ export function useNotifications() {
         const severity = getPollenSeverity(maxPollenValue, limit);
         const displayName = POLLEN_DISPLAY_NAMES?.[pollenKey] ?? pollenKey;
         const body = `⏰ ${formattedTimeRanges.join(', ')} ${severity.emoji} ${severity.label} ${displayName} pollen (max: ${Math.round(maxPollenValue)}, limit: ${limit})`;
-
-        sendNotification('Pollen Alert!', {
-          body,
-          icon: '/favicon.ico',
-        });
+        try {
+          sendNotification('Pollen Alert!', { body, icon: '/favicon.ico' });
+          if ('vibrate' in navigator && severity.label === 'Very High') {
+            navigator.vibrate([300, 100, 300]);
+          }
+        } catch (err) {
+          console.error('Notification or vibration error:', err);
+        }
       }
     }
   };
