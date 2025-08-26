@@ -1,4 +1,3 @@
-// composables/usePollenSensitivities.js
 import { reactive, watch } from 'vue';
 import { useUserSettings } from './useUserSettings.js';
 
@@ -13,7 +12,6 @@ export function usePollenSelector() {
 
   const sensitivities = reactive({});
 
-  // Initialize sensitivities
   pollens.forEach((pollen) => {
     sensitivities[pollen] =
       (settings.value.selected_pollens &&
@@ -28,10 +26,8 @@ export function usePollenSelector() {
     (newVals) => {
       clearTimeout(debounceTimer);
       debounceTimer = setTimeout(() => {
-        settings.value.selected_pollens = Object.fromEntries(
-          Object.entries(newVals).filter(([, val]) => val > 0),
-        );
-      }, 300); // Debounce delay (ms)
+        settings.value.selected_pollens = newVals;
+      }, 300);
     },
     { deep: true },
   );
@@ -40,6 +36,7 @@ export function usePollenSelector() {
     pollens.forEach((pollen) => {
       sensitivities[pollen] = 0;
     });
+    settings.value.selected_pollens = {};
   }
 
   return {

@@ -16,12 +16,19 @@
       />
     </div>
 
-    <button @click="clearAll" class="clear-button">Clear All</button>
-  </div>
+      <button
+        type="button"
+        @click="clearAll"
+      >
+        Clear All
+      </button>
+    </form>
+  </section>
 </template>
 
 <script setup>
 import { usePollenSelector } from '../composables/usePollenSelector.js';
+import { POLLEN_DISPLAY_NAMES } from '../pollen.js';
 
 const { pollens, sensitivities, clearAll } = usePollenSelector();
 </script>
