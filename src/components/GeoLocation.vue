@@ -3,24 +3,29 @@
     <h2>Location</h2>
     <p v-if="loading">Getting location...</p>
     <p v-else-if="error">{{ error }}</p>
-    <p v-else-if="settings.location">
-      Current location: {{ settings.location.latitude }}, {{ settings.location.longitude }}
+    <p v-else-if="isGeolocationEnabled">
+      Current location: {{ coords.latitude.toFixed(4) }},
+      {{ coords.longitude.toFixed(4) }}
     </p>
-    <button @click="getLocation" :disabled="loading">Refresh Location</button>
+    <button
+      @click="requestLocation"
+      :disabled="loading"
+      class="clear-button border rounded p-1 cursor-pointer hover:text-red-400"
+    >
+      Refresh Location
+    </button>
   </section>
 </template>
 
 <script setup>
 import { onMounted } from 'vue';
-import { useUserSettings } from '../composables/useUserSettings';
 import { useGeoLocation } from '../composables/useGeoLocation';
 
-const { settings } = useUserSettings();
-const { loading, error, getLocation } = useGeoLocation();
+const { coords, isGeolocationEnabled, loading, error, requestLocation } = useGeoLocation();
 
 onMounted(() => {
-  if (!settings.value.location) {
-    getLocation();
+  if (!isGeolocationEnabled.value) {
+    requestLocation();
   }
 });
 </script>
