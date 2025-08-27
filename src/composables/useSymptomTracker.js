@@ -43,14 +43,20 @@ function clearSymptoms() {
   localStorage.removeItem(SYMPTOMS_STORAGE_KEY);
 }
 
+function deleteSymptom(id) {
+  symptoms.value = symptoms.value.filter((symptom) => symptom.id !== id);
+  localStorage.setItem(SYMPTOMS_STORAGE_KEY, JSON.stringify(symptoms.value));
+}
+
 export function useSymptomTracker() {
   onMounted(initialize);
   const { isGeolocationEnabled } = useGeoLocation();
 
   return {
-    symptoms: readonly(symptoms),
+    symptoms,
     logSneeze,
     clearSymptoms,
+    deleteSymptom,
     isGeolocationEnabled,
   };
 }
