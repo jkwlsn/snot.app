@@ -1,6 +1,7 @@
 import { ref } from 'vue';
 import { POLLEN_DISPLAY_NAMES } from '../pollen';
-import { usePollenSeverity } from './usePollenSeverity'; // Adjust path as needed
+import { usePollenSeverity } from './usePollenSeverity';
+import { formatAlertTimeRanges } from './../utils/timeUtils';
 
 export function useNotifications() {
   const permissionGranted = ref(false);
@@ -46,29 +47,8 @@ export function useNotifications() {
     for (const pollenKey in summarizedNotifications) {
       const alerts = summarizedNotifications[pollenKey];
       if (alerts.length > 0) {
-        alerts.sort((a, b) => a.time.getTime() - b.time.getTime());
         const maxPollenValue = Math.max(...alerts.map((a) => a.value));
-        const formattedTimeRanges = [];
-        let startTime = alerts[0].time;
-        let endTime = alerts[0].time;
-
-        for (let i = 1; i < alerts.length; i++) {
-          const currentTime = alerts[i].time;
-          const prevTime = alerts[i - 1].time;
-          if (currentTime.getTime() === prevTime.getTime() + 60 * 60 * 1000) {
-            endTime = currentTime;
-          } else {
-            formattedTimeRanges.push(
-              `${startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${endTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`,
-            );
-            startTime = currentTime;
-            endTime = currentTime;
-          }
-        }
-
-        formattedTimeRanges.push(
-          `${startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${endTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`,
-        );
+        const formattedTimeRanges = formatAlertTimeRanges(alerts);
 
         const limit = limitMap[pollenKey];
         const severity = getSeverity(pollenKey, maxPollenValue);

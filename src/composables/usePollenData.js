@@ -1,71 +1,13 @@
-import { ref, watch, computed } from 'vue';
-import { fetchWeatherApi } from 'openmeteo';
+import { watch, computed } from 'vue';
 import { useUserSettings } from './useUserSettings';
+import { usePollenApi } from './usePollenApi';
+import { useLocalStorageCache } from './useLocalStorageCache';
+import { usePollenDataParser } from './usePollenDataParser';
 
 const STORAGE_KEY = 'pollenDataCache';
 const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
 
-function saveToStorage(data) {
-  localStorage.setItem(
-    STORAGE_KEY,
-    JSON.stringify({ timestamp: Date.now(), data }),
-  );
-}
-
-function loadFromStorage() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
-    return JSON.parse(raw);
-  } catch {
-    return null;
-  }
-}
-
-function parseHourlyData(hourly, selectedPollens, displayNameMap) {
-  const offset = hourly.utcOffsetSeconds?.() ?? 0;
-  const t0 = Number(hourly.time?.());
-  const tEnd = Number(hourly.timeEnd?.());
-  const interval = hourly.interval?.();
-
-  const time = [];
-  for (let t = t0; t < tEnd; t += interval) {
-    time.push(new Date((t + offset) * 1000));
-  }
-
-  const raw = { time };
-  const display = { time };
-
-  const count = hourly.variablesLength?.() ?? 0;
-
-  for (let i = 0; i < count; i++) {
-    const field = selectedPollens[i];
-    if (!field) continue;
-
-    const vals = Array.from(hourly.variables(i).valuesArray());
-    raw[field] = vals;
-
-    const displayName = displayNameMap[field];
-    if (displayName) display[displayName] = vals;
-  }
-
-  return { raw, display };
-}
-
-function debounce(fn, delay = 100) {
-  let timeout;
-  return (...args) => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => fn(...args), delay);
-  };
-}
-
 export function usePollenData() {
-  const parsedData = ref({});
-  const displayData = ref({});
-  const isLoading = ref(false);
-  const fetchError = ref(null);
-
   const { settings } = useUserSettings();
 
   const location = computed(() => settings.value.location);
@@ -76,83 +18,60 @@ export function usePollenData() {
       .map(([k]) => k),
   );
 
-  const displayNameMap = {
-    alder_pollen: 'Alder',
-    birch_pollen: 'Birch',
-    grass_pollen: 'Grass',
-    mugwort_pollen: 'Mugwort',
-    olive_pollen: 'Olive',
-    ragweed_pollen: 'Ragweed',
-  };
+  const { cachedData, loadFromStorage, saveToStorage } = useLocalStorageCache(
+    STORAGE_KEY,
+    { parsedData: {}, displayData: {} },
+    CACHE_TTL,
+  );
 
-  async function fetchPollen() {
-    if (
-      !location.value?.latitude ||
-      !location.value?.longitude ||
-      selectedPollens.value.length === 0
-    ) {
-      parsedData.value = {};
-      displayData.value = {};
-      localStorage.removeItem(STORAGE_KEY);
-      return;
-    }
+  const { rawPollenData, isLoading, fetchError, fetchPollen } = usePollenApi(
+    location,
+    selectedPollens,
+  );
 
-    isLoading.value = true;
-    fetchError.value = null;
+  const { parsedData, displayData } = usePollenDataParser(
+    rawPollenData,
+    selectedPollens,
+  );
 
-    try {
-      const [response] = await fetchWeatherApi(
-        'https://air-quality-api.open-meteo.com/v1/air-quality',
-        {
-          latitude: location.value.latitude,
-          longitude: location.value.longitude,
-          hourly: selectedPollens.value,
-          start_date: new Date().toISOString().slice(0, 10),
-          end_date: new Date().toISOString().slice(0, 10),
-        },
-      );
+  // Load cache on initial setup
+  loadFromStorage();
 
-      const hourly = response.hourly();
+  // Watch for changes in rawPollenData and save to cache
+  watch(
+    rawPollenData,
+    (newVal) => {
+      if (newVal) {
+        saveToStorage({
+          parsedData: parsedData.value,
+          displayData: displayData.value,
+        });
+      }
+    },
+    { deep: true },
+  );
 
-      const { raw, display } = parseHourlyData(
-        hourly,
-        selectedPollens.value,
-        displayNameMap,
-      );
-
-      parsedData.value = raw;
-      displayData.value = display;
-
-      saveToStorage({ parsedData: raw, displayData: display });
-    } catch {
-      fetchError.value = 'Failed to fetch pollen data';
-      parsedData.value = {};
-      displayData.value = {};
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
-  // Load cache and refresh if stale
-  const cached = loadFromStorage();
-  if (cached && cached.timestamp && cached.data) {
-    parsedData.value = cached.data.parsedData ?? {};
-    displayData.value = cached.data.displayData ?? {};
-
-    if (Date.now() - cached.timestamp > CACHE_TTL) {
-      fetchPollen();
-    }
-  } else {
-    fetchPollen();
-  }
-
-  const debouncedFetch = debounce(fetchPollen, 100);
-
-  watch([location, selectedPollens], debouncedFetch, { immediate: false });
+  // If cache is stale or no data, fetch new data
+  watch(
+    [location, selectedPollens],
+    () => {
+      if (
+        !cachedData.value.parsedData ||
+        Object.keys(cachedData.value.parsedData).length === 0 ||
+        (cachedData.value.timestamp &&
+          Date.now() - cachedData.value.timestamp > CACHE_TTL)
+      ) {
+        fetchPollen();
+      }
+    },
+    { immediate: true },
+  );
 
   return {
-    parsedData,
-    displayData,
+    parsedData: computed(() => parsedData.value || cachedData.value.parsedData),
+    displayData: computed(
+      () => displayData.value || cachedData.value.displayData,
+    ),
     isLoading,
     fetchError,
     fetchPollen,

@@ -1,14 +1,8 @@
 import { useUserSettings } from './useUserSettings';
-import { ALERT_LIMIT_BASE } from './../config';
+import { calculateLimit } from './../utils/pollenUtils';
 
 export function usePollenSeverity() {
   const { settings } = useUserSettings();
-
-  function calculateLimit(sensitivity) {
-    return sensitivity > 0
-      ? Math.round(ALERT_LIMIT_BASE / sensitivity)
-      : Infinity;
-  }
 
   function getPollenSeverity(value, limit) {
     const ratio = value / limit;

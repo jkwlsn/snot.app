@@ -1,6 +1,4 @@
 import { computed } from 'vue';
-import { useUserSettings } from './useUserSettings';
-import { ALERT_LIMIT_BASE } from './../config';
 import { POLLEN_DISPLAY_NAMES } from './../pollen';
 import { usePollenSeverity } from './usePollenSeverity';
 
@@ -11,13 +9,7 @@ function formatTime(date) {
 }
 
 export function useGroupedPollenAlerts(alerts) {
-  const { settings } = useUserSettings();
   const { getSeverity } = usePollenSeverity();
-
-  const getLimit = (key) => {
-    const sensitivity = settings.value.selected_pollen?.[key] ?? 1;
-    return Math.round(ALERT_LIMIT_BASE / sensitivity);
-  };
 
   return computed(() => {
     const alertList = alerts.value;
@@ -31,7 +23,7 @@ export function useGroupedPollenAlerts(alerts) {
     let currentGroup = null;
 
     for (const warning of sorted) {
-      const limit = getLimit(warning.pollenKey);
+      const limit = warning.limit;
 
       const isConsecutive =
         currentGroup &&

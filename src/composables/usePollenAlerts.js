@@ -1,7 +1,7 @@
 import { computed, watch, ref } from 'vue';
 import { useUserSettings } from './useUserSettings';
 import { useNotifications } from './useNotifications';
-import { ALERT_LIMIT_BASE } from './../config';
+import { calculateLimit } from './../utils/pollenUtils';
 
 export function usePollenAlerts(parsedData) {
   const { requestPermission, sendPollenAlertNotification } = useNotifications();
@@ -12,12 +12,6 @@ export function usePollenAlerts(parsedData) {
   const sensitivities = computed(() => settings.value.selected_pollens || {});
 
   const warnings = ref([]);
-
-  function calculateLimit(sensitivity) {
-    return sensitivity > 0
-      ? Math.round(ALERT_LIMIT_BASE / sensitivity)
-      : Infinity;
-  }
 
   function createWarnings(data, sensitivityMap) {
     if (!data || !sensitivityMap) return [];
