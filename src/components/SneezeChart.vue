@@ -15,7 +15,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { computed } from 'vue';
 import { Bar } from 'vue-chartjs';
 import {
   Chart as ChartJS,
@@ -27,6 +27,7 @@ import {
   LinearScale,
 } from 'chart.js';
 import { useSymptomTracker } from '../composables/useSymptomTracker';
+import { useChartOptions } from '../composables/useChartOptions';
 
 ChartJS.register(
   Title,
@@ -38,6 +39,11 @@ ChartJS.register(
 );
 
 const { symptoms } = useSymptomTracker();
+
+const { chartOptions } = useChartOptions(() => ({
+  yTitle: 'Number of Sneezes',
+  legendDisplay: false,
+}));
 
 const chartData = computed(() => {
   if (!symptoms.value || symptoms.value.length === 0) return null;
@@ -65,66 +71,5 @@ const chartData = computed(() => {
       },
     ],
   };
-});
-
-const chartOptions = ref({});
-
-const updateChartOptions = () => {
-  const isMobile = window.innerWidth < 768;
-  const isDarkMode = document.documentElement.classList.contains('dark');
-
-  const textColor = isDarkMode ? 'rgb(243, 244, 246)' : 'rgb(31, 41, 55)'; // gray-100 vs gray-800
-  const gridColor = isDarkMode ? 'rgba(243, 244, 246, 0.2)' : 'rgba(31, 41, 55, 0.2)';
-  const tooltipBgColor = isDarkMode ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.8)';
-
-  chartOptions.value = {
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      y: {
-        beginAtZero: true,
-        title: {
-          display: true,
-          text: 'Number of Sneezes',
-          color: textColor,
-        },
-        ticks: {
-          color: textColor,
-        },
-        grid: {
-          color: gridColor,
-        },
-      },
-      x: {
-        ticks: {
-          maxRotation: isMobile ? 90 : 0,
-          minRotation: isMobile ? 90 : 0,
-          color: textColor,
-        },
-        grid: {
-          color: gridColor,
-        },
-      },
-    },
-    plugins: {
-      legend: {
-        display: false,
-      },
-      tooltip: {
-        backgroundColor: tooltipBgColor,
-        titleColor: textColor,
-        bodyColor: textColor,
-      },
-    },
-  };
-};
-
-onMounted(() => {
-  updateChartOptions();
-  window.addEventListener('resize', updateChartOptions);
-});
-
-onUnmounted(() => {
-  window.removeEventListener('resize', updateChartOptions);
 });
 </script>
