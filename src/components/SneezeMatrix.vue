@@ -2,12 +2,12 @@
   <section
     class="bg-emerald-200 rounded-lg shadow-md p-6 mb-4 transition-all duration-300 hover:shadow-lg"
   >
-    <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">Sneeze Activity</h2>
+    <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">Symptom Activity</h2>
     <div class="relative">
       <div class="grid grid-flow-col grid-rows-1 gap-0 pt-4 text-xs mb-1 pointer-events-none">
         <span
           v-for="month in monthLabels"
-          :key="month.name"
+          :key="month.name + month.columnIndex"
           :style="{ 'grid-column-start': month.columnIndex + 1 }"
           class="inline-block whitespace-nowrap overflow-hidden text-ellipsis"
         >
@@ -143,7 +143,7 @@ const tooltip = ref({
 
 const showTooltip = (day, event) => {
   tooltip.value.visible = true;
-  tooltip.value.text = `${day.count} sneezes on ${day.date}`;
+  tooltip.value.text = `${day.count} symptoms on ${day.date}`;
   tooltip.value.x = event.target.offsetLeft - 60;
   tooltip.value.y = event.target.offsetTop - 30;
 };

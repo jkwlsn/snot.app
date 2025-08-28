@@ -6,6 +6,7 @@ const STORAGE_KEY = 'snotAppSettings';
 const DEFAULT_SETTINGS = Object.freeze({
   location: null,
   selected_pollens: {},
+  custom_symptoms: [], // New property for custom symptom types
 });
 
 // Load from localStorage with safety checks

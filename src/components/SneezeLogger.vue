@@ -2,7 +2,7 @@
   <section
     class="bg-emerald-200 rounded-lg shadow-md p-6 mb-4 transition-all duration-300 hover:shadow-lg"
   >
-    
+
     <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">Symptom Tracker</h2>
     <div
       v-if="!isGeolocationEnabled"
@@ -11,55 +11,103 @@
       Please enable location services to log symptoms.
     </div>
     <div class="flex flex-col items-center mb-4">
+      <!-- Symptom Type Selection -->
       <label
-        for="sneeze-severity"
+        for="symptom-type"
         class="block text-gray-700 text-base font-medium mb-2"
       >
-        Sneeze Severity: {{ sneezeSeverity }}
+        Select Symptom:
+      </label>
+      <select
+        id="symptom-type"
+        v-model="selectedSymptomType"
+        class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300 mb-4"
+      >
+        <option v-for="symptom in availableSymptoms" :key="symptom.id" :value="symptom.id">
+          {{ symptom.name }}
+        </option>
+      </select>
+
+      <label
+        for="symptom-severity"
+        class="block text-gray-700 text-base font-medium mb-2"
+      >
+        Severity: {{ symptomSeverity }}
       </label>
       <input
         type="range"
-        id="sneeze-severity"
+        id="symptom-severity"
         min="1"
         max="5"
         step="1"
-        v-model.number="sneezeSeverity"
+        v-model.number="symptomSeverity"
         class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-amber-500"
       />
       <button
-        @click="handleLogSneeze"
+        @click="handleLogSymptom"
         :disabled="!isGeolocationEnabled"
         class="bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-300 focus:ring-opacity-75 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed mt-4"
       >
-        Log Sneeze 🤧
+        Log Symptom
       </button>
     </div>
   </section>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useSymptomTracker } from '../composables/useSymptomTracker';
 import { useSneezePrediction } from '../composables/useSneezePrediction';
 import { useNotifications } from '../composables/useNotifications';
+import { useUserSettings } from '../composables/useUserSettings';
+import { usePollenData } from '../composables/usePollenData';
 
-const { logSneeze, isGeolocationEnabled } = useSymptomTracker();
+const { logSymptom, isGeolocationEnabled } = useSymptomTracker();
 const { prediction } = useSneezePrediction();
 const { requestPermission, sendNotification } = useNotifications();
+const { settings } = useUserSettings();
+const { parsedData } = usePollenData();
 
-const sneezeSeverity = ref(3);
+const symptomSeverity = ref(3);
+const selectedSymptomType = ref('sneeze');
+
+const availableSymptoms = computed(() => {
+  const defaultSymptom = { id: 'sneeze', name: 'Sneeze' };
+  return [defaultSymptom, ...(settings.value.custom_symptoms || [])];
+});
 
 onMounted(() => {
   requestPermission();
 });
 
-const handleLogSneeze = () => {
-  if (prediction.value === 'No') {
+const handleLogSymptom = () => {
+  if (prediction.value === 'No' && selectedSymptomType.value === 'sneeze') {
     sendNotification('So sorry!', {
       body: 'Our prediction was wrong. Thanks for helping us improve!',
       icon: '/favicon.ico',
     });
   }
-  logSneeze(sneezeSeverity.value);
+
+  let relevantPollenData = null;
+  if (parsedData.value && parsedData.value.time && settings.value.selected_pollens) {
+    const currentHour = new Date().getHours();
+    const timeIndex = parsedData.value.time.findIndex(
+      (timeStr) => new Date(timeStr).getHours() === currentHour
+    );
+
+    if (timeIndex !== -1) {
+      relevantPollenData = {
+        selected_pollens: settings.value.selected_pollens,
+        hourly_data: {}
+      };
+      for (const pollenType in settings.value.selected_pollens) {
+        if (parsedData.value[pollenType] && parsedData.value[pollenType][timeIndex] !== undefined) {
+          relevantPollenData.hourly_data[pollenType] = parsedData.value[pollenType][timeIndex];
+        }
+      }
+    }
+  }
+
+  logSymptom(selectedSymptomType.value, symptomSeverity.value, relevantPollenData);
 };
 </script>

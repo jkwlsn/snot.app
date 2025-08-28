@@ -17,23 +17,26 @@ function initialize() {
   initialized = true;
 }
 
-function logSneeze(severity) {
+// Renamed from logSneeze to logSymptom, added symptomType parameter
+function logSymptom(symptomType, severity, currentPollenData) { // <--- currentPollenData added here
   const { coords, isGeolocationEnabled } = useGeoLocation();
   if (!isGeolocationEnabled.value) {
     return;
   }
 
-  const newSneeze = {
+  const newSymptom = {
     id: Date.now(),
     time: new Date().toISOString(),
+    type: symptomType,
     severity,
     location: {
       latitude: coords.value.latitude,
       longitude: coords.value.longitude,
     },
+    pollenDataAtTimeOfLog: currentPollenData, // New property
   };
 
-  symptoms.value.unshift(newSneeze);
+  symptoms.value.unshift(newSymptom);
   localStorage.setItem(SYMPTOMS_STORAGE_KEY, JSON.stringify(symptoms.value));
 }
 
@@ -53,7 +56,7 @@ export function useSymptomTracker() {
 
   return {
     symptoms,
-    logSneeze,
+    logSymptom,
     clearSymptoms,
     deleteSymptom,
     isGeolocationEnabled,

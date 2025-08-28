@@ -3,7 +3,7 @@
     class="bg-emerald-200 rounded-lg shadow-md p-6 mb-4 transition-all duration-300 hover:shadow-lg"
   >
     <h2 class="text-2xl font-bold text-gray-800 mb-2 text-center">
-      Recent Sneezes
+      Recent Symptoms
     </h2>
     <div class="overflow-x-auto">
       <table
@@ -17,6 +17,12 @@
               class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
             >
               Time
+            </th>
+            <th
+              scope="col"
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Symptom
             </th>
             <th
               scope="col"
@@ -48,6 +54,9 @@
               {{ new Date(symptom.time).toLocaleString() }}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              {{ symptom.type }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
               {{ symptom.severity }}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -66,7 +75,7 @@
         </tbody>
       </table>
       <div v-else class="text-center text-gray-500 mt-2 italic">
-        No sneezes logged yet.
+        No symptoms logged yet.
       </div>
     </div>
     <button
@@ -87,7 +96,7 @@ const { symptoms, deleteSymptom, clearSymptoms } = useSymptomTracker();
 const clearHistory = () => {
   if (
     confirm(
-      'Are you sure you want to delete your sneeze history? This action cannot be undone.',
+      'Are you sure you want to delete your symptom history? This action cannot be undone.',
     )
   ) {
     clearSymptoms();
