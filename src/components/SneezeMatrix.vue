@@ -35,23 +35,23 @@
     <div class="flex justify-center mt-4 text-sm">
       <div class="flex items-center mr-4">
         <span class="w-4 h-4 rounded-sm bg-gray-300 mr-1"></span>
-        <span>0 sneezes</span>
+        <span>0</span>
       </div>
       <div class="flex items-center mr-4">
         <span class="w-4 h-4 rounded-sm bg-green-200 mr-1"></span>
-        <span>1-2 sneezes</span>
+        <span>1-2</span>
       </div>
       <div class="flex items-center mr-4">
         <span class="w-4 h-4 rounded-sm bg-green-400 mr-1"></span>
-        <span>3-5 sneezes</span>
+        <span>3-5</span>
       </div>
       <div class="flex items-center mr-4">
         <span class="w-4 h-4 rounded-sm bg-green-600 mr-1"></span>
-        <span>6-10 sneezes</span>
+        <span>6-10</span>
       </div>
       <div class="flex items-center">
         <span class="w-4 h-4 rounded-sm bg-green-800 mr-1"></span>
-        <span>>10 sneezes</span>
+        <span>>10</span>
       </div>
     </div>
   </section>
