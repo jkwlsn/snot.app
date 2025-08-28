@@ -1,9 +1,10 @@
 import { ref } from 'vue';
 import { POLLEN_DISPLAY_NAMES } from '../pollen';
-import { getPollenSeverity } from '../pollen'; // Adjust path as needed
+import { usePollenSeverity } from './usePollenSeverity'; // Adjust path as needed
 
 export function useNotifications() {
   const permissionGranted = ref(false);
+  const { getSeverity } = usePollenSeverity();
 
   const requestPermission = async () => {
     if (!('Notification' in window)) {
@@ -70,7 +71,7 @@ export function useNotifications() {
         );
 
         const limit = limitMap[pollenKey];
-        const severity = getPollenSeverity(maxPollenValue, limit);
+        const severity = getSeverity(pollenKey, maxPollenValue);
         const displayName = POLLEN_DISPLAY_NAMES?.[pollenKey] ?? pollenKey;
         const body = `⏰ ${formattedTimeRanges.join(', ')} ${severity.emoji} ${severity.label} ${displayName} pollen (max: ${Math.round(maxPollenValue)}, limit: ${limit})`;
         try {

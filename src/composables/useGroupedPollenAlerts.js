@@ -2,6 +2,7 @@ import { computed } from 'vue';
 import { useUserSettings } from './useUserSettings';
 import { ALERT_LIMIT_BASE } from './../config';
 import { POLLEN_DISPLAY_NAMES } from './../pollen';
+import { usePollenSeverity } from './usePollenSeverity';
 
 const ONE_HOUR = 60 * 60 * 1000;
 
@@ -11,6 +12,7 @@ function formatTime(date) {
 
 export function useGroupedPollenAlerts(alerts) {
   const { settings } = useUserSettings();
+  const { getSeverity } = usePollenSeverity();
 
   const getLimit = (key) => {
     const sensitivity = settings.value.selected_pollen?.[key] ?? 1;
@@ -71,7 +73,8 @@ export function useGroupedPollenAlerts(alerts) {
       const pollenInfo = Object.entries(pollenDetails)
         .map(([key, val]) => {
           const displayName = POLLEN_DISPLAY_NAMES[key] ?? key;
-          return `${displayName} (${Math.round(val.maxPollenValue)})`;
+          const severity = getSeverity(key, val.maxPollenValue);
+          return `${severity.emoji} ${displayName} (${Math.round(val.maxPollenValue)})`;
         })
         .join(', ');
 
