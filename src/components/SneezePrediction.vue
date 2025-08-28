@@ -5,7 +5,13 @@
     <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">
       Will I Sneeze Today?
     </h2>
-    <div class="text-6xl font-bold my-4 text-center" :class="predictionClass">
+    <p v-if="isLoading" class="text-center text-gray-700 mb-2 font-medium">
+      Calculating prediction...
+    </p>
+    <p v-else-if="fetchError" class="text-center text-red-600 mb-2 font-medium">
+      Error: {{ fetchError }}
+    </p>
+    <div v-else class="text-6xl font-bold my-4 text-center" :class="predictionClass">
       {{ predictionIcon }} {{ prediction }}
     </div>
   </section>
@@ -14,8 +20,10 @@
 <script setup>
 import { computed } from 'vue';
 import { useSneezePrediction } from '../composables/useSneezePrediction';
+import { usePollenData } from '../composables/usePollenData'; // Import usePollenData
 
 const { prediction } = useSneezePrediction();
+const { isLoading, fetchError } = usePollenData(); // Destructure isLoading and fetchError
 
 const predictionClass = computed(() => {
   switch (prediction.value) {

@@ -5,7 +5,13 @@
     <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">
       Pollen Forecast
     </h2>
-    <div class="overflow-x-auto">
+    <p v-if="isLoading" class="text-center text-gray-700 mb-2 font-medium">
+      Loading pollen forecast...
+    </p>
+    <p v-else-if="fetchError" class="text-center text-red-600 mb-2 font-medium">
+      Error: {{ fetchError }}
+    </p>
+    <div v-else class="overflow-x-auto">
       <div class="min-w-[600px]">
         <Bar v-if="chartData" :data="chartData" :options="chartOptions" />
         <div v-else class="text-center text-gray-500 mt-2 italic">
@@ -42,7 +48,7 @@ ChartJS.register(
   LinearScale,
 );
 
-const { parsedData } = usePollenData();
+const { parsedData, isLoading, fetchError } = usePollenData(); // Destructure isLoading and fetchError
 const { getSeverity } = usePollenSeverity();
 
 const { chartOptions } = useChartOptions(({ isMobile }) => ({
