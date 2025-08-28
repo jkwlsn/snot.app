@@ -10,7 +10,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { computed } from 'vue';
 import { Bar } from 'vue-chartjs';
 import {
   Chart as ChartJS,
@@ -22,7 +22,9 @@ import {
   LinearScale,
 } from 'chart.js';
 import { usePollenData } from '../composables/usePollenData';
-import { POLLEN_DISPLAY_NAMES } from '../pollen.js';
+import { useChartOptions } from '../composables/useChartOptions';
+import { POLLEN_DISPLAY_NAMES, POLLEN_CHART_COLORS } from '../pollen.js';
+import { usePollenSeverity } from '../composables/usePollenSeverity';
 
 ChartJS.register(
   Title,
@@ -34,62 +36,50 @@ ChartJS.register(
 );
 
 const { parsedData } = usePollenData();
+const { getSeverity } = usePollenSeverity();
+
+const { chartOptions } = useChartOptions(({ isMobile }) => ({
+  yTitle: 'Pollen Count',
+  legendDisplay: !isMobile,
+}));
 
 const chartData = computed(() => {
-  if (!parsedData.value) return null;
+  if (!parsedData.value || !parsedData.value.time) return null;
 
   const labels = parsedData.value.time.map(t => new Date(t).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
   const datasets = [];
+  let colorIndex = 0;
 
   for (const pollen in parsedData.value) {
     if (pollen !== 'time') {
       datasets.push({
         label: POLLEN_DISPLAY_NAMES[pollen] || pollen,
         data: parsedData.value[pollen],
-        backgroundColor: `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.5)`,
+        backgroundColor: POLLEN_CHART_COLORS[colorIndex % POLLEN_CHART_COLORS.length],
       });
+      colorIndex++;
     }
   }
 
   return { labels, datasets };
 });
 
-const chartOptions = ref({});
-
-const updateChartOptions = () => {
-  const isMobile = window.innerWidth < 768;
-  chartOptions.value = {
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      y: {
-        beginAtZero: true,
-        title: {
-          display: true,
-          text: 'Pollen Count',
-        },
-      },
-      x: {
-        ticks: {
-          maxRotation: isMobile ? 90 : 0,
-          minRotation: isMobile ? 90 : 0,
-        },
-      },
-    },
-    plugins: {
-      legend: {
-        display: !isMobile,
-      },
-    },
-  };
+chartOptions.value.plugins = {
+  tooltip: {
+    callbacks: {
+      label: function(context) {
+        const label = context.dataset.label || '';
+        if (label) {
+          const value = context.parsed.y;
+          const pollenKey = Object.keys(POLLEN_DISPLAY_NAMES).find(key => POLLEN_DISPLAY_NAMES[key] === label);
+          if (pollenKey) {
+            const severity = getSeverity(pollenKey, value);
+            return `${label}: ${value} (${severity.label} ${severity.emoji})`;
+          }
+        }
+        return context.parsed.y;
+      }
+    }
+  }
 };
-
-onMounted(() => {
-  updateChartOptions();
-  window.addEventListener('resize', updateChartOptions);
-});
-
-onUnmounted(() => {
-  window.removeEventListener('resize', updateChartOptions);
-});
 </script>
