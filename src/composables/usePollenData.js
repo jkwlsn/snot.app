@@ -124,7 +124,7 @@ export function usePollenData() {
       displayData.value = display;
 
       saveToStorage({ parsedData: raw, displayData: display });
-    } catch (error) {
+    } catch {
       fetchError.value = 'Failed to fetch pollen data';
       parsedData.value = {};
       displayData.value = {};

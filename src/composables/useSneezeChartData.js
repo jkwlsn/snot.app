@@ -21,7 +21,7 @@ export function useSneezeChartData(daysToShowRef) {
       }
       byDay[dateString]++;
     });
-
+    
     return byDay;
   });
 

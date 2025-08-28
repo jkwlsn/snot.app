@@ -1,12 +1,14 @@
 <template>
-  <section>
-    <h2>
+  <section
+    class="bg-emerald-200 rounded-lg shadow-md p-6 mb-4 transition-all duration-300 hover:shadow-lg"
+  >
+    <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">
       Sneeze History
     </h2>
-    <div>
-      <div>
+    <div class="overflow-x-auto">
+      <div class="min-w-[600px]">
         <Bar v-if="chartData" :data="chartData" :options="chartOptions" />
-        <div v-else>
+        <div v-else class="text-center text-gray-500 mt-2 italic">
           No sneezes logged in the last 24 hours.
         </div>
       </div>

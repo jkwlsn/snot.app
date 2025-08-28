@@ -1,9 +1,16 @@
 <template>
-  <section>
-    <h2>Pollen Forecast</h2>
-    <div>
-      <div>
+  <section
+    class="bg-emerald-200 rounded-lg shadow-md p-6 mb-4 transition-all duration-300 hover:shadow-lg"
+  >
+    <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">
+      Pollen Forecast
+    </h2>
+    <div class="overflow-x-auto">
+      <div class="min-w-[600px]">
         <Bar v-if="chartData" :data="chartData" :options="chartOptions" />
+        <div v-else class="text-center text-gray-500 mt-2 italic">
+          No pollen data available.
+        </div>
       </div>
     </div>
   </section>
@@ -32,7 +39,7 @@ ChartJS.register(
   Legend,
   BarElement,
   CategoryScale,
-  LinearScale
+  LinearScale,
 );
 
 const { parsedData } = usePollenData();
@@ -46,7 +53,9 @@ const { chartOptions } = useChartOptions(({ isMobile }) => ({
 const chartData = computed(() => {
   if (!parsedData.value || !parsedData.value.time) return null;
 
-  const labels = parsedData.value.time.map(t => new Date(t).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+  const labels = parsedData.value.time.map((t) =>
+    new Date(t).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+  );
   const datasets = [];
   let colorIndex = 0;
 
@@ -55,7 +64,8 @@ const chartData = computed(() => {
       datasets.push({
         label: POLLEN_DISPLAY_NAMES[pollen] || pollen,
         data: parsedData.value[pollen],
-        backgroundColor: POLLEN_CHART_COLORS[colorIndex % POLLEN_CHART_COLORS.length],
+        backgroundColor:
+          POLLEN_CHART_COLORS[colorIndex % POLLEN_CHART_COLORS.length],
       });
       colorIndex++;
     }
@@ -67,19 +77,21 @@ const chartData = computed(() => {
 chartOptions.value.plugins = {
   tooltip: {
     callbacks: {
-      label: function(context) {
+      label: function (context) {
         const label = context.dataset.label || '';
         if (label) {
           const value = context.parsed.y;
-          const pollenKey = Object.keys(POLLEN_DISPLAY_NAMES).find(key => POLLEN_DISPLAY_NAMES[key] === label);
+          const pollenKey = Object.keys(POLLEN_DISPLAY_NAMES).find(
+            (key) => POLLEN_DISPLAY_NAMES[key] === label,
+          );
           if (pollenKey) {
             const severity = getSeverity(pollenKey, value);
             return `${label}: ${value} (${severity.label} ${severity.emoji})`;
           }
         }
         return context.parsed.y;
-      }
-    }
-  }
+      },
+    },
+  },
 };
 </script>

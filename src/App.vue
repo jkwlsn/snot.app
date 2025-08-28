@@ -5,7 +5,9 @@ import SiteFooter from './components/SiteFooter.vue';
 </script>
 
 <template>
-  <SiteHeader />
-  <SiteMain />
-  <SiteFooter />
+  <div class="min-h-screen flex flex-col">
+    <SiteHeader />
+    <SiteMain />
+    <SiteFooter />
+  </div>
 </template>

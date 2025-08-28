@@ -1,4 +1,4 @@
-import { ref, onMounted, readonly } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useGeoLocation } from './useGeoLocation';
 
 const SYMPTOMS_STORAGE_KEY = 'snot_app_symptoms';
@@ -20,7 +20,6 @@ function initialize() {
 function logSneeze(severity) {
   const { coords, isGeolocationEnabled } = useGeoLocation();
   if (!isGeolocationEnabled.value) {
-    console.error('Cannot log sneeze: location not available.');
     return;
   }
 
