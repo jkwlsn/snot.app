@@ -1,10 +1,25 @@
 <template>
-  <header class="text-center p-4">
-    <h1>{{ title }}</h1>
-    <nav>
-      <router-link to="/" class="p-2">Dashboard</router-link>
-      <router-link to="/data" class="p-2">Data</router-link>
-      <router-link to="/settings" class="p-2">Settings</router-link>
+  <header class="bg-emerald-200 rounded-lg p-2 m-5 flex justify-between">
+    <h1 class="p-2">{{ title }}</h1>
+    <nav class="flex space-x-5">
+      <router-link
+        to="/"
+        class="rounded-md p-2 bg-emerald-300 hover:bg-emerald-400"
+      >
+        Dashboard
+      </router-link>
+      <router-link
+        to="/data"
+        class="rounded-md p-2 bg-emerald-300 hover:bg-emerald-400"
+      >
+        Data
+      </router-link>
+      <router-link
+        to="/settings"
+        class="rounded-md p-2 bg-emerald-300 hover:bg-emerald-400"
+      >
+        Settings
+      </router-link>
     </nav>
   </header>
 </template>
