@@ -2,7 +2,6 @@
   <section
     class="bg-emerald-200 rounded-lg shadow-md p-6 mb-4 transition-all duration-300 hover:shadow-lg"
   >
-
     <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">Symptom Tracker</h2>
     <div
       v-if="!isGeolocationEnabled"
@@ -11,22 +10,24 @@
       Please enable location services to log symptoms.
     </div>
     <div class="flex flex-col items-center mb-4">
-      <!-- Symptom Type Selection -->
-      <label
-        for="symptom-type"
-        class="block text-gray-700 text-base font-medium mb-2"
-      >
-        Select Symptom:
+      <!-- Symptom Type Selection Checkboxes -->
+      <label class="block text-gray-700 text-base font-medium mb-2">
+        Select Symptoms:
       </label>
-      <select
-        id="symptom-type"
-        v-model="selectedSymptomType"
-        class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300 mb-4"
-      >
-        <option v-for="symptom in availableSymptoms" :key="symptom.id" :value="symptom.id">
-          {{ symptom.name }}
-        </option>
-      </select>
+      <div class="flex flex-wrap justify-center gap-2 mb-4">
+        <div v-for="symptom in availableSymptoms" :key="symptom.id" class="flex items-center">
+          <input
+            type="checkbox"
+            :id="`symptom-${symptom.id}`"
+            :value="symptom.id"
+            v-model="selectedSymptomTypes"
+            class="mr-1 h-4 w-4 text-amber-500 focus:ring-amber-400 border-gray-300 rounded"
+          />
+          <label :for="`symptom-${symptom.id}`" class="text-gray-700 text-sm">
+            {{ symptom.name }}
+          </label>
+        </div>
+      </div>
 
       <label
         for="symptom-severity"
@@ -45,7 +46,7 @@
       />
       <button
         @click="handleLogSymptom"
-        :disabled="!isGeolocationEnabled"
+        :disabled="!isGeolocationEnabled || selectedSymptomTypes.length === 0"
         class="bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-300 focus:ring-opacity-75 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed mt-4"
       >
         Log Symptom
@@ -70,7 +71,7 @@ const { settings } = useUserSettings();
 const { parsedData } = usePollenData();
 
 const symptomSeverity = ref(3);
-const selectedSymptomType = ref(Object.keys(DEFAULT_SYMPTOMS)[0]);
+const selectedSymptomTypes = ref([]); // Changed to array for multiple selections
 
 const availableSymptoms = computed(() => {
   const defaultSymptoms = Object.entries(DEFAULT_SYMPTOMS).map(
@@ -84,7 +85,7 @@ onMounted(() => {
 });
 
 const handleLogSymptom = () => {
-  if (prediction.value === 'No' && selectedSymptomType.value === 'sneeze') {
+  if (selectedSymptomTypes.value.includes('sneeze') && prediction.value === 'No') {
     sendNotification('So sorry!', {
       body: 'Our prediction was wrong. Thanks for helping us improve!',
       icon: '/favicon.ico',
@@ -111,6 +112,10 @@ const handleLogSymptom = () => {
     }
   }
 
-  logSymptom(selectedSymptomType.value, symptomSeverity.value, relevantPollenData);
+  selectedSymptomTypes.value.forEach(symptomType => {
+    logSymptom(symptomType, symptomSeverity.value, relevantPollenData);
+  });
+  selectedSymptomTypes.value = []; // Clear selections after logging
+  symptomSeverity.value = 3; // Reset severity
 };
 </script>
