@@ -1,6 +1,8 @@
 <template>
-  <header class="bg-emerald-200 rounded-lg p-2 m-5 flex justify-between">
-    <h1 class="p-2">{{ title }}</h1>
+  <header
+    class="sticky top-5 bg-emerald-200/75 rounded-lg p-2 mt-5 mb-5 flex justify-between backdrop-blur-xs"
+  >
+    <SneezePrediction />
     <nav class="flex space-x-5">
       <router-link
         to="/"
@@ -20,10 +22,16 @@
       >
         Settings
       </router-link>
+      <router-link
+        to="/about"
+        class="rounded-md p-2 bg-emerald-300 hover:bg-emerald-400"
+      >
+        About
+      </router-link>
     </nav>
   </header>
 </template>
 
 <script setup>
-const title = 'snot.app';
+import SneezePrediction from '../components/SneezePrediction.vue';
 </script>

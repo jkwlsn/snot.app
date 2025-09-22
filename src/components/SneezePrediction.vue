@@ -1,17 +1,10 @@
 <template>
   <section
-    class="bg-emerald-200 rounded-lg shadow-md p-6 mb-4 transition-all duration-300 hover:shadow-lg"
+    class="flex flex-row text-lg font-bold p-2 bg-emerald-300 rounded-md"
   >
-    <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">
-      Will I Sneeze Today?
-    </h2>
-    <p v-if="isLoading" class="text-center text-gray-700 mb-2 font-medium">
-      Calculating prediction...
-    </p>
-    <p v-else-if="fetchError" class="text-center text-red-600 mb-2 font-medium">
-      Error: {{ fetchError }}
-    </p>
-    <div v-else class="text-6xl font-bold my-4 text-center" :class="predictionClass">
+    <h2 class="text-gray-800">Will I Sneeze Today?</h2>
+    <p v-if="isLoading" class="text-yellow-500 pl-2">🙃 Maybe?</p>
+    <div v-else class="pl-2" :class="predictionClass">
       {{ predictionIcon }} {{ prediction }}
     </div>
   </section>
@@ -20,10 +13,10 @@
 <script setup>
 import { computed } from 'vue';
 import { useSneezePrediction } from '../composables/useSneezePrediction';
-import { usePollenData } from '../composables/usePollenData'; // Import usePollenData
+import { usePollenData } from '../composables/usePollenData';
 
 const { prediction } = useSneezePrediction();
-const { isLoading, fetchError } = usePollenData(); // Destructure isLoading and fetchError
+const { isLoading } = usePollenData();
 
 const predictionClass = computed(() => {
   switch (prediction.value) {
@@ -34,20 +27,20 @@ const predictionClass = computed(() => {
     case 'No':
       return 'text-green-500';
     default:
-      return 'text-gray-400';
+      return 'text-yellow-500';
   }
 });
 
 const predictionIcon = computed(() => {
   switch (prediction.value) {
     case 'Yes':
-      return '😭'; // Crying face
+      return '😭';
     case 'Maybe':
-      return '😐'; // Neutral face
+      return '🙃';
     case 'No':
-      return '😀'; // Grinning face
+      return '😀';
     default:
-      return '';
+      return '🙃';
   }
 });
 </script>

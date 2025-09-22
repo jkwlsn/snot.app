@@ -4,9 +4,9 @@ import SiteFooter from './components/SiteFooter.vue';
 </script>
 
 <template>
-  <div class="min-h-screen flex flex-col">
+  <div>
     <SiteHeader />
-    <main class="flex-grow p-4 md:p-8 text-gray-900">
+    <main>
       <router-view />
     </main>
     <SiteFooter />
