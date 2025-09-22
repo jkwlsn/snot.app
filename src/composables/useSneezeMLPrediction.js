@@ -37,7 +37,7 @@ export function useSneezeMLPrediction() {
         const hour = symptomDate.getHours();
         const featureVector = [hour];
 
-        selectedPollenTypes.value.forEach(pollenType => {
+        selectedPollenTypes.value?.forEach(pollenType => {
           const pollenValue = symptom.pollenDataAtTimeOfLog[pollenType]?.[0]?.value || 0;
           featureVector.push(pollenValue);
         });
@@ -72,11 +72,11 @@ export function useSneezeMLPrediction() {
 
   const getPredictionCategory = (probability) => {
     if (probability > 0.7) {
-      return 'Yes';
+      return 'yes';
     } else if (probability > 0.4) {
-      return 'Maybe';
+      return 'maybe';
     } else {
-      return 'No';
+      return 'no';
     }
   };
 
@@ -90,10 +90,10 @@ export function useSneezeMLPrediction() {
     }
 
     try {
-      const { xs, ys, predictionXs, hasTrainingData, hasPredictionInputs } = prepareData(symptoms, parsedData, settings);
+      const { xs, ys, predictionXs, hasTrainingData, hasPredictionInputs } = prepareData(symptoms, parsedData, settings, selectedPollenTypes);
 
       if (!hasTrainingData) {
-        console.warn('Not enough training data. Skipping model training.');
+        console.warn('Not enough training data (need at least one logged symptom with pollen data) to train ML model. ML prediction will be unavailable until more data is logged.');
         loading.value = false;
         xs.dispose();
         ys.dispose();
