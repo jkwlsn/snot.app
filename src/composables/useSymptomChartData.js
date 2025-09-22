@@ -2,7 +2,7 @@
 import { computed, ref, watch } from 'vue';
 import { useSymptomTracker } from './useSymptomTracker';
 
-export function useSneezeChartData(daysToShowRef) {
+export function useSymptomChartData(daysToShowRef) {
   const { symptoms } = useSymptomTracker();
 
   const _daysToShow = ref(daysToShowRef.value);
