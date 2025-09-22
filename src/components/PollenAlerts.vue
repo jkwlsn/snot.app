@@ -4,7 +4,7 @@
     <div v-if="isLoading" class="text-center text-gray-700 mb-2 font-medium ">pollen data...</div>
     <div v-else-if="fetchError" class="text-center text-red-600 mb-2 font-medium">Error: {{ fetchError }}</div>
     <ul v-else-if="groupedAlerts.length" class="text-gray-700 divide-y divide-gray-200">
-      <li v-for="(group, i) in groupedAlerts" :key="i" class="py-2">
+      <li v-for="group in groupedAlerts" :key="group.timeRange" class="py-2">
         ⏰ {{ group.timeRange }} {{ pollenEmoji }} High Pollen:
         {{ group.pollenInfo }}
       </li>

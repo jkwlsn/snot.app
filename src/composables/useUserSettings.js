@@ -7,6 +7,7 @@ const DEFAULT_SETTINGS = Object.freeze({
   location: null,
   selected_pollens: {},
   custom_symptoms: [], // New property for custom symptom types
+  isFirstTimeUser: true, // New property
 });
 
 // Load from localStorage with safety checks
@@ -51,5 +52,10 @@ export function useUserSettings() {
     settings,
     resetSettings: () => (settings.value = { ...DEFAULT_SETTINGS }),
     defaultSettings: DEFAULT_SETTINGS,
+    completeOnboarding, // Export new function
   };
 }
+
+const completeOnboarding = () => {
+  settings.value.isFirstTimeUser = false;
+};

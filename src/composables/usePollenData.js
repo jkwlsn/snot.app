@@ -3,8 +3,7 @@ import { useUserSettings } from './useUserSettings';
 import { usePollenApi } from './usePollenApi';
 import { useLocalStorageCache } from './useLocalStorageCache';
 import { usePollenDataParser } from './usePollenDataParser';
-
-const STORAGE_KEY = 'pollenDataCache';
+import { POLLEN_DATA_STORAGE_KEY } from '../config';
 const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
 
 export function usePollenData() {
@@ -19,7 +18,7 @@ export function usePollenData() {
   );
 
   const { cachedData, loadFromStorage, saveToStorage } = useLocalStorageCache(
-    STORAGE_KEY,
+    POLLEN_DATA_STORAGE_KEY,
     { parsedData: {}, displayData: {} },
     CACHE_TTL,
   );
