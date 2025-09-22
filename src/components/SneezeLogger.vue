@@ -61,6 +61,7 @@ import { useSneezePrediction } from '../composables/useSneezePrediction';
 import { useNotifications } from '../composables/useNotifications';
 import { useUserSettings } from '../composables/useUserSettings';
 import { usePollenData } from '../composables/usePollenData';
+import { DEFAULT_SYMPTOMS } from '../symptoms';
 
 const { logSymptom, isGeolocationEnabled } = useSymptomTracker();
 const { prediction } = useSneezePrediction();
@@ -69,11 +70,13 @@ const { settings } = useUserSettings();
 const { parsedData } = usePollenData();
 
 const symptomSeverity = ref(3);
-const selectedSymptomType = ref('sneeze');
+const selectedSymptomType = ref(Object.keys(DEFAULT_SYMPTOMS)[0]);
 
 const availableSymptoms = computed(() => {
-  const defaultSymptom = { id: 'sneeze', name: 'Sneeze' };
-  return [defaultSymptom, ...(settings.value.custom_symptoms || [])];
+  const defaultSymptoms = Object.entries(DEFAULT_SYMPTOMS).map(
+    ([id, name]) => ({ id, name }),
+  );
+  return [...defaultSymptoms, ...(settings.value.custom_symptoms || [])];
 });
 
 onMounted(() => {

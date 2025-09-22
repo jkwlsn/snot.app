@@ -59,7 +59,7 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue';
-import { useSneezeChartData } from '../composables/useSneezeChartData';
+import { useSymptomChartData } from '../composables/useSymptomChartData';
 
 const daysToShow = ref(90);
 
@@ -86,7 +86,7 @@ onUnmounted(() => {
   clearTimeout(resizeTimeout); // Clear timeout on unmount
 });
 
-const { chartData } = useSneezeChartData(daysToShow);
+const { chartData } = useSymptomChartData(daysToShow);
 
 const monthLabels = computed(() => {
   const labels = [];

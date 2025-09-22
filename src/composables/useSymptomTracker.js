@@ -1,7 +1,6 @@
 import { ref, onMounted } from 'vue';
 import { useGeoLocation } from './useGeoLocation';
-
-const SYMPTOMS_STORAGE_KEY = 'snot_app_symptoms';
+import { SYMPTOMS_STORAGE_KEY } from '../config';
 
 const symptoms = ref([]);
 

@@ -1,11 +1,11 @@
 <script setup>
-import SneezeHistory from '../components/SneezeHistory.vue';
+import SymptomHistory from '../components/SymptomHistory.vue';
 import PollenData from '../components/PollenData.vue';
 </script>
 
 <template>
   <div>
-    <SneezeHistory />
+    <SymptomHistory />
     <PollenData />
   </div>
 </template>

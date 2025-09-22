@@ -11,18 +11,14 @@ export function useSneezeChartData(daysToShowRef) {
     _daysToShow.value = newValue;
   });
 
-  const sneezesByDay = computed(() => {
-    const byDay = {};
+const symptomsByDay = computed(() => {
+    const counts = {};
     symptoms.value.forEach((symptom) => {
       const date = new Date(symptom.time);
-      const dateString = date.toISOString().split('T')[0];
-      if (!byDay[dateString]) {
-        byDay[dateString] = 0;
-      }
-      byDay[dateString]++;
+      const dateString = date.toISOString().slice(0, 10);
+      counts[dateString] = (counts[dateString] || 0) + 1;
     });
-
-    return byDay;
+    return counts;
   });
 
   const chartData = computed(() => {
@@ -51,7 +47,7 @@ export function useSneezeChartData(daysToShowRef) {
       const dateString = `${year}-${month}-${day}`;
       days.push({
         date: dateString,
-        count: sneezesByDay.value[dateString] || 0,
+        count: symptomsByDay.value[dateString] || 0,
       });
       currentDate.setDate(currentDate.getDate() + 1); // Move to next day
     }
