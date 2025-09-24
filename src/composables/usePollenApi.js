@@ -1,7 +1,8 @@
 import { ref, watch } from 'vue';
 import { fetchWeatherApi } from 'openmeteo';
+import { POLLEN_DISPLAY_NAMES } from '../pollen'; // Import all pollen types
 
-export function usePollenApi(location, selectedPollens) {
+export function usePollenApi(location) { // Removed selectedPollens from arguments
   const rawPollenData = ref(null);
   const isLoading = ref(false);
   const fetchError = ref(null);
@@ -9,8 +10,7 @@ export function usePollenApi(location, selectedPollens) {
   async function fetchPollen() {
     if (
       !location.value?.latitude ||
-      !location.value?.longitude ||
-      selectedPollens.value.length === 0
+      !location.value?.longitude
     ) {
       rawPollenData.value = null;
       return;
@@ -25,7 +25,7 @@ export function usePollenApi(location, selectedPollens) {
         {
           latitude: location.value.latitude,
           longitude: location.value.longitude,
-          hourly: selectedPollens.value,
+          hourly: Object.keys(POLLEN_DISPLAY_NAMES), // Fetch all pollen types
           start_date: new Date().toISOString().slice(0, 10),
           end_date: new Date().toISOString().slice(0, 10),
         },
@@ -39,7 +39,7 @@ export function usePollenApi(location, selectedPollens) {
     }
   }
 
-  watch([location, selectedPollens], fetchPollen, { immediate: true });
+  watch([location], fetchPollen, { immediate: true }); // Removed selectedPollens from watch
 
   return {
     rawPollenData,
