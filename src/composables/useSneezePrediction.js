@@ -1,14 +1,14 @@
 // composables/useSneezePrediction.js
 import { computed } from 'vue';
 import { usePollenData } from './usePollenData';
-import { useUserSettings } from './useUserSettings';
+import { settings } from './useUserSettings'; // Import settings directly
 import { useSneezeMLPrediction } from './useSneezeMLPrediction'; // Import ML prediction
 import { calculateSneezePrediction } from './../utils/sneezePredictionUtils';
 import { ALERT_LIMIT_BASE } from './../config';
 
 export function useSneezePrediction() {
   const { parsedData } = usePollenData();
-  const { settings } = useUserSettings();
+  // settings is now directly imported
   const { mlOverallPrediction, loading, error } = useSneezeMLPrediction(); // Get ML prediction
 
   const prediction = computed(() => {

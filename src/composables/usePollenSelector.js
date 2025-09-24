@@ -1,5 +1,5 @@
 import { reactive, watch } from 'vue';
-import { useUserSettings } from './useUserSettings.js';
+import { settings } from './useUserSettings';
 
 export function usePollenSelector() {
   const rawPollens = import.meta.env.VITE_POLLENS || '';
@@ -8,7 +8,7 @@ export function usePollenSelector() {
     .map((p) => p.trim())
     .filter(Boolean);
 
-  const { settings } = useUserSettings();
+  // settings is now directly imported
 
   const sensitivities = reactive({});
 

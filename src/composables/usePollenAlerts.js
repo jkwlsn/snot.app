@@ -1,11 +1,11 @@
 import { computed, watch, ref } from 'vue';
-import { useUserSettings } from './useUserSettings';
+import { settings } from './useUserSettings';
 import { useNotifications } from './useNotifications';
 import { calculateLimit } from './../utils/pollenUtils';
 
 export function usePollenAlerts(parsedData) {
   const { requestPermission, sendPollenAlertNotification } = useNotifications();
-  const { settings } = useUserSettings();
+  // settings is now directly imported
 
   requestPermission();
 

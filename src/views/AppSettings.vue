@@ -2,9 +2,9 @@
 import { ref } from 'vue'; // Import ref for new input
 import GeoLocation from '../components/GeoLocation.vue';
 import PollenSelector from '../components/PollenSelector.vue';
-import { useUserSettings } from '../composables/useUserSettings'; // Import useUserSettings
+import { settings } from '../composables/useUserSettings'; // Import settings directly
 
-const { settings } = useUserSettings(); // Access settings
+// settings is now directly imported
 
 const newSymptomName = ref(''); // Reactive variable for new symptom input
 

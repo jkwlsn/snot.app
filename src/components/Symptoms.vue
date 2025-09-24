@@ -1,11 +1,11 @@
 <script setup>
 import { computed } from 'vue';
 import SymptomChart from '../components/SymptomChart.vue';
-import { useUserSettings } from '../composables/useUserSettings';
+import { settings } from '../composables/useUserSettings'; // Import settings directly
 import { useSymptomTracker } from '../composables/useSymptomTracker';
 import { DEFAULT_SYMPTOMS } from '../symptoms';
 
-const { settings } = useUserSettings();
+// settings is now directly imported
 const { symptoms } = useSymptomTracker();
 
 const availableSymptoms = computed(() => {
