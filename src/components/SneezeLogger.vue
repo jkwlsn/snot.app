@@ -63,7 +63,7 @@ import { useNotifications } from '../composables/useNotifications';
 import { settings } from '../composables/useUserSettings'; // Import settings directly
 import { usePollenData } from '../composables/usePollenData';
 import { DEFAULT_SYMPTOMS } from '../symptoms';
-
+  
 const { logSymptom, hasActiveLocation } = useSymptomTracker();
 const { prediction } = useSneezePrediction();
 const { requestPermission, sendNotification } = useNotifications();

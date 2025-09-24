@@ -1,7 +1,6 @@
 import { ref, readonly, computed, watch } from 'vue';
 import { settings } from './useUserSettings'; // Import settings directly
 
-
 const autoCoords = ref(settings.value.location || null);
 const autoAddress = ref(settings.value.auto_address || ''); // New ref for auto address
 const manualCoords = ref(settings.value.manual_location || null);
@@ -85,6 +84,7 @@ async function requestLocation() {
       latitude: pos.coords.latitude,
       longitude: pos.coords.longitude,
     };
+
     settings.value.location = autoCoords.value;
 
     // Perform reverse geocoding for auto-detected location
@@ -95,7 +95,7 @@ async function requestLocation() {
     isGeolocationEnabled.value = true;
   } catch (err) {
     error.value = getErrorMessage(err);
-    isGeolocationEnabled.value = false;
+    isAutoLocationActive.value = false; // Renamed
   } finally {
     loading.value = false;
   }
