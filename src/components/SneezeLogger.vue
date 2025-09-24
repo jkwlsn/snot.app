@@ -4,7 +4,7 @@
   >
     <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">Symptom Tracker</h2>
     <div
-      v-if="!isAutoLocationActive"
+      v-if="!hasActiveLocation"
       class="text-red-600 text-center mb-4 font-medium"
     >
       Please enable location services to log symptoms.
@@ -46,7 +46,7 @@
       />
       <button
         @click="handleLogSymptom"
-        :disabled="!isAutoLocationActive || selectedSymptomTypes.length === 0"
+        :disabled="!hasActiveLocation || selectedSymptomTypes.length === 0"
         class="bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-300 focus:ring-opacity-75 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed mt-4"
       >
         Log Symptom
@@ -60,14 +60,14 @@ import { ref, onMounted, computed } from 'vue';
 import { useSymptomTracker } from '../composables/useSymptomTracker';
 import { useSneezePrediction } from '../composables/useSneezePrediction';
 import { useNotifications } from '../composables/useNotifications';
-import { useUserSettings } from '../composables/useUserSettings';
+import { settings } from '../composables/useUserSettings'; // Import settings directly
 import { usePollenData } from '../composables/usePollenData';
 import { DEFAULT_SYMPTOMS } from '../symptoms';
-
-const { logSymptom, isAutoLocationActive } = useSymptomTracker(); // Renamed
+  
+const { logSymptom, hasActiveLocation } = useSymptomTracker();
 const { prediction } = useSneezePrediction();
 const { requestPermission, sendNotification } = useNotifications();
-const { settings } = useUserSettings();
+// settings is now directly imported
 const { parsedData } = usePollenData();
 
 const symptomSeverity = ref(3);
@@ -85,13 +85,6 @@ onMounted(() => {
 });
 
 const handleLogSymptom = () => {
-  if (selectedSymptomTypes.value.includes('sneeze') && prediction.value === 'No') {
-    sendNotification('So sorry!', {
-      body: 'Our prediction was wrong. Thanks for helping us improve!',
-      icon: '/favicon.ico',
-    });
-  }
-
   let relevantPollenData = null;
   if (parsedData.value && parsedData.value.time && settings.value.selected_pollens) {
     const currentHour = new Date().getHours();
