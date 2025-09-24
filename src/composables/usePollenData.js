@@ -29,12 +29,10 @@ const { cachedData, loadFromStorage, saveToStorage, clearCache } = useLocalStora
 
 const { rawPollenData, isLoading, fetchError, fetchPollen } = usePollenApi(
   coords,
-  selectedPollens,
 );
 
 const { parsedData, displayData } = usePollenDataParser(
   rawPollenData,
-  selectedPollens,
 );
 
 // Helper to check if all parsed pollen data values are null (excluding 'time')
@@ -81,17 +79,15 @@ loadFromStorage();
 
 // Watch for changes in coords or selectedPollens and fetch new data
 watch(
-  [coords, selectedPollens],
-  ([newCoords, newSelectedPollens], [oldCoords, oldSelectedPollens]) => {
+  [coords],
+  ([newCoords, oldCoords]) => {
     const areCoordsEqual = (c1, c2) => {
       if (!c1 && !c2) return true;
       if (!c1 || !c2) return false;
       return c1.latitude === c2.latitude && c1.longitude === c2.longitude;
     };
 
-    const selectedPollensChanged = JSON.stringify(newSelectedPollens) !== JSON.stringify(oldSelectedPollens);
-
-    if (!areCoordsEqual(newCoords, oldCoords) || selectedPollensChanged) {
+    if (!areCoordsEqual(newCoords, oldCoords)) {
       clearCache();
       fetchPollen();
     } else if (

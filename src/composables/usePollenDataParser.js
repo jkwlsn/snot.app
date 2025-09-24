@@ -1,6 +1,7 @@
 import { ref, watch } from 'vue';
+import { POLLEN_DISPLAY_NAMES } from '../pollen'; // Import all pollen types
 
-function parseHourlyData(hourly, selectedPollens, displayNameMap) {
+function parseHourlyData(hourly, allPollenTypes, displayNameMap) {
   const offset = hourly.utcOffsetSeconds?.() ?? 0;
   const t0 = Number(hourly.time?.());
   const tEnd = Number(hourly.timeEnd?.());
@@ -14,42 +15,36 @@ function parseHourlyData(hourly, selectedPollens, displayNameMap) {
   const raw = { time };
   const display = { time };
 
-  const count = hourly.variablesLength?.() ?? 0;
+  // Iterate over all known pollen types to parse data
+  allPollenTypes.forEach(field => {
+    const index = hourly.variables().findIndex(v => v.variable() === field); // Find index by variable name
+    if (index !== -1) {
+      const vals = Array.from(hourly.variables(index).valuesArray());
+      raw[field] = vals;
 
-  for (let i = 0; i < count; i++) {
-    const field = selectedPollens[i];
-    if (!field) continue;
-
-    const vals = Array.from(hourly.variables(i).valuesArray());
-    raw[field] = vals;
-
-    const displayName = displayNameMap[field];
-    if (displayName) display[displayName] = vals;
-  }
+      const displayName = displayNameMap[field];
+      if (displayName) display[displayName] = vals;
+    }
+  });
 
   return { raw, display };
 }
 
-export function usePollenDataParser(rawPollenData, selectedPollens) {
+export function usePollenDataParser(rawPollenData) { // Removed selectedPollens from arguments
   const parsedData = ref({});
   const displayData = ref({});
 
-  const displayNameMap = {
-    alder_pollen: 'Alder',
-    birch_pollen: 'Birch',
-    grass_pollen: 'Grass',
-    mugwort_pollen: 'Mugwort',
-    olive_pollen: 'Olive',
-    ragweed_pollen: 'Ragweed',
-  };
+  // Use POLLEN_DISPLAY_NAMES directly for the map
+  const displayNameMap = POLLEN_DISPLAY_NAMES;
+  const allPollenTypes = Object.keys(POLLEN_DISPLAY_NAMES);
 
   watch(
-    [rawPollenData, selectedPollens],
+    [rawPollenData],
     () => {
       if (rawPollenData.value) {
         const { raw, display } = parseHourlyData(
           rawPollenData.value,
-          selectedPollens.value,
+          allPollenTypes,
           displayNameMap,
         );
         parsedData.value = raw;
