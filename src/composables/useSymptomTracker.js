@@ -16,6 +16,12 @@ function initialize() {
   initialized = true;
 }
 
+// Call initialize once when the module is loaded
+onMounted(initialize);
+
+// Call useGeoLocation once at module level
+const { coords, isGeolocationEnabled } = useGeoLocation();
+
 // Renamed from logSneeze to logSymptom, added symptomType parameter
 function logSymptom(symptomType, severity, currentPollenData) { // <--- currentPollenData added here
   const { coords, hasActiveLocation } = useGeoLocation();
@@ -52,7 +58,6 @@ function deleteSymptom(id) {
 export function useSymptomTracker() {
   onMounted(initialize);
   const { hasActiveLocation } = useGeoLocation();
-
   return {
     symptoms,
     logSymptom: (symptomType, severity, currentPollenData) => logSymptom(symptomType, severity, currentPollenData, coords, isGeolocationEnabled), // Pass reactive refs
