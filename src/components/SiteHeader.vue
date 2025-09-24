@@ -33,5 +33,13 @@
 </template>
 
 <script setup>
+import { onMounted } from 'vue';
 import SneezePrediction from '../components/SneezePrediction.vue';
+import { useNotifications } from '../composables/useNotifications';
+
+const { requestPermission } = useNotifications();
+
+onMounted(() => {
+  requestPermission();
+});
 </script>

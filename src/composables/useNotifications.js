@@ -4,7 +4,7 @@ import { usePollenSeverity } from './usePollenSeverity';
 import { formatAlertTimeRanges } from './../utils/timeUtils';
 
 export function useNotifications() {
-  const permissionGranted = ref(false);
+  const permissionGranted = ref(Notification.permission === 'granted'); // Initialize with current permission status
   const { getSeverity } = usePollenSeverity();
 
   const requestPermission = async () => {
@@ -25,7 +25,7 @@ export function useNotifications() {
   };
 
   const sendNotification = (title, options) => {
-    if (permissionGranted.value) {
+    if (Notification.permission === 'granted') { // Always check current permission
       new Notification(title, options);
     } else {
       console.warn('Notification permission not granted.');
