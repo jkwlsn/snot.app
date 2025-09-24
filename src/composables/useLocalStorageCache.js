@@ -4,29 +4,25 @@ export function useLocalStorageCache(key, initialValue, ttl) {
   const cachedData = ref(initialValue);
 
   function loadFromStorage() {
-    try {
-      const raw = localStorage.getItem(key);
-      if (!raw) return null;
-      const { timestamp, data } = JSON.parse(raw);
-      if (ttl && Date.now() - timestamp > ttl) {
-        return null; // Cache expired
+    const stored = localStorage.getItem(key);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      // Check if cache is still valid based on TTL
+      if (ttl && parsed.timestamp && Date.now() - parsed.timestamp < ttl) {
+        cachedData.value = parsed;
+      } else {
+        // Cache expired or no TTL, clear it
+        clearCache();
       }
-      cachedData.value = data;
-      return { timestamp, data };
-    } catch {
-      return null;
     }
   }
 
   function saveToStorage(data) {
-    localStorage.setItem(
-      key,
-      JSON.stringify({ timestamp: Date.now(), data }),
-    );
+    localStorage.setItem(key, JSON.stringify({ ...data, timestamp: Date.now() }));
     cachedData.value = data;
   }
 
-  function clearStorage() {
+  function clearCache() {
     localStorage.removeItem(key);
     cachedData.value = initialValue;
   }
@@ -35,6 +31,6 @@ export function useLocalStorageCache(key, initialValue, ttl) {
     cachedData,
     loadFromStorage,
     saveToStorage,
-    clearStorage,
+    clearCache,
   };
 }

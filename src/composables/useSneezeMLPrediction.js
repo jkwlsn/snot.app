@@ -2,7 +2,7 @@ import * as tf from '@tensorflow/tfjs';
 import { ref, watch, computed } from 'vue';
 import { usePollenData } from './usePollenData';
 import { useSymptomTracker } from './useSymptomTracker';
-import { useUserSettings } from './useUserSettings';
+import { settings } from './useUserSettings'; // Import settings directly
 
 export function useSneezeMLPrediction() {
   const model = ref(null);
@@ -12,7 +12,7 @@ export function useSneezeMLPrediction() {
 
   const { parsedData } = usePollenData();
   const { symptoms } = useSymptomTracker();
-  const { settings } = useUserSettings();
+  // settings is now directly imported
 
   const selectedPollenTypes = computed(() =>
     Object.keys(settings.value.selected_pollens || {})

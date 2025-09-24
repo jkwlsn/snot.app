@@ -1,4 +1,3 @@
-// useUserSettings.js
 import { ref, watch } from 'vue';
 
 const STORAGE_KEY = 'snotAppSettings';
@@ -46,16 +45,10 @@ watch(
   { deep: true },
 );
 
-// Main composable export
-export function useUserSettings() {
-  return {
-    settings,
-    resetSettings: () => (settings.value = { ...DEFAULT_SETTINGS }),
-    defaultSettings: DEFAULT_SETTINGS,
-    completeOnboarding, // Export new function
-  };
-}
-
-const completeOnboarding = () => {
+export const resetSettings = () => (settings.value = { ...DEFAULT_SETTINGS });
+export const completeOnboarding = () => {
   settings.value.isFirstTimeUser = false;
 };
+
+// Main composable export
+export { settings };
