@@ -26,7 +26,7 @@ export function useLocalStorageCache(key, initialValue, ttl) {
     cachedData.value = data;
   }
 
-  function clearStorage() {
+  function clearCache() { // Renamed from clearStorage
     localStorage.removeItem(key);
     cachedData.value = initialValue;
   }
@@ -35,6 +35,6 @@ export function useLocalStorageCache(key, initialValue, ttl) {
     cachedData,
     loadFromStorage,
     saveToStorage,
-    clearStorage,
+    clearCache, // Renamed export
   };
 }
