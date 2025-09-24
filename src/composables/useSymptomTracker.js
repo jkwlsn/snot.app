@@ -16,9 +16,11 @@ function initialize() {
   initialized = true;
 }
 
+// Move useGeoLocation call to module level for optimization
+const { coords, isGeolocationEnabled } = useGeoLocation();
+
 // Renamed from logSneeze to logSymptom, added symptomType parameter
 function logSymptom(symptomType, severity, currentPollenData) { // <--- currentPollenData added here
-  const { coords, isGeolocationEnabled } = useGeoLocation();
   if (!isGeolocationEnabled.value) {
     return;
   }
@@ -51,7 +53,6 @@ function deleteSymptom(id) {
 
 export function useSymptomTracker() {
   onMounted(initialize);
-  const { isGeolocationEnabled } = useGeoLocation();
 
   return {
     symptoms,
@@ -59,5 +60,6 @@ export function useSymptomTracker() {
     clearSymptoms,
     deleteSymptom,
     isGeolocationEnabled,
+    coords, // Export coords as well
   };
 }
