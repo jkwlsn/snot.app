@@ -63,9 +63,9 @@ export function useSneezeMLPrediction() {
       predictionInputs.push(featureVector);
     }
 
-    const xs = trainingFeatures.length > 0 ? tf.tensor2d(trainingFeatures) : tf.tensor2d([[0, ...Array(selectedPollenTypes.value.length).fill(0)]]); // Dummy tensor with correct feature count
-    const ys = trainingLabels.length > 0 ? tf.tensor2d(trainingLabels) : tf.tensor2d([[0]]);
-    const predictionXs = predictionInputs.length > 0 ? tf.tensor2d(predictionInputs) : tf.tensor2d([[0, ...Array(selectedPollenTypes.value.length).fill(0)]]); // Dummy tensor with correct feature count
+    const xs = trainingFeatures.length > 0 ? tf.tensor2d(trainingFeatures) : null;
+    const ys = trainingLabels.length > 0 ? tf.tensor2d(trainingLabels) : null;
+    const predictionXs = predictionInputs.length > 0 ? tf.tensor2d(predictionInputs) : null;
 
     return { xs, ys, predictionXs, hasTrainingData: trainingFeatures.length > 0, hasPredictionInputs: predictionInputs.length > 0 };
   };
@@ -92,12 +92,12 @@ export function useSneezeMLPrediction() {
     try {
       const { xs, ys, predictionXs, hasTrainingData, hasPredictionInputs } = prepareData(symptoms, parsedData, settings, selectedPollenTypes);
 
-      if (!hasTrainingData) {
+      if (!hasTrainingData || !xs || !ys) {
         console.warn('Not enough training data (need at least one logged symptom with pollen data) to train ML model. ML prediction will be unavailable until more data is logged.');
         loading.value = false;
-        xs.dispose();
-        ys.dispose();
-        predictionXs.dispose();
+        xs?.dispose();
+        ys?.dispose();
+        predictionXs?.dispose();
         return;
       }
 
@@ -105,7 +105,7 @@ export function useSneezeMLPrediction() {
         epochs: 50,
       });
 
-      if (hasPredictionInputs) {
+      if (hasPredictionInputs && predictionXs) {
         const predictionsTensor = model.value.predict(predictionXs);
         const predictionsArray = await predictionsTensor.array();
 
@@ -122,7 +122,7 @@ export function useSneezeMLPrediction() {
 
       xs.dispose();
       ys.dispose();
-      predictionXs.dispose();
+      predictionXs?.dispose();
 
     } catch (e) {
       console.error('TensorFlow ML Prediction Error:', e);
