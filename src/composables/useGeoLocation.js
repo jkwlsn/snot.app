@@ -4,7 +4,7 @@ import { useUserSettings } from './useUserSettings';
 const { settings } = useUserSettings();
 
 const coords = ref(settings.value.location);
-const isGeolocationEnabled = ref(false);
+const isAutoLocationActive = ref(false); // Renamed from isGeolocationEnabled
 const loading = ref(false);
 const error = ref(null);
 
@@ -37,10 +37,10 @@ async function requestLocation() {
       longitude: pos.coords.longitude,
     };
     settings.value.location = coords.value;
-    isGeolocationEnabled.value = true;
+    isAutoLocationActive.value = true; // Renamed
   } catch (err) {
     error.value = getErrorMessage(err);
-    isGeolocationEnabled.value = false;
+    isAutoLocationActive.value = false; // Renamed
   } finally {
     loading.value = false;
   }
@@ -49,7 +49,7 @@ async function requestLocation() {
 export function useGeoLocation() {
   return {
     coords: readonly(coords),
-    isGeolocationEnabled: readonly(isGeolocationEnabled),
+    isAutoLocationActive: readonly(isAutoLocationActive), // Renamed export
     loading: readonly(loading),
     error: readonly(error),
     requestLocation,
