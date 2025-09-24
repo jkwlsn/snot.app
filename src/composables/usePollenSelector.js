@@ -12,24 +12,28 @@ export function usePollenSelector() {
 
   const allergens = reactive({});
   pollens.forEach((pollen) => {
-    allergens[pollen] = !!(
-      settings.value.selected_pollens && settings.value.selected_pollens[pollen]
-    );
+    // Initialize with 1 or 0 based on stored value
+    allergens[pollen] = (settings.value.selected_pollens && settings.value.selected_pollens[pollen]) ? 1 : 0;
   });
 
   watch(allergens, (newVals) => {
-    settings.value.selected_pollens = newVals;
+    // Convert reactive object to plain object with 1s and 0s
+    const updatedSelectedPollens = {};
+    for (const pollenType in newVals) {
+      updatedSelectedPollens[pollenType] = newVals[pollenType];
+    }
+    settings.value.selected_pollens = updatedSelectedPollens;
   });
 
   function clearAll() {
     pollens.forEach((pollen) => {
-      allergens[pollen] = false;
+      allergens[pollen] = 0;
     });
   }
 
   function selectAll() {
     pollens.forEach((pollen) => {
-      allergens[pollen] = true;
+      allergens[pollen] = 1;
     });
   }
 
