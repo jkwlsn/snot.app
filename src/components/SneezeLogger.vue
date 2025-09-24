@@ -85,13 +85,6 @@ onMounted(() => {
 });
 
 const handleLogSymptom = () => {
-  if (selectedSymptomTypes.value.includes('sneeze') && prediction.value === 'No') {
-    sendNotification('So sorry!', {
-      body: 'Our prediction was wrong. Thanks for helping us improve!',
-      icon: '/favicon.ico',
-    });
-  }
-
   let relevantPollenData = null;
   if (parsedData.value && parsedData.value.time && settings.value.selected_pollens) {
     const currentHour = new Date().getHours();
