@@ -17,8 +17,9 @@ function initialize() {
 }
 
 // Renamed from logSneeze to logSymptom, added symptomType parameter
-function logSymptom(symptomType, severity, currentPollenData, coords, isGeolocationEnabled) { // <--- coords, isGeolocationEnabled added here
-  if (!isGeolocationEnabled.value) {
+function logSymptom(symptomType, severity, currentPollenData) { // <--- currentPollenData added here
+  const { coords, hasActiveLocation } = useGeoLocation();
+  if (!hasActiveLocation.value) {
     return;
   }
 
@@ -50,13 +51,13 @@ function deleteSymptom(id) {
 
 export function useSymptomTracker() {
   onMounted(initialize);
-  const { coords, isGeolocationEnabled } = useGeoLocation(); // Call useGeoLocation once here
+  const { hasActiveLocation } = useGeoLocation();
 
   return {
     symptoms,
     logSymptom: (symptomType, severity, currentPollenData) => logSymptom(symptomType, severity, currentPollenData, coords, isGeolocationEnabled), // Pass reactive refs
     clearSymptoms,
     deleteSymptom,
-    isGeolocationEnabled,
+    hasActiveLocation,
   };
 }
