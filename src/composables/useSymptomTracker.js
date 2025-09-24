@@ -24,7 +24,7 @@ function logSymptom(symptomType, severity, currentPollenData) { // <--- currentP
   }
 
   const newSymptom = {
-    id: Date.now(),
+    id: Date.now().toString() + Math.random().toString(36).substring(2, 9), // More robust ID generation
     time: new Date().toISOString(),
     type: symptomType,
     severity,
