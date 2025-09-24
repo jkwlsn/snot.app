@@ -1,8 +1,9 @@
 import * as tf from '@tensorflow/tfjs';
-import { ref, watch, computed } from 'vue';
+import { ref, watch, computed } from 'vue
 import { usePollenData } from './usePollenData';
 import { useSymptomTracker } from './useSymptomTracker';
 import { settings } from './useUserSettings'; // Import settings directly
+import { POLLEN_DISPLAY_NAMES } from '../pollen'; // Import all pollen types
 
 export function useSneezeMLPrediction() {
   const model = ref(null);
@@ -14,19 +15,17 @@ export function useSneezeMLPrediction() {
   const { symptoms } = useSymptomTracker();
   // settings is now directly imported
 
-  const selectedPollenTypes = computed(() =>
-    Object.keys(settings.value.selected_pollens || {})
-  );
+  const allPollenTypes = Object.keys(POLLEN_DISPLAY_NAMES); // Use all pollen types
 
   const buildModel = () => {
-    const numFeatures = 1 + selectedPollenTypes.value.length; // 1 for hour + number of selected pollen types
+    const numFeatures = 1 + allPollenTypes.length; // 1 for hour + number of all pollen types
     model.value = tf.sequential();
     model.value.add(tf.layers.dense({ units: 10, activation: 'relu', inputShape: [numFeatures] }));
     model.value.add(tf.layers.dense({ units: 1, activation: 'sigmoid' }));
     model.value.compile({ optimizer: 'adam', loss: 'meanSquaredError' });
   };
 
-  const prepareData = (symptoms, parsedData, settings, selectedPollenTypes) => {
+  const prepareData = (symptoms, parsedData) => {
     const trainingFeatures = [];
     const trainingLabels = [];
 
@@ -37,8 +36,9 @@ export function useSneezeMLPrediction() {
         const hour = symptomDate.getHours();
         const featureVector = [hour];
 
-        selectedPollenTypes.value?.forEach(pollenType => {
-          const pollenValue = symptom.pollenDataAtTimeOfLog[pollenType]?.[0]?.value || 0;
+        allPollenTypes.forEach(pollenType => {
+          // Corrected access pattern
+          const pollenValue = symptom.pollenDataAtTimeOfLog.hourly_data?.[pollenType] || 0;
           featureVector.push(pollenValue);
         });
 
@@ -56,16 +56,16 @@ export function useSneezeMLPrediction() {
       const hourData = parsedData.value.hourly?.[h];
       const featureVector = [h];
 
-      selectedPollenTypes.value.forEach(pollenType => {
-        const pollenValue = hourData?.[pollenType]?.[0]?.value || 0;
+      allPollenTypes.forEach(pollenType => {
+        const pollenValue = hourData?.[pollenType] || 0;
         featureVector.push(pollenValue);
       });
       predictionInputs.push(featureVector);
     }
 
-    const xs = trainingFeatures.length > 0 ? tf.tensor2d(trainingFeatures) : tf.tensor2d([[0, ...Array(selectedPollenTypes.value.length).fill(0)]]); // Dummy tensor with correct feature count
-    const ys = trainingLabels.length > 0 ? tf.tensor2d(trainingLabels) : tf.tensor2d([[0]]);
-    const predictionXs = predictionInputs.length > 0 ? tf.tensor2d(predictionInputs) : tf.tensor2d([[0, ...Array(selectedPollenTypes.value.length).fill(0)]]); // Dummy tensor with correct feature count
+    const xs = trainingFeatures.length > 0 ? tf.tensor2d(trainingFeatures) : null;
+    const ys = trainingLabels.length > 0 ? tf.tensor2d(trainingLabels) : null;
+    const predictionXs = predictionInputs.length > 0 ? tf.tensor2d(predictionInputs) : null;
 
     return { xs, ys, predictionXs, hasTrainingData: trainingFeatures.length > 0, hasPredictionInputs: predictionInputs.length > 0 };
   };
@@ -90,14 +90,14 @@ export function useSneezeMLPrediction() {
     }
 
     try {
-      const { xs, ys, predictionXs, hasTrainingData, hasPredictionInputs } = prepareData(symptoms, parsedData, settings, selectedPollenTypes);
+      const { xs, ys, predictionXs, hasTrainingData, hasPredictionInputs } = prepareData(symptoms, parsedData);
 
-      if (!hasTrainingData) {
+      if (!hasTrainingData || !xs || !ys) {
         console.warn('Not enough training data (need at least one logged symptom with pollen data) to train ML model. ML prediction will be unavailable until more data is logged.');
         loading.value = false;
-        xs.dispose();
-        ys.dispose();
-        predictionXs.dispose();
+        xs?.dispose();
+        ys?.dispose();
+        predictionXs?.dispose();
         return;
       }
 
@@ -105,7 +105,7 @@ export function useSneezeMLPrediction() {
         epochs: 50,
       });
 
-      if (hasPredictionInputs) {
+      if (hasPredictionInputs && predictionXs) {
         const predictionsTensor = model.value.predict(predictionXs);
         const predictionsArray = await predictionsTensor.array();
 
@@ -122,7 +122,7 @@ export function useSneezeMLPrediction() {
 
       xs.dispose();
       ys.dispose();
-      predictionXs.dispose();
+      predictionXs?.dispose();
 
     } catch (e) {
       console.error('TensorFlow ML Prediction Error:', e);
