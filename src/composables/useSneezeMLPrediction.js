@@ -4,6 +4,7 @@ import { usePollenData } from './usePollenData';
 import { useSymptomTracker } from './useSymptomTracker';
 import { settings } from './useUserSettings'; // Import settings directly
 import { POLLEN_DISPLAY_NAMES } from '../pollen'; // Import all pollen types
+import { ML_PREDICTION_THRESHOLD_YES, ML_PREDICTION_THRESHOLD_MAYBE } from '../config'; // Import ML thresholds
 
 const MODEL_STORAGE_KEY = 'sneeze-ml-model';
 
@@ -92,9 +93,9 @@ export function useSneezeMLPrediction() {
   };
 
   const getPredictionCategory = (probability) => {
-    if (probability > 0.7) {
+    if (probability > ML_PREDICTION_THRESHOLD_YES) {
       return 'yes';
-    } else if (probability > 0.4) {
+    } else if (probability > ML_PREDICTION_THRESHOLD_MAYBE) {
       return 'maybe';
     } else {
       return 'no';
