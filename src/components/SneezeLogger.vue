@@ -60,14 +60,14 @@ import { ref, onMounted, computed } from 'vue';
 import { useSymptomTracker } from '../composables/useSymptomTracker';
 import { useSneezePrediction } from '../composables/useSneezePrediction';
 import { useNotifications } from '../composables/useNotifications';
-import { useUserSettings } from '../composables/useUserSettings';
+import { settings } from '../composables/useUserSettings'; // Import settings directly
 import { usePollenData } from '../composables/usePollenData';
 import { DEFAULT_SYMPTOMS } from '../symptoms';
 
 const { logSymptom, hasActiveLocation } = useSymptomTracker();
 const { prediction } = useSneezePrediction();
 const { requestPermission, sendNotification } = useNotifications();
-const { settings } = useUserSettings();
+// settings is now directly imported
 const { parsedData } = usePollenData();
 
 const symptomSeverity = ref(3);
