@@ -1,9 +1,21 @@
 import * as tf from '@tensorflow/tfjs';
-import { ref, watch, computed } from 'vue
+import { ref, watch, computed } from 'vue';
 import { usePollenData } from './usePollenData';
 import { useSymptomTracker } from './useSymptomTracker';
 import { settings } from './useUserSettings'; // Import settings directly
 import { POLLEN_DISPLAY_NAMES } from '../pollen'; // Import all pollen types
+
+const MODEL_STORAGE_KEY = 'sneeze-ml-model';
+
+// Basic debounce utility
+const debounce = (func, delay) => {
+  let timeout;
+  return function(...args) {
+    const context = this;
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(context, args), delay);
+  };
+};
 
 export function useSneezeMLPrediction() {
   const model = ref(null);
@@ -17,12 +29,21 @@ export function useSneezeMLPrediction() {
 
   const allPollenTypes = Object.keys(POLLEN_DISPLAY_NAMES); // Use all pollen types
 
-  const buildModel = () => {
+  const buildAndLoadModel = async () => {
     const numFeatures = 1 + allPollenTypes.length; // 1 for hour + number of all pollen types
-    model.value = tf.sequential();
-    model.value.add(tf.layers.dense({ units: 10, activation: 'relu', inputShape: [numFeatures] }));
-    model.value.add(tf.layers.dense({ units: 1, activation: 'sigmoid' }));
-    model.value.compile({ optimizer: 'adam', loss: 'meanSquaredError' });
+
+    try {
+      // Try to load existing model
+      model.value = await tf.io.loadLayersModel(`localstorage://${MODEL_STORAGE_KEY}`);
+      console.log('ML model loaded from local storage.');
+    } catch (e) {
+      console.log('No ML model found in local storage, building new model.', e);
+      // If no model found, build a new one
+      model.value = tf.sequential();
+      model.value.add(tf.layers.dense({ units: 10, activation: 'relu', inputShape: [numFeatures] }));
+      model.value.add(tf.layers.dense({ units: 1, activation: 'sigmoid' }));
+      model.value.compile({ optimizer: 'adam', loss: 'meanSquaredError' });
+    }
   };
 
   const prepareData = (symptoms, parsedData) => {
@@ -86,7 +107,7 @@ export function useSneezeMLPrediction() {
     rawHourlyPredictions.value = [];
 
     if (!model.value) {
-      buildModel();
+      await buildAndLoadModel(); // Ensure model is built or loaded
     }
 
     try {
@@ -104,6 +125,10 @@ export function useSneezeMLPrediction() {
       await model.value.fit(xs, ys, {
         epochs: 50,
       });
+
+      // Save model after successful training
+      await tf.io.save(`localstorage://${MODEL_STORAGE_KEY}`);
+      console.log('ML model saved to local storage.');
 
       if (hasPredictionInputs && predictionXs) {
         const predictionsTensor = model.value.predict(predictionXs);
@@ -132,7 +157,10 @@ export function useSneezeMLPrediction() {
     }
   };
 
-  watch([parsedData, symptoms, settings], trainAndPredict);
+  // Debounce the trainAndPredict function
+  const debouncedTrainAndPredict = debounce(trainAndPredict, 1000); // 1 second debounce
+
+  watch([parsedData, symptoms, settings], debouncedTrainAndPredict, { immediate: true });
 
   const mlHourlyPredictions = computed(() => {
     return rawHourlyPredictions.value.map(p => ({
