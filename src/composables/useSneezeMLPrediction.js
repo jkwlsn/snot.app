@@ -4,7 +4,7 @@ import { usePollenData } from './usePollenData';
 import { useSymptomTracker } from './useSymptomTracker';
 import { settings } from './useUserSettings'; // Import settings directly
 import { POLLEN_DISPLAY_NAMES } from '../pollen'; // Import all pollen types
-import { ML_PREDICTION_THRESHOLD_YES, ML_PREDICTION_THRESHOLD_MAYBE } from '../config'; // Import ML thresholds
+import { ML_PREDICTION_THRESHOLD_YES, ML_PREDICTION_THRESHOLD_MAYBE, ML_ALLERGY_SEVERITY_THRESHOLD } from '../config'; // Import ML thresholds
 
 const MODEL_STORAGE_KEY = 'sneeze-ml-model';
 
@@ -70,7 +70,7 @@ export function useSneezeMLPrediction() {
           featureVector.push(pollenValue);
 
           // Heuristic for allergy label: if symptom severity is high and pollen is present
-          if (symptom.severity >= 3 && pollenValue > 0) {
+          if (symptom.severity >= ML_ALLERGY_SEVERITY_THRESHOLD && pollenValue > 0) {
             labelVector[index] = 1;
           }
         });
