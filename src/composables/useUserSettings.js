@@ -7,6 +7,8 @@ const DEFAULT_SETTINGS = Object.freeze({
   selected_pollens: {},
   custom_symptoms: [], // New property for custom symptom types
   isFirstTimeUser: true, // New property
+  confirmed_allergies: [], // New property for confirmed allergies
+  ignored_pollens: [], // New property for ignored pollens
 });
 
 // Load from localStorage with safety checks

@@ -3,6 +3,7 @@ import { ref } from 'vue'; // Import ref for new input
 import GeoLocation from '../components/GeoLocation.vue';
 import PollenSelector from '../components/PollenSelector.vue';
 import { settings } from '../composables/useUserSettings'; // Import settings directly
+import { POLLEN_DISPLAY_NAMES } from '../pollen'; // Import all pollen types
 
 // settings is now directly imported
 
@@ -27,6 +28,20 @@ const removeCustomSymptom = (idToRemove) => {
   settings.value.custom_symptoms = settings.value.custom_symptoms.filter(
     (symptom) => symptom.id !== idToRemove,
   );
+};
+
+// Handlers for confirmed_allergies and ignored_pollens
+const togglePollenInSetting = (pollenType, settingKey) => {
+  const index = settings.value[settingKey].indexOf(pollenType);
+  if (index > -1) {
+    settings.value[settingKey].splice(index, 1);
+  } else {
+    settings.value[settingKey].push(pollenType);
+  }
+};
+
+const isPollenInSetting = (pollenType, settingKey) => {
+  return settings.value[settingKey].includes(pollenType);
 };
 </script>
 
@@ -76,6 +91,45 @@ const removeCustomSymptom = (idToRemove) => {
         </ul>
       </div>
       <p v-else class="text-center text-gray-500 italic">No custom symptoms added yet.</p>
+    </section>
+
+    <section
+      class="bg-emerald-200 rounded-lg shadow-md p-6 mb-4 transition-all duration-300 hover:shadow-lg"
+    >
+      <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">
+        Allergy Management
+      </h2>
+      <h3 class="text-lg font-semibold text-gray-700 mb-2">Confirmed Allergies:</h3>
+      <div class="flex flex-wrap gap-2 mb-4">
+        <div v-for="pollenType in Object.keys(POLLEN_DISPLAY_NAMES)" :key="pollenType" class="flex items-center">
+          <input
+            type="checkbox"
+            :id="`confirmed-${pollenType}`"
+            :checked="isPollenInSetting(pollenType, 'confirmed_allergies')"
+            @change="togglePollenInSetting(pollenType, 'confirmed_allergies')"
+            class="mr-1 h-4 w-4 text-blue-500 focus:ring-blue-400 border-gray-300 rounded"
+          />
+          <label :for="`confirmed-${pollenType}`" class="text-gray-700 text-sm">
+            {{ POLLEN_DISPLAY_NAMES[pollenType] }}
+          </label>
+        </div>
+      </div>
+
+      <h3 class="text-lg font-semibold text-gray-700 mb-2">Ignored Pollens:</h3>
+      <div class="flex flex-wrap gap-2">
+        <div v-for="pollenType in Object.keys(POLLEN_DISPLAY_NAMES)" :key="pollenType" class="flex items-center">
+          <input
+            type="checkbox"
+            :id="`ignored-${pollenType}`"
+            :checked="isPollenInSetting(pollenType, 'ignored_pollens')"
+            @change="togglePollenInSetting(pollenType, 'ignored_pollens')"
+            class="mr-1 h-4 w-4 text-red-500 focus:ring-red-400 border-gray-300 rounded"
+          />
+          <label :for="`ignored-${pollenType}`" class="text-gray-700 text-sm">
+            {{ POLLEN_DISPLAY_NAMES[pollenType] }}
+          </label>
+        </div>
+      </div>
     </section>
   </div>
 </template>
