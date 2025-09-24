@@ -20,7 +20,7 @@ const debounce = (func, delay) => {
 
 export function useSneezeMLPrediction() {
   const model = ref(null);
-  const rawHourlyPredictions = ref([]); // Store raw probabilities
+  const rawHourlyPredictions = ref([]); // Store raw probabilities for each pollen type
   const loading = ref(false);
   const error = ref(null);
 
@@ -32,24 +32,30 @@ export function useSneezeMLPrediction() {
 
   const buildAndLoadModel = async () => {
     const numFeatures = 1 + allPollenTypes.length; // 1 for hour + number of all pollen types
+    const numOutputs = allPollenTypes.length; // One output for each pollen type
 
     try {
       // Try to load existing model
       model.value = await tf.io.loadLayersModel(`localstorage://${MODEL_STORAGE_KEY}`);
       console.log('ML model loaded from local storage.');
+      // Ensure loaded model has correct output shape
+      if (model.value.outputs[0].shape[1] !== numOutputs) {
+        console.warn('Loaded model has incorrect output shape, rebuilding.');
+        throw new Error('Incorrect model shape');
+      }
     } catch (e) {
-      console.log('No ML model found in local storage, building new model.', e);
-      // If no model found, build a new one
+      console.log('No ML model found in local storage or incorrect shape, building new model.', e);
+      // If no model found or incorrect shape, build a new one
       model.value = tf.sequential();
       model.value.add(tf.layers.dense({ units: 10, activation: 'relu', inputShape: [numFeatures] }));
-      model.value.add(tf.layers.dense({ units: 1, activation: 'sigmoid' }));
-      model.value.compile({ optimizer: 'adam', loss: 'meanSquaredError' });
+      model.value.add(tf.layers.dense({ units: numOutputs, activation: 'sigmoid' })); // Multi-output
+      model.value.compile({ optimizer: 'adam', loss: 'binaryCrossentropy' }); // Use binaryCrossentropy for multi-label
     }
   };
 
   const prepareData = (symptoms, parsedData) => {
     const trainingFeatures = [];
-    const trainingLabels = [];
+    const trainingLabels = []; // Will be a 2D array for multi-label
 
     // Prepare training data from historical symptoms and pollen data
     symptoms.value.forEach(symptom => {
@@ -57,15 +63,20 @@ export function useSneezeMLPrediction() {
         const symptomDate = new Date(symptom.time);
         const hour = symptomDate.getHours();
         const featureVector = [hour];
+        const labelVector = Array(allPollenTypes.length).fill(0); // Initialize label vector for this symptom
 
-        allPollenTypes.forEach(pollenType => {
-          // Corrected access pattern
+        allPollenTypes.forEach((pollenType, index) => {
           const pollenValue = symptom.pollenDataAtTimeOfLog.hourly_data?.[pollenType] || 0;
           featureVector.push(pollenValue);
+
+          // Heuristic for allergy label: if symptom severity is high and pollen is present
+          if (symptom.severity >= 3 && pollenValue > 0) {
+            labelVector[index] = 1;
+          }
         });
 
         trainingFeatures.push(featureVector);
-        trainingLabels.push([symptom.severity / 5]); // Normalize severity to 0-1
+        trainingLabels.push(labelVector); // Push the label vector
       }
     });
 
@@ -86,12 +97,13 @@ export function useSneezeMLPrediction() {
     }
 
     const xs = trainingFeatures.length > 0 ? tf.tensor2d(trainingFeatures) : null;
-    const ys = trainingLabels.length > 0 ? tf.tensor2d(trainingLabels) : null;
+    const ys = trainingLabels.length > 0 ? tf.tensor2d(trainingLabels) : null; // ys is now 2D
     const predictionXs = predictionInputs.length > 0 ? tf.tensor2d(predictionInputs) : null;
 
     return { xs, ys, predictionXs, hasTrainingData: trainingFeatures.length > 0, hasPredictionInputs: predictionInputs.length > 0 };
   };
 
+  // getPredictionCategory now interprets probability for a single pollen type
   const getPredictionCategory = (probability) => {
     if (probability > ML_PREDICTION_THRESHOLD_YES) {
       return 'yes';
@@ -133,13 +145,17 @@ export function useSneezeMLPrediction() {
 
       if (hasPredictionInputs && predictionXs) {
         const predictionsTensor = model.value.predict(predictionXs);
-        const predictionsArray = await predictionsTensor.array();
+        const predictionsArray = await predictionsTensor.array(); // predictionsArray is now 2D (num_hours x num_pollen_types)
 
         const now = new Date();
         const currentHour = now.getHours();
-        rawHourlyPredictions.value = predictionsArray.map((pred, index) => ({
+        rawHourlyPredictions.value = predictionsArray.map((hourPreds, index) => ({
           hour: currentHour + index,
-          probability: pred[0],
+          // Store probabilities for each pollen type
+          probabilities: allPollenTypes.reduce((acc, pollenType, pIdx) => {
+            acc[pollenType] = hourPreds[pIdx];
+            return acc;
+          }, {}),
         }));
         predictionsTensor.dispose();
       } else {
@@ -166,15 +182,31 @@ export function useSneezeMLPrediction() {
   const mlHourlyPredictions = computed(() => {
     return rawHourlyPredictions.value.map(p => ({
       hour: p.hour,
-      prediction: getPredictionCategory(p.probability),
+      // For each hour, provide predictions for each pollen type
+      predictions: allPollenTypes.map(pollenType => ({
+        pollenType,
+        prediction: getPredictionCategory(p.probabilities[pollenType] || 0),
+      })),
     }));
   });
 
   const mlOverallPrediction = computed(() => {
     if (rawHourlyPredictions.value.length === 0) return null;
-    // For overall prediction, let's take the highest probability among hourly predictions
-    const maxProbPrediction = rawHourlyPredictions.value.reduce((max, p) => (p.probability > max.probability ? p : max), rawHourlyPredictions.value[0]);
-    return getPredictionCategory(maxProbPrediction.probability);
+
+    const allergicPollenTypes = new Set();
+    rawHourlyPredictions.value.forEach(hourPred => {
+      allPollenTypes.forEach(pollenType => {
+        if (getPredictionCategory(hourPred.probabilities[pollenType] || 0) === 'yes') {
+          allergicPollenTypes.add(pollenType);
+        }
+      });
+    });
+
+    if (allergicPollenTypes.size > 0) {
+      return Array.from(allergicPollenTypes).map(pollenType => POLLEN_DISPLAY_NAMES[pollenType] || pollenType).join(', ');
+    } else {
+      return 'No significant allergy predicted';
+    }
   });
 
   return {
