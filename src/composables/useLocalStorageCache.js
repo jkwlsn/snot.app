@@ -21,7 +21,7 @@ export function useLocalStorageCache(key, initialValue, ttl) {
     localStorage.setItem(key, JSON.stringify({ ...data, timestamp: Date.now() }));
     cachedData.value = data;
   }
-
+  
   function clearCache() {
     localStorage.removeItem(key);
     cachedData.value = initialValue;
