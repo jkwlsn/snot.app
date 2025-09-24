@@ -65,7 +65,8 @@ watch(
     }
     noPollenDataAvailable.value = checkIfAllPollenDataIsNull(parsedData.value);
 
-    if (noPollenDataAvailable.value) {
+    // Only send notification if pollen types are selected and no data is available
+    if (selectedPollens.value.length > 0 && noPollenDataAvailable.value) {
       sendNotification('Pollen Data Unavailable', {
         body: 'We apologize, but pollen data is not available for your current location.',
         icon: '/favicon.ico',

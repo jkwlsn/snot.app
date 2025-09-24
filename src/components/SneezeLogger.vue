@@ -46,7 +46,7 @@
       />
       <button
         @click="handleLogSymptom"
-        :disabled="!hasActiveLocation"
+        :disabled="!hasActiveLocation || selectedSymptomTypes.length === 0"
         class="bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-300 focus:ring-opacity-75 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed mt-4"
       >
         Log Symptom

@@ -76,7 +76,6 @@ const {
   coords,
   activeAddress,
   manualAddress,
-  isGeolocationEnabled,
   isManualLocationActive,
   loading,
   error,
@@ -136,3 +135,4 @@ onMounted(() => {
     requestLocation();
   }
 });
+</script>
