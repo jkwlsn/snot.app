@@ -62,8 +62,8 @@ import { useSneezePrediction } from '../composables/useSneezePrediction';
 import { useNotifications } from '../composables/useNotifications';
 import { settings } from '../composables/useUserSettings'; // Import settings directly
 import { usePollenData } from '../composables/usePollenData';
-import { DEFAULT_SYMPTOMS } from '../symptoms';
-  
+import { DEFAULT_SYMPTOMS, POLLEN_DISPLAY_NAMES } from '../symptoms'; // Import POLLEN_DISPLAY_NAMES
+
 const { logSymptom, hasActiveLocation } = useSymptomTracker();
 const { prediction } = useSneezePrediction();
 const { requestPermission, sendNotification } = useNotifications();
@@ -86,7 +86,7 @@ onMounted(() => {
 
 const handleLogSymptom = () => {
   let relevantPollenData = null;
-  if (parsedData.value && parsedData.value.time && settings.value.selected_pollens) {
+  if (parsedData.value && parsedData.value.time) {
     const currentHour = new Date().getHours();
     const timeIndex = parsedData.value.time.findIndex(
       (timeStr) => new Date(timeStr).getHours() === currentHour
@@ -94,12 +94,12 @@ const handleLogSymptom = () => {
 
     if (timeIndex !== -1) {
       relevantPollenData = {
-        selected_pollens: settings.value.selected_pollens,
         hourly_data: {}
       };
-      for (const pollenType in settings.value.selected_pollens) {
-        if (parsedData.value[pollenType] && parsedData.value[pollenType][timeIndex] !== undefined) {
-          relevantPollenData.hourly_data[pollenType] = parsedData.value[pollenType][timeIndex];
+      // Iterate through all known pollen types from POLLEN_DISPLAY_NAMES
+      for (const pollenTypeKey in POLLEN_DISPLAY_NAMES) {
+        if (parsedData.value[pollenTypeKey] && parsedData.value[pollenTypeKey][timeIndex] !== undefined) {
+          relevantPollenData.hourly_data[pollenTypeKey] = parsedData.value[pollenTypeKey][timeIndex];
         }
       }
     }
