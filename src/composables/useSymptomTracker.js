@@ -55,7 +55,7 @@ export function useSymptomTracker() {
 
   return {
     symptoms,
-    logSymptom,
+    logSymptom: (symptomType, severity, currentPollenData) => logSymptom(symptomType, severity, currentPollenData, coords, isGeolocationEnabled), // Pass reactive refs
     clearSymptoms,
     deleteSymptom,
     hasActiveLocation,
