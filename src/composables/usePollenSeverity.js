@@ -1,8 +1,8 @@
-import { useUserSettings } from './useUserSettings';
+import { settings } from './useUserSettings';
 import { calculateLimit } from './../utils/pollenUtils';
 
 export function usePollenSeverity() {
-  const { settings } = useUserSettings();
+  // settings is now directly imported
 
   function getPollenSeverity(value, limit) {
     const ratio = value / limit;
