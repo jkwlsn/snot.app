@@ -1,12 +1,9 @@
 import { reactive, watch } from 'vue';
 import { settings } from './useUserSettings';
+import { POLLEN_DISPLAY_NAMES } from '../pollen'; // Import pollen names
 
 export function usePollenSelector() {
-  const rawPollens = import.meta.env.VITE_POLLENS || '';
-  const pollens = rawPollens
-    .split(',')
-    .map((p) => p.trim())
-    .filter(Boolean);
+  const pollens = Object.keys(POLLEN_DISPLAY_NAMES); // Use keys from POLLEN_DISPLAY_NAMES
 
   // settings is now directly imported
 
