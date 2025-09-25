@@ -1,13 +1,11 @@
 import { ref, computed, watch } from 'vue';
-import { POLLEN_DATA_STORAGE_KEY } from '../config';
+import { POLLEN_DATA_STORAGE_KEY, CACHE_TTL } from '../config'; // Import CACHE_TTL
 import { useGeoLocation } from './useGeoLocation';
 import { useNotifications } from './useNotifications';
 import { usePollenApi } from './usePollenApi';
 import { usePollenDataParser } from './usePollenDataParser';
 import { useLocalStorageCache } from './useLocalStorageCache';
 import { settings } from './useUserSettings';
-
-const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
 
 // Move state and watchers outside the function to create a singleton pattern
 const { coords } = useGeoLocation();

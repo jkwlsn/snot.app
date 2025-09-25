@@ -1,5 +1,6 @@
 import { ref, readonly, computed, watch } from 'vue';
 import { settings } from './useUserSettings'; // Import settings directly
+import { GEOLOCATION_TIMEOUT } from '../config'; // Import timeout
 
 const autoCoords = ref(settings.value.location || null);
 const autoAddress = ref(settings.value.auto_address || ''); // New ref for auto address
@@ -76,7 +77,7 @@ async function requestLocation() {
       }
       navigator.geolocation.getCurrentPosition(resolve, reject, {
         enableHighAccuracy: true,
-        timeout: 10000,
+        timeout: GEOLOCATION_TIMEOUT,
       });
     });
 
