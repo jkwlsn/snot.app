@@ -7,6 +7,8 @@ export const POLLEN_DISPLAY_NAMES = {
   ragweed_pollen: 'Ragweed',
 };
 
+export const ALL_POLLEN_TYPES = Object.keys(POLLEN_DISPLAY_NAMES);
+
 export const POLLEN_CHART_COLORS = [
   'rgba(16, 185, 129, 0.7)', // emerald-500
   'rgba(245, 158, 11, 0.7)', // amber-500

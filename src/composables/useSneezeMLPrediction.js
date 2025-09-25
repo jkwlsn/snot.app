@@ -3,6 +3,17 @@ import { ref, watch, computed } from 'vue';
 import { usePollenData } from './usePollenData';
 import { useSymptomTracker } from './useSymptomTracker';
 import { settings } from './useUserSettings'; // Import settings directly
+import { ML_RETRAIN_DEBOUNCE_DELAY } from '../config'; // Import debounce delay
+
+// Basic debounce utility
+const debounce = (func, delay) => {
+  let timeout;
+  return function(...args) {
+    const context = this;
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(context, args), delay);
+  };
+};
 
 export function useSneezeMLPrediction() {
   const model = ref(null);
@@ -132,7 +143,9 @@ export function useSneezeMLPrediction() {
     }
   };
 
-  watch([parsedData, symptoms, settings], trainAndPredict);
+  const debouncedTrainAndPredict = debounce(trainAndPredict, ML_RETRAIN_DEBOUNCE_DELAY);
+
+  watch([parsedData, symptoms, settings], debouncedTrainAndPredict);
 
   const mlHourlyPredictions = computed(() => {
     return rawHourlyPredictions.value.map(p => ({
