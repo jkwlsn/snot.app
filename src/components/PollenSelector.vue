@@ -4,7 +4,7 @@
   >
     <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">Allergens</h2>
     <form>
-      <div class="flex flex-row justify-center gap-4">
+      <div class="flex flex-row justify-center gap-4 py-4">
         <div v-for="pollen in pollens" :key="pollen">
           <input
             type="checkbox"
@@ -14,7 +14,7 @@
           />
           <label
             :for="pollen"
-            class="cursor-pointer py-2 px-4 inset-ring-2 inset-ring-amber-400 rounded-md peer-checked:inset-ring-amber-400 peer-checked:bg-amber-400 hover:bg-amber-600 hover:inset-ring-amber-600 duration-100"
+            class="cursor-pointer font-semibold text-amber-600 py-2 px-4 rounded-lg inset-ring-2 peer-checked:text-white inset-ring-amber-500 hover:inset-ring-amber-600 peer-checked:bg-amber-500 peer-checked:hover:bg-amber-600 duration-100 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-amber-400 peer-focus:ring-opacity-75"
           >
             {{ POLLEN_DISPLAY_NAMES[pollen] || pollen }}
           </label>
@@ -24,7 +24,7 @@
         <button
           type="button"
           @click="selectAll"
-          class="bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-opacity-75 transition-colors duration-200 mt-4"
+          class="cursor-pointer bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-opacity-75 transition-colors duration-200 mt-4"
         >
           Select All
         </button>
@@ -32,7 +32,7 @@
         <button
           type="button"
           @click="clearAll"
-          class="bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-opacity-75 transition-colors duration-200 mt-4"
+          class="cursor-pointer bg-red-400 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75 transition-colors duration-200 mt-4"
         >
           Clear All
         </button>
