@@ -1,6 +1,6 @@
 interface Symptom {
   id: number;
-  timestamp: Date;
+  timestamp: number;
   type: string;
 }
 

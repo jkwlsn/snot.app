@@ -23,16 +23,15 @@
   </form>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from "vue";
 import { SYMPTOM_LIST } from "../config";
 import { db } from "../db";
 
 let selectedSymptoms = ref([]);
 
-// Give the symptoms list a name and an ID
-const symptomObjects = SYMPTOM_LIST.map((symptom, index) => ({
-  id: index, // You can also use something like a UUID here for a unique id
+const symptomObjects = SYMPTOM_LIST.map((symptom: string, index: number) => ({
+  id: index,
   name: symptom,
 }));
 
@@ -40,7 +39,7 @@ const clearForm = () => {
   selectedSymptoms.value = [];
 };
 
-const addSymptom = async (symptom) => {
+const addSymptom = async (symptom: string) => {
   try {
     const id = await db.symptoms.add({
       type: symptom,
