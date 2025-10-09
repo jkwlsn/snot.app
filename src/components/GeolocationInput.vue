@@ -20,8 +20,8 @@
       </button>
     </fieldset>
   </form>
-  <p v-if="errorMessage">{{ errorMessage }}</p>
-  <p v-if="isLoading">Finding location...</p>
+  <p v-if="anyError">{{ anyError }}</p>
+  <p v-if="anyLoading">Finding location...</p>
   <div v-if="location">
     <p>Latitude: {{ location.latitude }}</p>
     <p>Longitude: {{ location.longitude }}</p>
@@ -29,96 +29,42 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
+import { useNominatim } from "../composables/useNominatim";
+import type { Coordinates } from "../types/coordinates";
 
-interface Location {
-  latitude: number;
-  longitude: number;
-}
+const nominatim = useNominatim();
 
 const gpsButtonText = ref<"Use GPS" | "Refresh GPS">("Use GPS");
 const textLocation = ref<string>("");
-const location = ref<Location | null>(null);
+const location = ref<Coordinates | null>(null);
 const errorMessage = ref<string | null>(null);
 const isLoading = ref<boolean>(false);
 
-const reverseGeocodeCoordinates = async () => {
-  isLoading.value = true;
+const anyLoading = computed(
+  () => isLoading.value || nominatim.nominatimIsLoading.value,
+);
 
-  try {
-    const apiUrl = `https://nominatim.openstreetmap.org/reverse?lat=${location.value?.latitude}&lon=${location.value?.longitude}&format=geocodejson&addressdetails=1`;
+const anyError = computed(
+  () => errorMessage.value || nominatim.nominatimErrorMessage.value || null,
+);
 
-    const response = await fetch(apiUrl);
-
-    if (!response.ok) {
-      throw new Error("Network response was not ok.");
-    }
-
-    const data = await response.json();
-
-    console.log(data);
-    const feature = data.features?.[0];
-
-    if (feature && feature.properties?.geocoding) {
-      const geocoding = feature.properties.geocoding;
-      const district: string = geocoding.district;
-      const city = geocoding.city || geocoding.town || geocoding.village;
-      const country = geocoding.country;
-
-      textLocation.value = `${district}, ${city}, ${country}`;
-    } else {
-      throw new Error(
-        `Could not find location for ${location.value?.latitude}, ${location.value?.longitude}`,
-      );
-    }
-  } catch (error: any) {
-    errorMessage.value = error.message;
-  } finally {
-    isLoading.value = false;
-  }
-};
-
-const submitTextLocation = async () => {
-  if (textLocation.value.trim() === "") {
-    errorMessage.value = "Please enter a location";
-    return;
-  }
-  isLoading.value = true;
+const submitTextLocation = async (): Promise<void> => {
   location.value = null;
+  errorMessage.value = null;
 
-  try {
-    const encodedQuery = encodeURIComponent(textLocation.value);
-    const apiUrl = `https://nominatim.openstreetmap.org/search?q=${encodedQuery}&format=json`;
+  const newLocation = await nominatim.forwardGeocode(textLocation.value);
 
-    const response = await fetch(apiUrl);
-
-    if (!response.ok) {
-      throw new Error("Network response was not ok.");
-    }
-
-    const data = await response.json();
-
-    if (data && data.length > 0) {
-      location.value = {
-        latitude: data[0].lat,
-        longitude: data[0].lon,
-      };
-    } else {
-      throw new Error(
-        `Could not find coordinates for "${textLocation.value}".`,
-      );
-    }
-  } catch (error: any) {
-    errorMessage.value = error.message;
-  } finally {
-    gpsButtonText.value = "Use GPS";
-    isLoading.value = false;
+  if (newLocation) {
+    location.value = newLocation;
   }
+  gpsButtonText.value = "Use GPS";
 };
 
 const requestGeolocation = (): void => {
   isLoading.value = true;
   errorMessage.value = null;
+  location.value = null;
 
   if ("geolocation" in navigator) {
     navigator.geolocation.getCurrentPosition(success, error);
@@ -129,14 +75,24 @@ const requestGeolocation = (): void => {
 };
 
 const success = (position: GeolocationPosition): void => {
-  location.value = {
+  const newLocation: Coordinates = {
     latitude: position.coords.latitude,
     longitude: position.coords.longitude,
   };
-  reverseGeocodeCoordinates();
-  gpsButtonText.value = "Refresh GPS";
-  textLocation.value = "";
+  location.value = newLocation;
+  reverseGeocode(newLocation);
+
   isLoading.value = false;
+  gpsButtonText.value = "Refresh GPS";
+};
+
+const reverseGeocode = async (coordinates: Coordinates) => {
+  const resultText = await nominatim.reverseGeocode(coordinates);
+  if (resultText) {
+    textLocation.value = resultText;
+  } else {
+    textLocation.value = "";
+  }
 };
 
 const error = (err: GeolocationPositionError): void => {
