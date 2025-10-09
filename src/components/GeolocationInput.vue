@@ -1,6 +1,16 @@
 <template>
   <form @submit.prevent>
     <fieldset>
+      <input
+        type="text"
+        placeholder="e.g., Paris, France..."
+        v-model="manualLocation"
+      />
+      <button :disabled="isLoading" @click="submitManualLocation">
+        Find my location
+      </button>
+    </fieldset>
+    <fieldset>
       <button
         id="requestGeolocation"
         :disabled="isLoading"
@@ -26,10 +36,49 @@ interface Location {
   longitude: number;
 }
 
-const gpsButtonText = ref<string>("Use GPS");
+const gpsButtonText = ref<"Use GPS" | "Refresh GPS">("Use GPS");
+const manualLocation = ref<string>("");
 const location = ref<Location | null>(null);
 const errorMessage = ref<string | null>(null);
 const isLoading = ref<boolean>(false);
+
+const submitManualLocation = async () => {
+  if (manualLocation.value.trim() === "") {
+    errorMessage.value = "Please enter a location";
+    return;
+  }
+  isLoading.value = true;
+  location.value = null;
+
+  try {
+    const encodedQuery = encodeURIComponent(manualLocation.value);
+    const apiUrl = `https://nominatim.openstreetmap.org/search?q=${encodedQuery}&format=json`;
+
+    const response = await fetch(apiUrl);
+
+    if (!response.ok) {
+      throw new Error("Network response was not ok.");
+    }
+
+    const data = await response.json();
+
+    if (data && data.length > 0) {
+      location.value = {
+        latitude: data[0].lat,
+        longitude: data[0].lon,
+      };
+    } else {
+      throw new Error(
+        `Could not find coordinates for "${manualLocation.value}".`,
+      );
+    }
+  } catch (error: any) {
+    errorMessage.value = error.message;
+  } finally {
+    gpsButtonText.value = "Use GPS";
+    isLoading.value = false;
+  }
+};
 
 const requestGeolocation = (): void => {
   isLoading.value = true;
@@ -68,5 +117,4 @@ const error = (err: GeolocationPositionError): void => {
       errorMessage.value = "An unknown error occurred.";
   }
 };
-
 </script>
