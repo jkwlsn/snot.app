@@ -98,6 +98,7 @@ const success = (position: GeolocationPosition): void => {
     longitude: position.coords.longitude,
   };
   gpsButtonText.value = "Refresh GPS";
+  manualLocation.value = "";
   isLoading.value = false;
 };
 
