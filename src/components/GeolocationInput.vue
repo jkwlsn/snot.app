@@ -4,9 +4,9 @@
       <input
         type="text"
         placeholder="e.g., Paris, France..."
-        v-model="manualLocation"
+        v-model="textLocation"
       />
-      <button :disabled="isLoading" @click="submitManualLocation">
+      <button :disabled="isLoading" @click="submitTextLocation">
         Find my location
       </button>
     </fieldset>
@@ -37,13 +37,13 @@ interface Location {
 }
 
 const gpsButtonText = ref<"Use GPS" | "Refresh GPS">("Use GPS");
-const manualLocation = ref<string>("");
+const textLocation = ref<string>("");
 const location = ref<Location | null>(null);
 const errorMessage = ref<string | null>(null);
 const isLoading = ref<boolean>(false);
 
-const submitManualLocation = async () => {
-  if (manualLocation.value.trim() === "") {
+const submitTextLocation = async () => {
+  if (textLocation.value.trim() === "") {
     errorMessage.value = "Please enter a location";
     return;
   }
@@ -51,7 +51,7 @@ const submitManualLocation = async () => {
   location.value = null;
 
   try {
-    const encodedQuery = encodeURIComponent(manualLocation.value);
+    const encodedQuery = encodeURIComponent(textLocation.value);
     const apiUrl = `https://nominatim.openstreetmap.org/search?q=${encodedQuery}&format=json`;
 
     const response = await fetch(apiUrl);
@@ -69,7 +69,7 @@ const submitManualLocation = async () => {
       };
     } else {
       throw new Error(
-        `Could not find coordinates for "${manualLocation.value}".`,
+        `Could not find coordinates for "${textLocation.value}".`,
       );
     }
   } catch (error: any) {
@@ -98,7 +98,7 @@ const success = (position: GeolocationPosition): void => {
     longitude: position.coords.longitude,
   };
   gpsButtonText.value = "Refresh GPS";
-  manualLocation.value = "";
+  textLocation.value = "";
   isLoading.value = false;
 };
 
