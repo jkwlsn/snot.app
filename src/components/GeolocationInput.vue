@@ -42,6 +42,42 @@ const location = ref<Location | null>(null);
 const errorMessage = ref<string | null>(null);
 const isLoading = ref<boolean>(false);
 
+const reverseGeocodeCoordinates = async () => {
+  isLoading.value = true;
+
+  try {
+    const apiUrl = `https://nominatim.openstreetmap.org/reverse?lat=${location.value?.latitude}&lon=${location.value?.longitude}&format=geocodejson&addressdetails=1`;
+
+    const response = await fetch(apiUrl);
+
+    if (!response.ok) {
+      throw new Error("Network response was not ok.");
+    }
+
+    const data = await response.json();
+
+    console.log(data);
+    const feature = data.features?.[0];
+
+    if (feature && feature.properties?.geocoding) {
+      const geocoding = feature.properties.geocoding;
+      const district: string = geocoding.district;
+      const city = geocoding.city || geocoding.town || geocoding.village;
+      const country = geocoding.country;
+
+      textLocation.value = `${district}, ${city}, ${country}`;
+    } else {
+      throw new Error(
+        `Could not find location for ${location.value?.latitude}, ${location.value?.longitude}`,
+      );
+    }
+  } catch (error: any) {
+    errorMessage.value = error.message;
+  } finally {
+    isLoading.value = false;
+  }
+};
+
 const submitTextLocation = async () => {
   if (textLocation.value.trim() === "") {
     errorMessage.value = "Please enter a location";
@@ -97,6 +133,7 @@ const success = (position: GeolocationPosition): void => {
     latitude: position.coords.latitude,
     longitude: position.coords.longitude,
   };
+  reverseGeocodeCoordinates();
   gpsButtonText.value = "Refresh GPS";
   textLocation.value = "";
   isLoading.value = false;
