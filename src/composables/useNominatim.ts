@@ -1,5 +1,5 @@
 import { ref } from "vue";
-import type { Coordinates } from "../types/coordinates";
+import { Coordinates } from "../interfaces/coordinates";
 
 interface NominatimSearchResult {
   lat: string;
