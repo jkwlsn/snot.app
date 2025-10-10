@@ -49,7 +49,11 @@ const clearForm = () => {
 
 const addSymptom = async (symptom: string) => {
   try {
-    const id = await db.symptoms.add({
+    if (geolocation.location.value === null) {
+            throw new Error("No location set");
+    }
+
+    await db.symptoms.add({
       type: symptom,
       timestamp: Date.now(),
       location: {
@@ -57,8 +61,7 @@ const addSymptom = async (symptom: string) => {
         longitude: geolocation.location.value.longitude,
       },
     });
-    console.log("logged:", symptom, "with id:", id);
-  } catch (error) {
+  } catch (error: any) {
     console.error("Failed to add symptom:", error);
   }
 };
