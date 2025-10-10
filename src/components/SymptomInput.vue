@@ -1,30 +1,33 @@
 <template>
   <form @submit.prevent>
     <fieldset>
-      <label>Select symptoms:</label>
-      <div v-for="symptom in symptomObjects" :key="symptom.id">
-        <input
-          :id="`symptom-${symptom.id}`"
-          v-model="selectedSymptoms"
-          :value="symptom.name"
-          type="checkbox"
-        />
-        <label :for="`symptom-${symptom.id}`">
-          {{ symptom.name }}
-        </label>
+      <div v-if="noLocation">Set location to log symptoms</div>
+      <div v-else>
+        <label>Select symptoms:</label>
+        <div v-for="symptom in symptomObjects" :key="symptom.id">
+          <input
+            :id="`symptom-${symptom.id}`"
+            v-model="selectedSymptoms"
+            :value="symptom.name"
+            type="checkbox"
+          />
+          <label :for="`symptom-${symptom.id}`">
+            {{ symptom.name }}
+          </label>
+        </div>
+        <button :disabled="selectedSymptoms.length === 0" @click="clearForm">
+          Clear all
+        </button>
+        <button :disabled="selectedSymptoms.length === 0" @click="logSymptoms">
+          Log Symptom
+        </button>
       </div>
-      <button :disabled="selectedSymptoms.length === 0" @click="clearForm">
-        Clear all
-      </button>
-      <button :disabled="selectedSymptoms.length === 0" @click="logSymptoms">
-        Log Symptom
-      </button>
     </fieldset>
   </form>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { SYMPTOM_LIST } from "../config";
 import { db } from "../db";
 import { useGeolocation } from "../composables/useGeolocation";
@@ -32,6 +35,8 @@ import { useGeolocation } from "../composables/useGeolocation";
 const geolocation = useGeolocation();
 
 const selectedSymptoms = ref([]);
+
+const noLocation = computed(() => geolocation.location.value === null);
 
 const symptomObjects = SYMPTOM_LIST.map((symptom: string, index: number) => ({
   id: index,
