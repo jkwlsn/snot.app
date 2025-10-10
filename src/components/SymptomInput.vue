@@ -27,8 +27,11 @@
 import { ref } from "vue";
 import { SYMPTOM_LIST } from "../config";
 import { db } from "../db";
+import { useGeolocation } from "../composables/useGeolocation";
 
-let selectedSymptoms = ref([]);
+const geolocation = useGeolocation();
+
+const selectedSymptoms = ref([]);
 
 const symptomObjects = SYMPTOM_LIST.map((symptom: string, index: number) => ({
   id: index,
@@ -44,6 +47,10 @@ const addSymptom = async (symptom: string) => {
     const id = await db.symptoms.add({
       type: symptom,
       timestamp: Date.now(),
+      location: {
+        latitude: geolocation.location.value.latitude,
+        longitude: geolocation.location.value.longitude,
+      },
     });
     console.log("logged:", symptom, "with id:", id);
   } catch (error) {
