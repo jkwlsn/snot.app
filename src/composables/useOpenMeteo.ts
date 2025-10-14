@@ -1,6 +1,6 @@
 import { ref, readonly } from "vue";
 import { fetchWeatherApi } from "openmeteo";
-import { OpenMeteoAPIParams } from "../interfaces/openmeteoapiparams";
+import type { OpenMeteoAPIParams } from "../interfaces/openmeteoapiparams";
 import {
   OPENMETEO_API_PARAMS,
   OPENMETEO_API_URL,
@@ -27,7 +27,7 @@ interface OpenMeteoAPIResponse {
   };
 }
 
-async function openMeteoFetch(parameters: OpenMeteoAPIParams) {
+async function openMeteoFetch(parameters: OpenMeteoAPIParams): Promise<void> {
   openMeteoLoading.value = true;
   openMeteoError.value = null;
 
@@ -92,7 +92,7 @@ async function openMeteoFetch(parameters: OpenMeteoAPIParams) {
         ragweed_pollen: getVariableData(5),
       },
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     openMeteoError.value = error as Error;
     openMeteoData.value = null;
   } finally {

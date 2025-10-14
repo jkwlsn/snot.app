@@ -1,6 +1,6 @@
 import { ref, computed } from "vue";
 import { useNominatim } from "./useNominatim";
-import { Coordinates } from "../interfaces/coordinates";
+import type { Coordinates } from "../interfaces/Coordinates";
 
 const nominatim = useNominatim();
 
@@ -11,21 +11,26 @@ const errorMessage = ref<string | null>(null);
 const isLoading = ref<boolean>(false);
 
 const anyLoading = computed(
-  () => isLoading.value || nominatim.nominatimIsLoading.value,
+  () => isLoading.value || nominatim.nominatimState.value.isLoading,
 );
 
 const anyError = computed(
-  () => errorMessage.value ?? nominatim.nominatimErrorMessage.value ?? null,
+  () =>
+    errorMessage.value ?? nominatim.nominatimState.value.errorMessage ?? null,
 );
 
 const submitTextLocation = async (): Promise<void> => {
   location.value = null;
   errorMessage.value = null;
 
-  const newLocation = await nominatim.forwardGeocode(textLocation.value);
-
-  if (newLocation) {
+  try {
+    const newLocation = await nominatim.forwardGeocode(textLocation.value);
+    if (newLocation === null) {
+      throw new Error("Could not get location");
+    }
     location.value = newLocation;
+  } catch (error: unknown) {
+    console.error(error as Error);
   }
   gpsButtonText.value = "Use GPS";
 };
@@ -55,7 +60,7 @@ const success = (position: GeolocationPosition): void => {
   gpsButtonText.value = "Refresh GPS";
 };
 
-const reverseGeocode = async (coordinates: Coordinates) => {
+const reverseGeocode = async (coordinates: Coordinates): Promise<void> => {
   const resultText = await nominatim.reverseGeocode(coordinates);
   if (resultText) {
     textLocation.value = resultText;

@@ -1,3 +1,5 @@
+import type { Timeframe } from "../interfaces/Timeframe";
+
 import { zeroMinutes } from "./zeroMinutes";
 
 type PollenDataMap = Record<string, number | null>;
@@ -13,14 +15,13 @@ export interface RawPollenData {
 
 function filterPollenDataByTimeframe(
   data: RawPollenData,
-  startTime: string,
-  endTime: string,
+  timeframe: Timeframe,
 ): PeriodPollenData[] {
   const { time, ...pollenLevels } = data;
   const result: FilteredPollenData = [];
 
-  const startTimestamp = zeroMinutes(new Date(startTime)).getTime();
-  const endTimestamp = new Date(endTime).getTime();
+  const startTimestamp = zeroMinutes(timeframe.startTime).getTime();
+  const endTimestamp = timeframe.endTime.getTime();
 
   const normalisedPollenData: Record<string, (number | null)[]> = {};
 

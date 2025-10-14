@@ -25,15 +25,15 @@
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import { db } from "../db";
 import { liveQuery } from "dexie";
-import { Symptom } from "../interfaces/symptom";
+import { SymptomRecord } from "../interfaces/SymptomRecord";
 
-const symptoms = ref<Symptom[]>([]);
+const symptoms = ref<SymptomRecord[]>([]);
 
 let liveSubscription: { unsubscribe: () => void } | null = null;
 
 const subscribeToLiveQuery = () => {
   liveSubscription = liveQuery(() => db.symptoms.toArray()).subscribe(
-    (updatedSymptoms: Symptom[]) => {
+    (updatedSymptoms: SymptomRecord[]) => {
       symptoms.value = updatedSymptoms;
     },
   );
