@@ -1,3 +1,5 @@
+import { zeroMinutes } from "./zeroMinutes";
+
 type PollenDataMap = Record<string, number | null>;
 
 type PeriodPollenData = Record<string, PollenDataMap>;
@@ -17,7 +19,7 @@ function filterPollenDataByTimeframe(
   const { time, ...pollenLevels } = data;
   const result: FilteredPollenData = [];
 
-  const startTimestamp = new Date(startTime).getTime();
+  const startTimestamp = zeroMinutes(new Date(startTime)).getTime();
   const endTimestamp = new Date(endTime).getTime();
 
   const normalisedPollenData: Record<string, (number | null)[]> = {};
