@@ -35,6 +35,7 @@ import {
   RawPollenData,
   usefilterPollenDataByTimeframe,
 } from "../utils/filterPollenLevelsByTimeframe";
+import { Timeframe } from "../interfaces/Timeframe";
 
 const { data } = useOpenMeteoAPI();
 const filter = usefilterPollenDataByTimeframe();
@@ -47,11 +48,13 @@ const filteredLevels = computed(() => {
   if (!data.value?.hourly) {
     return [];
   }
+  const rawPollenData = data.value?.hourly as unknown as RawPollenData;
 
-  return filter.filterPollenDataByTimeframe(
-    data.value.hourly as unknown as RawPollenData,
-    startTime.value,
-    endTime.value,
-  );
+  const timeframe: Timeframe = {
+    startTime: new Date(startTime.value),
+    endTime: new Date(endTime.value),
+  };
+
+  return filter.filterPollenDataByTimeframe(rawPollenData, timeframe);
 });
 </script>
