@@ -34,7 +34,7 @@ import { useOpenMeteoAPI } from "../composables/useOpenMeteo";
 import {
   RawPollenData,
   usefilterPollenDataByTimeframe,
-} from "../utils/filterPollenLevelsByTimeframe.ts";
+} from "../utils/filterPollenLevelsByTimeframe";
 
 const { data } = useOpenMeteoAPI();
 const filter = usefilterPollenDataByTimeframe();
