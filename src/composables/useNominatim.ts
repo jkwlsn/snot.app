@@ -72,16 +72,13 @@ const reverseGeocode = async (
     }
 
     const data = (await response.json()) as NominatimReverseResult;
-    const feature = data.features?.[0];
 
-    if (feature?.properties?.geocoding) {
-      const geo = feature.properties.geocoding;
-      const district: string = geo.district;
-      const city: string = geo.city ?? geo.town ?? geo.village;
-      const country: string = geo.country;
+    const result = data.features[0].properties.geocoding;
+    const district: string = result.district;
+    const city: string = result.city ?? result.town ?? result.village ?? "";
+    const country: string = result.country;
 
-      return `${district}, ${city}, ${country}`;
-    }
+    return `${district}, ${city}, ${country}`;
   } catch (error: unknown) {
     if (error instanceof Error) {
       nominatimState.value.errorMessage = error.message;
