@@ -1,23 +1,25 @@
 import { ref } from "vue";
 import type { Coordinates } from "../interfaces/Coordinates";
+import type { NominatimForwardResult } from "../interfaces/NominatimForwardResult";
+import type { NominatimReverseResult } from "../interfaces/NominatimReverseResult";
 
-interface NominatimSearchResult {
-  lat: string;
-  lon: string;
+interface NominatimState {
+  isLoading: boolean;
+  errorMessage: string | null;
 }
 
-const nominatimIsLoading = ref<boolean>(false);
-const nominatimErrorMessage = ref<string | null>(null);
+const nominatimState = ref<NominatimState>({
+  isLoading: false,
+  errorMessage: null,
+});
 
-const forwardGeocode = async (
-  query: string,
-): Promise<Coordinates | undefined | null> => {
-  nominatimIsLoading.value = true;
-  nominatimErrorMessage.value = null;
+const forwardGeocode = async (query: string): Promise<Coordinates | null> => {
+  nominatimState.value.isLoading = true;
+  nominatimState.value.errorMessage = null;
 
   if (query.trim() === "") {
-    nominatimIsLoading.value = false;
-    nominatimErrorMessage.value = "Please enter a location";
+    nominatimState.value.isLoading = false;
+    nominatimState.value.errorMessage = "Please enter a location";
     return null;
   }
 
@@ -31,7 +33,7 @@ const forwardGeocode = async (
       throw new Error(`${response.status.toString()}: ${response.statusText}`);
     }
 
-    const data = (await response.json()) as NominatimSearchResult[];
+    const data = (await response.json()) as NominatimForwardResult[];
 
     if (data.length > 0) {
       return {
@@ -43,21 +45,22 @@ const forwardGeocode = async (
     }
   } catch (error: any) {
     if (error instanceof Error) {
-      nominatimErrorMessage.value = error.message;
-      return;
+      nominatimState.value.errorMessage = error.message;
+      return null;
     } else {
-      nominatimErrorMessage.value = "An unknown error occurred";
+      nominatimState.value.errorMessage = "An unknown error occurred";
+      return null;
     }
   } finally {
-    nominatimIsLoading.value = false;
+    nominatimState.value.isLoading = false;
   }
 };
 
 const reverseGeocode = async (
   coordinates: Coordinates,
-): Promise<string | undefined> => {
-  nominatimIsLoading.value = true;
-  nominatimErrorMessage.value = null;
+): Promise<string | null> => {
+  nominatimState.value.isLoading = true;
+  nominatimState.value.errorMessage = null;
 
   try {
     const apiUrl = `https://nominatim.openstreetmap.org/reverse?lat=${coordinates.latitude.toString()}&lon=${coordinates.longitude.toString()}&format=geocodejson&addressdetails=1`;
@@ -68,7 +71,7 @@ const reverseGeocode = async (
       throw new Error(`${response.status.toString()}: ${response.statusText}`);
     }
 
-    const data = await response.json();
+    const data = (await response.json()) as NominatimReverseResult;
     const feature = data.features?.[0];
 
     if (feature?.properties?.geocoding) {
@@ -81,20 +84,20 @@ const reverseGeocode = async (
     }
   } catch (error: any) {
     if (error instanceof Error) {
-      nominatimErrorMessage.value = error.message;
-      return;
+      nominatimState.value.errorMessage = error.message;
+      return null;
     } else {
-      nominatimErrorMessage.value = "An unknown error occurred";
+      nominatimState.value.errorMessage = "An unknown error occurred";
+      return null;
     }
   } finally {
-    nominatimIsLoading.value = false;
+    nominatimState.value.isLoading = false;
   }
 };
 
 export function useNominatim() {
   return {
-    nominatimIsLoading,
-    nominatimErrorMessage,
+    nominatimState,
     forwardGeocode,
     reverseGeocode,
   };

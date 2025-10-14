@@ -11,20 +11,23 @@ const errorMessage = ref<string | null>(null);
 const isLoading = ref<boolean>(false);
 
 const anyLoading = computed(
-  () => isLoading.value || nominatim.nominatimIsLoading.value,
+  () => isLoading.value || nominatim.nominatimState.value.isLoading,
 );
 
 const anyError = computed(
-  () => errorMessage.value ?? nominatim.nominatimErrorMessage.value ?? null,
+  () =>
+    errorMessage.value ?? nominatim.nominatimState.value.errorMessage ?? null,
 );
 
 const submitTextLocation = async (): Promise<void> => {
   location.value = null;
   errorMessage.value = null;
 
-  const newLocation = await nominatim.forwardGeocode(textLocation.value);
-
-  if (newLocation) {
+  try {
+    const newLocation = await nominatim.forwardGeocode(textLocation.value);
+    if (newLocation === null) {
+      throw new Error("Could not get location");
+    }
     location.value = newLocation;
   }
   gpsButtonText.value = "Use GPS";
