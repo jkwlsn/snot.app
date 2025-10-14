@@ -92,7 +92,7 @@ async function openMeteoFetch(parameters: OpenMeteoAPIParams) {
         ragweed_pollen: getVariableData(5),
       },
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     openMeteoError.value = error as Error;
     openMeteoData.value = null;
   } finally {

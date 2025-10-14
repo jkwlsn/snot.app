@@ -29,6 +29,8 @@ const submitTextLocation = async (): Promise<void> => {
       throw new Error("Could not get location");
     }
     location.value = newLocation;
+  } catch (error: unknown) {
+    console.error(error as Error);
   }
   gpsButtonText.value = "Use GPS";
 };

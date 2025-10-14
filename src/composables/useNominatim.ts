@@ -43,7 +43,7 @@ const forwardGeocode = async (query: string): Promise<Coordinates | null> => {
     } else {
       throw new Error(`Could not find coordinates for "${query}".`);
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (error instanceof Error) {
       nominatimState.value.errorMessage = error.message;
       return null;
@@ -82,7 +82,7 @@ const reverseGeocode = async (
 
       return `${district}, ${city}, ${country}`;
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (error instanceof Error) {
       nominatimState.value.errorMessage = error.message;
       return null;
