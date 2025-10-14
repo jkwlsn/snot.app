@@ -60,7 +60,7 @@ const success = (position: GeolocationPosition): void => {
   gpsButtonText.value = "Refresh GPS";
 };
 
-const reverseGeocode = async (coordinates: Coordinates) => {
+const reverseGeocode = async (coordinates: Coordinates): Promise<void> => {
   const resultText = await nominatim.reverseGeocode(coordinates);
   if (resultText) {
     textLocation.value = resultText;

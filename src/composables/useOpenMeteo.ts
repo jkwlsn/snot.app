@@ -27,7 +27,7 @@ interface OpenMeteoAPIResponse {
   };
 }
 
-async function openMeteoFetch(parameters: OpenMeteoAPIParams) {
+async function openMeteoFetch(parameters: OpenMeteoAPIParams): Promise<void> {
   openMeteoLoading.value = true;
   openMeteoError.value = null;
 
