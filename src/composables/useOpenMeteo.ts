@@ -1,6 +1,6 @@
 import { ref, readonly } from "vue";
 import { fetchWeatherApi } from "openmeteo";
-import { OpenMeteoAPIParams } from "../interfaces/openmeteoapiparams";
+import type { OpenMeteoAPIParams } from "../interfaces/openmeteoapiparams";
 import {
   OPENMETEO_API_PARAMS,
   OPENMETEO_API_URL,
