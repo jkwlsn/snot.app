@@ -1,10 +1,10 @@
 import Dexie, { type EntityTable } from "dexie";
 import { DATABASE_NAME, DATABASE_VERSION } from "./config";
-import { type Symptom } from "./interfaces/symptom";
+import { type SymptomRecord } from "./interfaces/SymptomRecord";
 
 // Instantiate db
 const db = new Dexie(DATABASE_NAME) as Dexie & {
-  symptoms: EntityTable<Symptom, "id">;
+  symptoms: EntityTable<SymptomRecord, "id">;
 };
 
 // Declare Schema

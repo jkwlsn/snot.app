@@ -31,10 +31,13 @@ import { ref, computed } from "vue";
 import { SYMPTOM_LIST } from "../config";
 import { db } from "../db";
 import { useGeolocation } from "../composables/useGeolocation";
+import { Coordinates } from "../interfaces/coordinates";
+import { SymptomRecord } from "../interfaces/SymptomRecord";
 
 const geolocation = useGeolocation();
+const location = computed<Coordinates | null>(() => geolocation.location.value);
 
-const selectedSymptoms = ref([]);
+const selectedSymptoms = ref<string[]>([]);
 
 const noLocation = computed(() => geolocation.location.value === null);
 
@@ -47,20 +50,36 @@ const clearForm = () => {
   selectedSymptoms.value = [];
 };
 
-const addSymptom = async (symptom: string) => {
+const createSymptomRecord = (symptom: string): SymptomRecord | null => {
+  try {
+    if (location.value === null) {
+      throw new Error("No location set");
+    }
+    return {
+      type: symptom,
+      timestamp: new Date(),
+      location: {
+        latitude: location.value.latitude,
+        longitude: location.value.longitude,
+      },
+    };
+  } catch (error: any) {
+    console.error(error);
+    return null;
+  }
+};
+
+const addSymptom = async (symptom: string): Promise<void> => {
   try {
     if (geolocation.location.value === null) {
-            throw new Error("No location set");
+      throw new Error("No location set");
     }
 
-    await db.symptoms.add({
-      type: symptom,
-      timestamp: Date.now(),
-      location: {
-        latitude: geolocation.location.value.latitude,
-        longitude: geolocation.location.value.longitude,
-      },
-    });
+    const newSymptomRecord = createSymptomRecord(symptom);
+
+    if (newSymptomRecord === null) return;
+
+    await db.symptoms.add(newSymptomRecord);
   } catch (error: any) {
     console.error("Failed to add symptom:", error);
   }
@@ -70,7 +89,7 @@ const logSymptoms = async () => {
   try {
     await Promise.all(selectedSymptoms.value.map(addSymptom));
     clearForm();
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
   }
 };
