@@ -1,6 +1,11 @@
 import { ref, readonly } from "vue";
 import { fetchWeatherApi } from "openmeteo";
 import { OpenMeteoAPIParams } from "../interfaces/openmeteoapiparams";
+import {
+  OPENMETEO_API_PARAMS,
+  OPENMETEO_API_URL,
+  OPENMETEO_POLLEN_TYPES,
+} from "../config";
 
 const openMeteoData = ref<OpenMeteoAPIResponse | null>(null);
 const openMeteoLoading = ref<boolean>(false);
@@ -30,21 +35,19 @@ async function openMeteoFetch(parameters: OpenMeteoAPIParams) {
     const queryParameters: OpenMeteoAPIParams = {
       latitude: parameters.latitude,
       longitude: parameters.longitude,
-      hourly: parameters.hourly ?? [
-        "alder_pollen",
-        "birch_pollen",
-        "grass_pollen",
-        "mugwort_pollen",
-        "olive_pollen",
-        "ragweed_pollen",
-      ],
+      hourly: parameters.hourly ?? OPENMETEO_POLLEN_TYPES,
       timezone: parameters.timezone ?? "auto",
       forecast_days: parameters.forecast_days ?? 5,
     };
 
     // Fetch data
-    const url = "https://air-quality-api.open-meteo.com/v1/air-quality";
-    const responses = await fetchWeatherApi(url, queryParameters);
+    const responses = await fetchWeatherApi(
+      OPENMETEO_API_URL,
+      queryParameters,
+      OPENMETEO_API_PARAMS.retries,
+      OPENMETEO_API_PARAMS.backoffFactor,
+      OPENMETEO_API_PARAMS.backoffMax,
+    );
 
     // Process response
     const response = responses[0];
