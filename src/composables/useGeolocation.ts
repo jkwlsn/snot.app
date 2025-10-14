@@ -62,11 +62,7 @@ const success = (position: GeolocationPosition): void => {
 
 const reverseGeocode = async (coordinates: Coordinates): Promise<void> => {
   const resultText = await nominatim.reverseGeocode(coordinates);
-  if (resultText) {
-    textLocation.value = resultText;
-  } else {
-    textLocation.value = "";
-  }
+  textLocation.value = resultText ?? "";
 };
 
 const error = (err: GeolocationPositionError): void => {
