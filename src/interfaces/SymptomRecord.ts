@@ -1,4 +1,4 @@
-import type { Coordinates } from "./coordinates";
+import type { Coordinates } from "./Coordinates";
 
 interface SymptomRecord {
   id?: number;

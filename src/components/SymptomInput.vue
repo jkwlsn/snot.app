@@ -31,7 +31,7 @@ import { ref, computed } from "vue";
 import { SYMPTOM_LIST } from "../config";
 import { db } from "../db";
 import { useGeolocation } from "../composables/useGeolocation";
-import { Coordinates } from "../interfaces/coordinates";
+import { Coordinates } from "../interfaces/Coordinates";
 import { SymptomRecord } from "../interfaces/SymptomRecord";
 
 const geolocation = useGeolocation();

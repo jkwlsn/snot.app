@@ -1,6 +1,6 @@
 import { ref, computed } from "vue";
 import { useNominatim } from "./useNominatim";
-import { Coordinates } from "../interfaces/coordinates";
+import type { Coordinates } from "../interfaces/Coordinates";
 
 const nominatim = useNominatim();
 
