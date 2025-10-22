@@ -7,6 +7,7 @@
         <th>Timestamp</th>
         <th>Latitude</th>
         <th>Longitude</th>
+        <th>Pollen Data</th>
       </tr>
     </thead>
     <tbody>
@@ -16,6 +17,7 @@
         <td>{{ symptom.timestamp.toLocaleString() }}</td>
         <td>{{ symptom.location.latitude }}</td>
         <td>{{ symptom.location.longitude }}</td>
+        <td>{{ JSON.stringify(symptom.pollenData) }}</td>
       </tr>
     </tbody>
   </table>
