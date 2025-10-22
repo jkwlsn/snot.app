@@ -9,7 +9,7 @@ const db = new Dexie(DATABASE_NAME) as Dexie & {
 
 // Declare Schema
 db.version(DATABASE_VERSION).stores({
-  symptoms: "++id, timestamp, type, location",
+  symptoms: "++id, timestamp, type, location, pollenData",
 });
 
 // Exports
