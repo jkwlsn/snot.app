@@ -1,6 +1,5 @@
 import type { Timeframe } from "../interfaces/Timeframe";
-import { PollenRecord } from "../interfaces/Pollen";
-import { PollenType, PollenLevels } from "../interfaces/PollenTypes";
+import type { PollenRecord } from "../interfaces/Pollen";
 import { zeroUTCMinutes } from "./zeroUTCMinutes";
 
 function filterPollenDataByTimeframe(
@@ -15,7 +14,10 @@ function filterPollenDataByTimeframe(
   for (let i = 0; i < data.length; i++) {
     const currentTimestamp = data[i].timestamp.getTime();
 
-    if (currentTimestamp >= startTimestamp && currentTimestamp <= endTimestamp) {
+    if (
+      currentTimestamp >= startTimestamp &&
+      currentTimestamp <= endTimestamp
+    ) {
       result.push(data[i]);
     } else if (currentTimestamp > endTimestamp) {
       break;
@@ -30,4 +32,3 @@ export const usefilterPollenDataByTimeframe = () => {
     filterPollenDataByTimeframe,
   };
 };
-
