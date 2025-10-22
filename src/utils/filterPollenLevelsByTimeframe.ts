@@ -1,6 +1,6 @@
 import type { Timeframe } from "../interfaces/Timeframe";
 
-import { zeroMinutes } from "./zeroMinutes";
+import { zeroUTCMinutes } from "./zeroUTCMinutes";
 
 type PollenDataMap = Record<string, number | null>;
 
@@ -9,8 +9,8 @@ type PeriodPollenData = Record<string, PollenDataMap>;
 type FilteredPollenData = PeriodPollenData[];
 
 export interface RawPollenData {
-  time: string[];
-  [pollenType: string]: PollenDataMap | string[];
+  time: Date[];
+  [pollenType: string]: PollenDataMap | Date[];
 }
 
 function filterPollenDataByTimeframe(
@@ -20,7 +20,7 @@ function filterPollenDataByTimeframe(
   const { time, ...pollenLevels } = data;
   const result: FilteredPollenData = [];
 
-  const startTimestamp = zeroMinutes(timeframe.startTime).getTime();
+  const startTimestamp = zeroUTCMinutes(timeframe.startTime).getTime();
   const endTimestamp = timeframe.endTime.getTime();
 
   const normalisedPollenData: Record<string, (number | null)[]> = {};
@@ -36,7 +36,7 @@ function filterPollenDataByTimeframe(
   let endIndex = -1;
 
   for (let i = 0; i < time.length; i++) {
-    const currentTimestamp = new Date(time[i]).getTime();
+    const currentTimestamp = time[i].getTime();
 
     if (startIndex === -1 && currentTimestamp >= startTimestamp) {
       startIndex = i;
@@ -65,7 +65,7 @@ function filterPollenDataByTimeframe(
     });
 
     const timeEntry: PeriodPollenData = {};
-    timeEntry[currentTime] = timePollenMap;
+    timeEntry[currentTime.toISOString()] = timePollenMap;
     result.push(timeEntry);
   }
 

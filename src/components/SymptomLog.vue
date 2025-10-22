@@ -13,7 +13,7 @@
       <tr v-for="symptom in symptoms" :key="symptom.id">
         <td>{{ symptom.id }}</td>
         <td>{{ symptom.type }}</td>
-        <td>{{ new Date(symptom.timestamp).toLocaleString() }}</td>
+        <td>{{ symptom.timestamp.toLocaleString() }}</td>
         <td>{{ symptom.location.latitude }}</td>
         <td>{{ symptom.location.longitude }}</td>
       </tr>

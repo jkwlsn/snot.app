@@ -30,3 +30,6 @@ export const OPENMETEO_POLLEN_TYPES = [
 
 export const OPENMETEO_API_URL =
   "https://air-quality-api.open-meteo.com/v1/air-quality";
+
+// Datetime
+export const DATETIME_LOCAL_FORMAT = "YYYY-MM-DDTHH:mm";
