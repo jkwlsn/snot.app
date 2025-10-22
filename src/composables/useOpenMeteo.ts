@@ -36,7 +36,7 @@ async function openMeteoFetch(parameters: OpenMeteoAPIParams): Promise<void> {
       latitude: parameters.latitude,
       longitude: parameters.longitude,
       hourly: parameters.hourly ?? OPENMETEO_POLLEN_TYPES,
-      timezone: parameters.timezone ?? "auto",
+      timezone: "UTC",
       forecast_days: parameters.forecast_days ?? 5,
     };
 
@@ -61,7 +61,6 @@ async function openMeteoFetch(parameters: OpenMeteoAPIParams): Promise<void> {
       hourly.variables(index)?.valuesArray() ?? [];
 
     // Attributes for timezone and location
-    const utcOffsetSeconds = response.utcOffsetSeconds();
     const startTime = Number(hourly.time());
     const endTime = Number(hourly.timeEnd());
     const interval = hourly.interval();
@@ -72,7 +71,7 @@ async function openMeteoFetch(parameters: OpenMeteoAPIParams): Promise<void> {
 
     const timeArray = Array.from(
       { length: (endTime - startTime) / interval },
-      (_, i) => new Date((startTime + i * interval + utcOffsetSeconds) * 1000),
+      (_, i) => new Date((startTime + i * interval) * 1000),
     );
 
     // Create JSON object to export out of composable
