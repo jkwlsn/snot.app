@@ -6,26 +6,12 @@ import {
   OPENMETEO_API_URL,
   OPENMETEO_POLLEN_TYPES,
 } from "../config";
+import { PollenData, PollenRecord } from "../interfaces/Pollen";
+import { PollenType, PollenLevels } from "../interfaces/PollenTypes";
 
-const openMeteoData = ref<OpenMeteoAPIResponse | null>(null);
+const openMeteoData = ref<PollenData | null>(null);
 const openMeteoLoading = ref<boolean>(false);
 const openMeteoError = ref<Error | null>(null);
-
-interface OpenMeteoAPIResponse {
-  latitude: number;
-  longitude: number;
-  elevation: number;
-  timezone: string | null;
-  hourly: {
-    time: Date[];
-    alder_pollen: Float32Array | never[];
-    birch_pollen: Float32Array | never[];
-    grass_pollen: Float32Array | never[];
-    mugwort_pollen: Float32Array | never[];
-    olive_pollen: Float32Array | never[];
-    ragweed_pollen: Float32Array | never[];
-  };
-}
 
 async function openMeteoFetch(parameters: OpenMeteoAPIParams): Promise<void> {
   openMeteoLoading.value = true;
@@ -74,22 +60,19 @@ async function openMeteoFetch(parameters: OpenMeteoAPIParams): Promise<void> {
       (_, i) => new Date((startTime + i * interval) * 1000),
     );
 
-    // Create JSON object to export out of composable
+    const records: PollenRecord[] = timeArray.map((time, index) => {
+      const levels: PollenLevels = {} as PollenLevels;
+      OPENMETEO_POLLEN_TYPES.forEach((pollenType: PollenType, pollenIndex: number) => {
+        levels[pollenType] = getVariableData(pollenIndex)[index] as number | null;
+      });
+      return { timestamp: time, levels };
+    });
 
+    // Create JSON object to export out of composable
     openMeteoData.value = {
       latitude: response.latitude(),
       longitude: response.longitude(),
-      elevation: response.elevation(),
-      timezone: response.timezone(),
-      hourly: {
-        time: timeArray,
-        alder_pollen: getVariableData(0),
-        birch_pollen: getVariableData(1),
-        grass_pollen: getVariableData(2),
-        mugwort_pollen: getVariableData(3),
-        olive_pollen: getVariableData(4),
-        ragweed_pollen: getVariableData(5),
-      },
+      records: records,
     };
   } catch (error: unknown) {
     openMeteoError.value = error as Error;
