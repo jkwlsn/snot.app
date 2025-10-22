@@ -43,7 +43,7 @@ function filterPollenDataByTimeframe(
     }
 
     if (currentTimestamp <= endTimestamp) {
-      endIndex = i;
+      endIndex = i - 1;
     } else if (currentTimestamp > endTimestamp) {
       break;
     }
@@ -77,3 +77,4 @@ export const usefilterPollenDataByTimeframe = () => {
     filterPollenDataByTimeframe,
   };
 };
+
