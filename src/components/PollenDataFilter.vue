@@ -9,7 +9,7 @@
             type="datetime-local"
             id="startTimeInput"
             v-model="startTime"
-            :min="minimumDateTime"
+            :min="minimumLocalDatetime"
             step="3600"
           />
         </div>
@@ -36,12 +36,20 @@ import {
   usefilterPollenDataByTimeframe,
 } from "../utils/filterPollenLevelsByTimeframe";
 import { Timeframe } from "../interfaces/Timeframe";
+import { formatDateForInput } from "../utils/formatDateForInput";
+import { parseLocalDatetimeToUTC } from "../utils/parseLocalDatetimeToUTC";
 
 const { data } = useOpenMeteoAPI();
 const filter = usefilterPollenDataByTimeframe();
 
-const minimumDateTime = new Date().toISOString().split(":")[0] + ":00";
-const startTime = ref<string>(minimumDateTime);
+const getStartOfCurrentHourLocal = (): string => {
+  const now = new Date();
+  now.setMinutes(0, 0, 0); // Set minutes, seconds, milliseconds to 0 in local time
+  return formatDateForInput(now);
+};
+
+const minimumLocalDatetime = getStartOfCurrentHourLocal();
+const startTime = ref<string>(minimumLocalDatetime);
 const endTime = ref<string>("");
 
 const filteredLevels = computed(() => {
@@ -51,8 +59,8 @@ const filteredLevels = computed(() => {
   const rawPollenData = data.value?.hourly as unknown as RawPollenData;
 
   const timeframe: Timeframe = {
-    startTime: new Date(startTime.value),
-    endTime: new Date(endTime.value),
+    startTime: parseLocalDatetimeToUTC(startTime.value),
+    endTime: parseLocalDatetimeToUTC(endTime.value),
   };
 
   return filter.filterPollenDataByTimeframe(rawPollenData, timeframe);
