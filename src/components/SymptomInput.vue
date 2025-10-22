@@ -27,12 +27,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { SYMPTOM_LIST } from "../config";
 import { db } from "../db";
 import { useGeolocation } from "../composables/useGeolocation";
 import { Coordinates } from "../interfaces/Coordinates";
 import { SymptomRecord } from "../interfaces/SymptomRecord";
+import { useOpenMeteoAPI } from "../composables/useOpenMeteo";
+import { usefilterPollenDataByTimeframe } from "../utils/filterPollenLevelsByTimeframe";
+import { createTimeframe } from "../utils/createTimeframe";
+
+const { data: openMeteoApiData, openMeteoFetch } = useOpenMeteoAPI();
+const apiData = computed(() => openMeteoApiData.value);
+const filter = usefilterPollenDataByTimeframe();
 
 const geolocation = useGeolocation();
 const location = computed<Coordinates | null>(() => geolocation.location.value);
@@ -55,13 +62,27 @@ const createSymptomRecord = (symptom: string): SymptomRecord | null => {
     if (location.value === null) {
       throw new Error("No location set");
     }
+    if (apiData.value === null) {
+      throw new Error("No pollen data");
+    }
+
+    const currentTime = new Date();
+
+    const currentTimeframe = createTimeframe(currentTime);
+
+    const currentPollenData = filter.filterPollenDataByTimeframe(
+      apiData.value.records,
+      currentTimeframe,
+    );
+
     return {
       type: symptom,
-      timestamp: new Date(),
-      location: {
+      timestamp: currentTime,
+      location: JSON.parse(JSON.stringify({
         latitude: location.value.latitude,
         longitude: location.value.longitude,
-      },
+      })),
+      pollenData: JSON.parse(JSON.stringify(currentPollenData)),
     };
   } catch (error: any) {
     console.error(error);
@@ -93,4 +114,13 @@ const logSymptoms = async () => {
     console.error(error);
   }
 };
+
+watch(location, (newLocation) => {
+  if (newLocation) {
+    openMeteoFetch({
+      latitude: newLocation.latitude,
+      longitude: newLocation.longitude,
+    });
+  }
+}, { immediate: true });
 </script>
