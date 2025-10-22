@@ -31,10 +31,8 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { useOpenMeteoAPI } from "../composables/useOpenMeteo";
-import {
-  RawPollenData,
-  usefilterPollenDataByTimeframe,
-} from "../utils/filterPollenLevelsByTimeframe";
+import { usefilterPollenDataByTimeframe } from "../utils/filterPollenLevelsByTimeframe";
+import { PollenData } from "../interfaces/Pollen";
 import { Timeframe } from "../interfaces/Timeframe";
 import { formatDateForInput } from "../utils/formatDateForInput";
 import { parseLocalDatetimeToUTC } from "../utils/parseLocalDatetimeToUTC";
@@ -53,10 +51,10 @@ const startTime = ref<string>(minimumLocalDatetime);
 const endTime = ref<string>("");
 
 const filteredLevels = computed(() => {
-  if (!data.value?.hourly) {
+  if (!data.value?.records) {
     return [];
   }
-  const rawPollenData = data.value?.hourly as unknown as RawPollenData;
+  const rawPollenData = data.value?.records;
 
   const timeframe: Timeframe = {
     startTime: parseLocalDatetimeToUTC(startTime.value),

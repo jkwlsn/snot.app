@@ -1,72 +1,25 @@
 import type { Timeframe } from "../interfaces/Timeframe";
-
+import { PollenRecord } from "../interfaces/Pollen";
+import { PollenType, PollenLevels } from "../interfaces/PollenTypes";
 import { zeroUTCMinutes } from "./zeroUTCMinutes";
 
-type PollenDataMap = Record<string, number | null>;
-
-type PeriodPollenData = Record<string, PollenDataMap>;
-
-type FilteredPollenData = PeriodPollenData[];
-
-export interface RawPollenData {
-  time: Date[];
-  [pollenType: string]: PollenDataMap | Date[];
-}
-
 function filterPollenDataByTimeframe(
-  data: RawPollenData,
+  data: readonly PollenRecord[],
   timeframe: Timeframe,
-): PeriodPollenData[] {
-  const { time, ...pollenLevels } = data;
-  const result: FilteredPollenData = [];
+): PollenRecord[] {
+  const result: PollenRecord[] = [];
 
   const startTimestamp = zeroUTCMinutes(timeframe.startTime).getTime();
   const endTimestamp = timeframe.endTime.getTime();
 
-  const normalisedPollenData: Record<string, (number | null)[]> = {};
+  for (let i = 0; i < data.length; i++) {
+    const currentTimestamp = data[i].timestamp.getTime();
 
-  for (const pollenType in pollenLevels) {
-    if (Array.isArray(pollenLevels[pollenType])) continue;
-    normalisedPollenData[pollenType] = Object.values(
-      pollenLevels[pollenType] as Record<string, number | null>,
-    );
-  }
-
-  let startIndex = -1;
-  let endIndex = -1;
-
-  for (let i = 0; i < time.length; i++) {
-    const currentTimestamp = time[i].getTime();
-
-    if (startIndex === -1 && currentTimestamp >= startTimestamp) {
-      startIndex = i;
-    }
-
-    if (currentTimestamp <= endTimestamp) {
-      endIndex = i - 1;
+    if (currentTimestamp >= startTimestamp && currentTimestamp <= endTimestamp) {
+      result.push(data[i]);
     } else if (currentTimestamp > endTimestamp) {
       break;
     }
-  }
-
-  if (startIndex === -1 || endIndex === -1 || startIndex > endIndex) {
-    return [];
-  }
-
-  const pollenTypes = Object.keys(normalisedPollenData);
-
-  for (let i = startIndex; i <= endIndex; i++) {
-    const currentTime = time[i];
-    const timePollenMap: PollenDataMap = {};
-
-    pollenTypes.forEach((pollenType) => {
-      const levels = normalisedPollenData[pollenType];
-      timePollenMap[pollenType] = levels[i];
-    });
-
-    const timeEntry: PeriodPollenData = {};
-    timeEntry[currentTime.toISOString()] = timePollenMap;
-    result.push(timeEntry);
   }
 
   return result;
