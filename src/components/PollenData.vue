@@ -16,7 +16,7 @@
           Showing data for: {{ textLocation }} (Latitude:
           {{ location?.latitude }}, Longitude: {{ location?.longitude }})
         </h3>
-        <pre>{{ JSON.stringify(data.hourly, null, 2) }}</pre>
+        <pre>{{ JSON.stringify(data.records, null, 2) }}</pre>
       </div>
     </div>
   </section>
@@ -27,6 +27,7 @@ import { computed, watch } from "vue";
 import { useOpenMeteoAPI } from "../composables/useOpenMeteo";
 import { useGeolocation } from "../composables/useGeolocation";
 import { OpenMeteoAPIParams } from "../interfaces/openmeteoapiparams";
+
 
 const { textLocation, location } = useGeolocation();
 const { data, loading, error, openMeteoFetch } = useOpenMeteoAPI();
