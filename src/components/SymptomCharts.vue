@@ -1,6 +1,21 @@
 <template>
   <h2>Symptom History</h2>
-  <Bar :options="chartOptions" :data="symptomsPerDayChartData" />
+  <div>
+    <h3>Symptoms Per Day</h3>
+    <Bar
+      id="symptomsPerDay"
+      :options="symptomsPerDayChartOptions"
+      :data="symptomsPerDayChartData"
+    />
+  </div>
+  <div>
+    <h3>Average Symptom Severity Per Day</h3>
+    <Bar
+      id="averageSeverity"
+      :options="averageSeverityChartOptions"
+      :data="averageSeverityChartData"
+    />
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -46,12 +61,14 @@ const symptomsPerDayChartData = computed<
       {
         label: "Symptoms per day",
         data: dataPoints,
+        backgroundColor: "lightgreen",
       } as ChartDataset<"bar", { x: string; y: number }[]>,
     ],
   };
 });
 
-const chartOptions: ChartOptions<"bar"> = {
+// symptomsPerDay chart options
+const symptomsPerDayChartOptions: ChartOptions<"bar"> = {
   responsive: true,
   plugins: {
     legend: {
@@ -72,6 +89,65 @@ const chartOptions: ChartOptions<"bar"> = {
       },
     },
   },
-  elements: { bar: { backgroundColor: "lightgreen" } },
+};
+
+// Format symptom data for averageSeverity chart
+const averageSeverityChartData = computed<
+  ChartData<"bar", { x: string; y: number }[]>
+>(() => {
+  const severityPerDay = new Map<string, { total: number; count: number }>();
+
+  for (const symptomRecord of symptoms.value) {
+    const date = new Date(symptomRecord.timestamp).toISOString().split("T")[0];
+    const severity = symptomRecord.severity;
+
+    if (!severityPerDay.has(date)) {
+      severityPerDay.set(date, { total: 0, count: 0 });
+    }
+    const dayData = severityPerDay.get(date)!;
+    dayData.total += severity;
+    dayData.count++;
+  }
+
+  const dataPoints = Array.from(severityPerDay.entries()).map(
+    ([date, data]) => ({
+      x: date,
+      y: data.total / data.count,
+    }),
+  );
+
+  return {
+    datasets: [
+      {
+        label: "Average Severity",
+        data: dataPoints,
+        backgroundColor: "#FFFF66",
+      } as ChartDataset<"bar", { x: string; y: number }[]>,
+    ],
+  };
+});
+
+const averageSeverityChartOptions: ChartOptions<"bar"> = {
+  responsive: true,
+  plugins: {
+    legend: {
+      display: false,
+    },
+  },
+  scales: {
+    y: {
+      beginAtZero: true,
+      max: 5,
+      ticks: {
+        stepSize: 1,
+      },
+    },
+    x: {
+      type: "time",
+      time: {
+        unit: "day",
+      },
+    },
+  },
 };
 </script>
