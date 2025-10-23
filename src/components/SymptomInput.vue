@@ -15,6 +15,20 @@
             {{ symptom.name }}
           </label>
         </div>
+        <div>
+          <label for="severity"
+            >Severity: <output>{{ symptomSeverity }}</output></label
+          >
+          <input
+            type="range"
+            id="severity"
+            name="severity"
+            min="1"
+            max="5"
+            v-model.number="symptomSeverity"
+            step="1"
+          />
+        </div>
         <button :disabled="selectedSymptoms.length === 0" @click="clearForm">
           Clear all
         </button>
@@ -42,9 +56,12 @@ const apiData = computed(() => openMeteoApiData.value);
 const filter = usefilterPollenDataByTimeframe();
 
 const geolocation = useGeolocation();
+
 const location = computed<Coordinates | null>(() => geolocation.location.value);
 
 const selectedSymptoms = ref<string[]>([]);
+
+const symptomSeverity = defineModel({ default: 1 });
 
 const noLocation = computed(() => geolocation.location.value === null);
 
@@ -55,6 +72,7 @@ const symptomObjects = SYMPTOM_LIST.map((symptom: string, index: number) => ({
 
 const clearForm = () => {
   selectedSymptoms.value = [];
+  symptomSeverity.value = 1;
 };
 
 const createSymptomRecord = (symptom: string): SymptomRecord | null => {
@@ -77,11 +95,14 @@ const createSymptomRecord = (symptom: string): SymptomRecord | null => {
 
     return {
       type: symptom,
+      severity: symptomSeverity.value,
       timestamp: currentTime,
-      location: JSON.parse(JSON.stringify({
-        latitude: location.value.latitude,
-        longitude: location.value.longitude,
-      })),
+      location: JSON.parse(
+        JSON.stringify({
+          latitude: location.value.latitude,
+          longitude: location.value.longitude,
+        }),
+      ),
       pollenData: JSON.parse(JSON.stringify(currentPollenData)),
     };
   } catch (error: any) {
@@ -115,12 +136,16 @@ const logSymptoms = async () => {
   }
 };
 
-watch(location, (newLocation) => {
-  if (newLocation) {
-    openMeteoFetch({
-      latitude: newLocation.latitude,
-      longitude: newLocation.longitude,
-    });
-  }
-}, { immediate: true });
+watch(
+  location,
+  (newLocation) => {
+    if (newLocation) {
+      openMeteoFetch({
+        latitude: newLocation.latitude,
+        longitude: newLocation.longitude,
+      });
+    }
+  },
+  { immediate: true },
+);
 </script>
