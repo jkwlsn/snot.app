@@ -1,38 +1,51 @@
 <template>
   <h2>Symptom History</h2>
-  <canvas id="symptoms-per-day"></canvas>
+  <Bar :options="chartOptions" :data="symptomsPerDayChartData" />
 </template>
 
 <script setup lang="ts">
-import Chart from "chart.js/auto";
+import { Bar } from "vue-chartjs";
+import {
+  Chart as ChartJS,
+  Title,
+  Tooltip,
+  Legend,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+} from "chart.js";
 import { useSymptoms } from "../composables/useSymptoms";
-import { onMounted, watch, computed } from "vue";
-import { ChartData, ChartDataset } from "../interfaces/ChartData";
+import { computed } from "vue";
+import type { ChartData, ChartDataset, ChartOptions } from "chart.js";
+
+ChartJS.register(
+  Title,
+  Tooltip,
+  Legend,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+);
 
 // Load symptom data
 const { symptoms } = useSymptoms();
 
-// Declare chart variable which will contain chart data and options etc.
-let chart: Chart<"bar", { x: string; y: number }[], string> | null = null;
-
 // Compute chartData: Turn the symptoms data into the correct structure for Chart.js charts.
-// This reduces the symptom data and creates a new list of objects with a string key (timestamp) and a value (symptoms per day)
-const chartData = computed(() => {
-  const symptomsPerDay = symptoms.value.reduce(
-    (accumulator, symptom) => {
-      const date = new Date(symptom.timestamp).toLocaleDateString();
-      accumulator[date] = (accumulator[date] || 0) + 1;
-      return accumulator;
-    },
-    {} as Record<string, number>,
-  );
+const symptomsPerDayChartData = computed<
+  ChartData<"bar", { x: string; y: number }[]>
+>(() => {
+  const symptomsPerDay = new Map<string, number>();
+  for (const symptom of symptoms.value) {
+    const date = new Date(symptom.timestamp).toLocaleDateString();
+    symptomsPerDay.set(date, (symptomsPerDay.get(date) || 0) + 1);
+  }
 
-  const dataPoints = Object.keys(symptomsPerDay)
-    .sort()
-    .map((date) => ({
+  const dataPoints = Array.from(symptomsPerDay.entries()).map(
+    ([date, count]) => ({
       x: date,
-      y: symptomsPerDay[date],
-    }));
+      y: count,
+    }),
+  );
 
   return {
     labels: dataPoints.map((point) => point.x),
@@ -40,43 +53,30 @@ const chartData = computed(() => {
       {
         label: "Symptoms per day",
         data: dataPoints,
-      } as ChartDataset,
+      } as ChartDataset<"bar", { x: string; y: number }[]>,
     ],
-  } as ChartData;
+  };
 });
 
-// This function updates the chart.data with the computed chartData value
-const updateChart = () => {
-  if (!chart) return;
-  chart.data = chartData.value;
-  chart.update();
-};
-
-// Init the chart on component mount
-// Provide basic values
-onMounted(() => {
-  const ctx = document.getElementById("symptoms-per-day") as HTMLCanvasElement;
-  if (!ctx) return;
-
-  chart = new Chart(ctx, {
-    type: "bar",
-    data: chartData.value,
-    options: {
-      plugins: { legend: { display: false } },
-      scales: {
-        y: {
-          beginAtZero: true,
-          ticks: {
-            stepSize: 1,
-          },
-        },
-        x: {
-          type: "category",
-        },
+const chartOptions: ChartOptions<"bar"> = {
+  responsive: true,
+  plugins: {
+    legend: {
+      display: false,
+    },
+  },
+  scales: {
+    y: {
+      beginAtZero: true,
+      ticks: {
+        stepSize: 1,
       },
     },
-  });
-
-  watch(symptoms, updateChart, { deep: true });
-});
+    x: {
+      type: "category",
+    },
+  },
+  parsing: false,
+  elements: { bar: { backgroundColor: "lightgreen" } },
+};
 </script>
