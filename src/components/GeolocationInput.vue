@@ -22,10 +22,7 @@
   </form>
   <p v-if="anyError">{{ anyError }}</p>
   <p v-if="anyLoading">Finding location...</p>
-  <div v-if="location">
-    <p>Latitude: {{ location.latitude }}</p>
-    <p>Longitude: {{ location.longitude }}</p>
-  </div>
+  <pre v-if="location">{{ location }}</pre>
 </template>
 
 <script setup lang="ts">

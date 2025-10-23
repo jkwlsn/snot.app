@@ -1,26 +1,5 @@
 <template>
-  <table>
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Type</th>
-        <th>Timestamp</th>
-        <th>Latitude</th>
-        <th>Longitude</th>
-        <th>Pollen Data</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="symptom in symptoms" :key="symptom.id">
-        <td>{{ symptom.id }}</td>
-        <td>{{ symptom.type }}</td>
-        <td>{{ symptom.timestamp.toLocaleString() }}</td>
-        <td>{{ symptom.location.latitude }}</td>
-        <td>{{ symptom.location.longitude }}</td>
-        <td>{{ JSON.stringify(symptom.pollenData) }}</td>
-      </tr>
-    </tbody>
-  </table>
+  <pre> {{ symptoms }} </pre>
 </template>
 
 <script setup lang="ts">
