@@ -11,21 +11,15 @@ import {
   Tooltip,
   Legend,
   BarElement,
-  CategoryScale,
   LinearScale,
+  TimeScale,
 } from "chart.js";
+import "chartjs-adapter-date-fns";
 import { useSymptoms } from "../composables/useSymptoms";
 import { computed } from "vue";
 import type { ChartData, ChartDataset, ChartOptions } from "chart.js";
 
-ChartJS.register(
-  Title,
-  Tooltip,
-  Legend,
-  BarElement,
-  CategoryScale,
-  LinearScale,
-);
+ChartJS.register(Title, Tooltip, Legend, BarElement, LinearScale, TimeScale);
 
 // Load symptom data
 const { symptoms } = useSymptoms();
@@ -36,7 +30,7 @@ const symptomsPerDayChartData = computed<
 >(() => {
   const symptomsPerDay = new Map<string, number>();
   for (const symptom of symptoms.value) {
-    const date = new Date(symptom.timestamp).toLocaleDateString();
+    const date = new Date(symptom.timestamp).toISOString().split("T")[0];
     symptomsPerDay.set(date, (symptomsPerDay.get(date) || 0) + 1);
   }
 
@@ -48,7 +42,6 @@ const symptomsPerDayChartData = computed<
   );
 
   return {
-    labels: dataPoints.map((point) => point.x),
     datasets: [
       {
         label: "Symptoms per day",
@@ -73,10 +66,12 @@ const chartOptions: ChartOptions<"bar"> = {
       },
     },
     x: {
-      type: "category",
+      type: "time",
+      time: {
+        unit: "day",
+      },
     },
   },
-  parsing: false,
   elements: { bar: { backgroundColor: "lightgreen" } },
 };
 </script>
