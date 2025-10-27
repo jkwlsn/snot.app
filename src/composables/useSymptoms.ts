@@ -9,11 +9,11 @@ export function useSymptoms() {
   let liveSubscription: { unsubscribe: () => void } | null = null;
 
   const subscribeToLiveQuery = () => {
-    liveSubscription = liveQuery(() => db.symptoms.toArray()).subscribe(
-      (updatedSymptoms: SymptomRecord[]) => {
-        symptoms.value = updatedSymptoms;
-      },
-    );
+    liveSubscription = liveQuery(() =>
+      db.symptoms.orderBy("timestamp").toArray(),
+    ).subscribe((updatedSymptoms: SymptomRecord[]) => {
+      symptoms.value = updatedSymptoms;
+    });
   };
 
   onMounted(() => {
