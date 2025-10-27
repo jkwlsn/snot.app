@@ -1,5 +1,5 @@
 import { type PollenData, type PollenRecord } from "../interfaces/Pollen";
-import { type PollenLevels } from "../interfaces/PollenTypes";
+import { type PollenLevels, type PollenType } from "../interfaces/PollenTypes";
 
 // This function takes a PollenData object, defined in /interfaces/pollen,
 // and a number representing the pollen level threshold for the filter.
@@ -32,6 +32,34 @@ export function filterPollenByLevel(
     })
     .filter((record): record is PollenRecord => record !== null);
   //filter out all records which contain null pollen level
+
+  return {
+    ...pollenData,
+    records: newRecords,
+  };
+}
+
+export function filterPollenByType(
+  pollenData: PollenData,
+  selectedPollenTypes: PollenType[],
+): PollenData {
+  const newRecords = pollenData.records
+    .map((record) => {
+      const newLevels: PollenLevels = { ...record.levels };
+      let isSelectedPollenType = false;
+
+      for (const pollenType in newLevels) {
+        if (!selectedPollenTypes.includes(pollenType)) {
+          newLevels[pollenType] = null;
+        }
+        if (newLevels[pollenType] !== null) {
+          isSelectedPollenType = true;
+        }
+      }
+
+      return isSelectedPollenType ? { ...record, levels: newLevels } : null;
+    })
+    .filter((record): record is PollenRecord => record !== null);
 
   return {
     ...pollenData,
