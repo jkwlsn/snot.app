@@ -24,6 +24,14 @@
       :options="symptomsPerTotalChartOptions"
     />
   </div>
+  <div>
+    <ChartDoughnut
+      id="pollenTypes"
+      chartTitle="Pollen Types in Symptoms"
+      :data="pollenTypeChartData"
+      :options="pollenTypeChartOptions"
+    />
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -36,6 +44,7 @@ import { useSymptomsPerTotalChart } from "../composables/useSymptomsPerTotalChar
 import { computed } from "vue";
 import type { SymptomRecord } from "../interfaces/SymptomRecord";
 import { aggregateSymptomsByDay } from "../utils/chartDataAggregator";
+import { usePollenTypePerTotalChart } from "../composables/usePollenTypePerTotalChart";
 
 // Load symptom data
 const { symptoms } = useSymptoms();
@@ -62,4 +71,7 @@ const {
   data: symptomsPerTotalChartData,
   options: symptomsPerTotalChartOptions,
 } = useSymptomsPerTotalChart(symptoms);
+
+const { data: pollenTypeChartData, options: pollenTypeChartOptions } =
+  usePollenTypePerTotalChart(symptoms);
 </script>
