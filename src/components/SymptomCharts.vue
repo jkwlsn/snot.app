@@ -16,13 +16,23 @@
       :options="averageSeverityChartOptions"
     />
   </div>
+  <div>
+    <ChartDoughnut
+      id="symptomsPerTotal"
+      chartTitle="Symptom Type Distribution"
+      :data="symptomsPerTotalChartData"
+      :options="symptomsPerTotalChartOptions"
+    />
+  </div>
 </template>
 
 <script setup lang="ts">
 import ChartBarPerDay from "./ChartBarPerDay.vue";
+import ChartDoughnut from "./ChartDoughnut.vue";
 import { useSymptoms } from "../composables/useSymptoms";
 import { useSymptomsPerDayChart } from "../composables/useSymptomsPerDayChart";
 import { useAverageSeverityChart } from "../composables/useAverageSeverityChart";
+import { useSymptomsPerTotalChart } from "../composables/useSymptomsPerTotalChart";
 import { computed } from "vue";
 import type { SymptomRecord } from "../interfaces/SymptomRecord";
 import { aggregateSymptomsByDay } from "../utils/chartDataAggregator";
@@ -30,7 +40,7 @@ import { aggregateSymptomsByDay } from "../utils/chartDataAggregator";
 // Load symptom data
 const { symptoms } = useSymptoms();
 
-// Pre-aggregate symptoms by day once in the parent component
+// Pre-aggregate symptoms by day once in the parent component (for bar charts)
 const symptomsGroupedByDay = computed<Map<string, SymptomRecord[]>>(() => {
   return aggregateSymptomsByDay(
     symptoms.value,
@@ -46,4 +56,10 @@ const { data: symptomsPerDayChartData, options: symptomsPerDayChartOptions } =
   useSymptomsPerDayChart(symptomsGroupedByDay);
 const { data: averageSeverityChartData, options: averageSeverityChartOptions } =
   useAverageSeverityChart(symptomsGroupedByDay);
+
+// Load data and options for symptom type doughnut chart
+const {
+  data: symptomsPerTotalChartData,
+  options: symptomsPerTotalChartOptions,
+} = useSymptomsPerTotalChart(symptoms);
 </script>

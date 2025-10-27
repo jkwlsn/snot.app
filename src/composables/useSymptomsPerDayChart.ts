@@ -1,12 +1,12 @@
-import { Ref } from "vue";
+import type { Ref } from "vue";
 import type { ChartOptions } from "chart.js";
 import type { SymptomRecord } from "../interfaces/SymptomRecord";
-import { useChartDataTransformer } from "./useChartDataTransformer";
+import { useDailyBarChart } from "./useDailyBarChart";
 
 export function useSymptomsPerDayChart(
   symptomsGroupedByDay: Ref<Map<string, SymptomRecord[]>>,
 ) {
-  const data = useChartDataTransformer(
+  const data = useDailyBarChart(
     symptomsGroupedByDay,
     (symptomsForDay) => symptomsForDay.length,
     "Symptoms per day",
@@ -15,7 +15,7 @@ export function useSymptomsPerDayChart(
 
   const options: ChartOptions<"bar"> = {
     responsive: true,
-    animation: false, // Disable animations for performance
+    animation: false,
     plugins: {
       legend: {
         display: false,
