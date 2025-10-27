@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint": "npx eslint src; npx vue-tsc --noEmit"
   },
   "dependencies": {
     "dexie": "^4.2.0",
