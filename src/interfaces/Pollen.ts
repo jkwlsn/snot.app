@@ -1,5 +1,5 @@
-import { Coordinates } from "./Coordinates";
-import { PollenLevels } from "./PollenTypes";
+import type { Coordinates } from "./Coordinates";
+import type { PollenLevels } from "./PollenTypes";
 
 export interface PollenRecord {
   timestamp: Date;
@@ -7,5 +7,5 @@ export interface PollenRecord {
 }
 
 export interface PollenData extends Coordinates {
-  records: PollenRecord[];
+  records: readonly PollenRecord[];
 }
