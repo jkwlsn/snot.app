@@ -50,6 +50,7 @@ import { usefilterPollenDataByTimeframe } from "../utils/filterPollenLevelsByTim
 import { createTimeframe } from "../utils/createTimeframe";
 import type { Coordinates } from "../interfaces/Coordinates";
 import type { SymptomRecord } from "../interfaces/SymptomRecord";
+import type { PollenRecord } from "../interfaces/Pollen";
 
 const { data: openMeteoApiData, openMeteoFetch } = useOpenMeteoAPI();
 const apiData = computed(() => openMeteoApiData.value);
@@ -61,7 +62,7 @@ const location = computed<Coordinates | null>(() => geolocation.location.value);
 
 const selectedSymptoms = ref<string[]>([]);
 
-const symptomSeverity = defineModel({ default: 1 });
+const symptomSeverity = defineModel<number>({ default: 1 });
 
 const noLocation = computed(() => geolocation.location.value === null);
 
@@ -70,7 +71,7 @@ const symptomObjects = SYMPTOM_LIST.map((symptom: string, index: number) => ({
   name: symptom,
 }));
 
-const clearForm = () => {
+const clearForm = (): void => {
   selectedSymptoms.value = [];
   symptomSeverity.value = 1;
 };
@@ -102,8 +103,10 @@ const createSymptomRecord = (symptom: string): SymptomRecord | null => {
           latitude: location.value.latitude,
           longitude: location.value.longitude,
         }),
-      ),
-      pollenData: JSON.parse(JSON.stringify(currentPollenData)),
+      ) as Coordinates,
+      pollenData: JSON.parse(
+        JSON.stringify(currentPollenData),
+      ) as PollenRecord[],
     };
   } catch (error: any) {
     console.error(error);
@@ -127,7 +130,7 @@ const addSymptom = async (symptom: string): Promise<void> => {
   }
 };
 
-const logSymptoms = async () => {
+const logSymptoms = async (): Promise<void> => {
   try {
     await Promise.all(selectedSymptoms.value.map(addSymptom));
     clearForm();
@@ -140,7 +143,7 @@ watch(
   location,
   (newLocation) => {
     if (newLocation) {
-      openMeteoFetch({
+      void openMeteoFetch({
         latitude: newLocation.latitude,
         longitude: newLocation.longitude,
       });

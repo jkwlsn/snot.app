@@ -54,7 +54,7 @@ const success = (position: GeolocationPosition): void => {
     longitude: position.coords.longitude,
   };
   location.value = newLocation;
-  reverseGeocode(newLocation);
+  void reverseGeocode(newLocation);
 
   isLoading.value = false;
   gpsButtonText.value = "Refresh GPS";

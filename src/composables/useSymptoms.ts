@@ -8,7 +8,7 @@ export function useSymptoms() {
 
   let liveSubscription: { unsubscribe: () => void } | null = null;
 
-  const subscribeToLiveQuery = () => {
+  const subscribeToLiveQuery = (): void => {
     liveSubscription = liveQuery(() =>
       db.symptoms.orderBy("timestamp").toArray(),
     ).subscribe((updatedSymptoms: SymptomRecord[]) => {

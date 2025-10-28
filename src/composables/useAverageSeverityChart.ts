@@ -5,7 +5,10 @@ import type { SymptomRecord } from "../interfaces/SymptomRecord";
 
 export function useAverageSeverityChart(
   symptomsGroupedByDay: Ref<Map<string, SymptomRecord[]>>,
-) {
+): {
+  data: Ref<ChartData<"bar", { x: number; y: number }[]>>;
+  options: ChartOptions<"bar">;
+} {
   const data = useDailyBarChart(
     symptomsGroupedByDay,
     (symptomsForDay) => {
