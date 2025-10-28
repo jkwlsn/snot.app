@@ -45,12 +45,14 @@ const forwardGeocode = async (query: string): Promise<Coordinates | null> => {
     }
   } catch (error: unknown) {
     if (error instanceof Error) {
+      console.error("forwardGeocode failed:", error.message);
       nominatimState.value.errorMessage = error.message;
-      return null;
     } else {
-      nominatimState.value.errorMessage = "An unknown error occurred";
-      return null;
+      const unknownErrorString = String(error);
+      console.error("forwardGeocode failed: An unknown error occurred.", unknownErrorString);
+      nominatimState.value.errorMessage = `An unknown error occurred: ${unknownErrorString}`;
     }
+    return null;
   } finally {
     nominatimState.value.isLoading = false;
   }
@@ -81,12 +83,14 @@ const reverseGeocode = async (
     return `${district}, ${city}, ${country}`;
   } catch (error: unknown) {
     if (error instanceof Error) {
+      console.error("reverseGeocode failed:", error.message);
       nominatimState.value.errorMessage = error.message;
-      return null;
     } else {
-      nominatimState.value.errorMessage = "An unknown error occurred";
-      return null;
+      const unknownErrorString = String(error);
+      console.error("reverseGeocode failed: An unknown error occurred.", unknownErrorString);
+      nominatimState.value.errorMessage = `An unknown error occurred: ${unknownErrorString}`;
     }
+    return null;
   } finally {
     nominatimState.value.isLoading = false;
   }

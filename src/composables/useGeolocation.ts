@@ -30,7 +30,12 @@ const submitTextLocation = async (): Promise<void> => {
     }
     location.value = newLocation;
   } catch (error: unknown) {
-    console.error(error as Error);
+    if (error instanceof Error) {
+      console.error("submitTextLocation failed:", error.message);
+    } else {
+      const unknownErrorString = String(error);
+      console.error("submitTextLocation failed: An unknown error occurred.", unknownErrorString);
+    }
   }
   gpsButtonText.value = "Use GPS";
 };

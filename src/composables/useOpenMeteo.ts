@@ -76,7 +76,14 @@ async function openMeteoFetch(parameters: OpenMeteoAPIParams): Promise<void> {
       records: records,
     };
   } catch (error: unknown) {
-    openMeteoError.value = error as Error;
+    if (error instanceof Error) {
+      console.error("openMeteoFetch failed:", error.message);
+      openMeteoError.value = error;
+    } else {
+      const unknownErrorString = String(error);
+      console.error("openMeteoFetch failed: An unknown error occurred.", unknownErrorString);
+      openMeteoError.value = new Error(`An unknown error occurred: ${unknownErrorString}`);
+    }
     openMeteoData.value = null;
   } finally {
     openMeteoLoading.value = false;

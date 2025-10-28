@@ -108,8 +108,16 @@ const createSymptomRecord = (symptom: string): SymptomRecord | null => {
         JSON.stringify(currentPollenData),
       ) as PollenRecord[],
     };
-  } catch (error: any) {
-    console.error(error);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("createSymptomRecord failed:", error.message);
+    } else {
+      const unknownErrorString = String(error);
+      console.error(
+        "createSymptomRecord failed: An unknown error occurred.",
+        unknownErrorString,
+      );
+    }
     return null;
   }
 };
@@ -125,8 +133,16 @@ const addSymptom = async (symptom: string): Promise<void> => {
     if (newSymptomRecord === null) return;
 
     await db.symptoms.add(newSymptomRecord);
-  } catch (error: any) {
-    console.error("Failed to add symptom:", error);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("addSymptom failed:", error.message);
+    } else {
+      const unknownErrorString = String(error);
+      console.error(
+        "addSymptom failed: An unknown error occurred.",
+        unknownErrorString,
+      );
+    }
   }
 };
 
@@ -134,8 +150,16 @@ const logSymptoms = async (): Promise<void> => {
   try {
     await Promise.all(selectedSymptoms.value.map(addSymptom));
     clearForm();
-  } catch (error: any) {
-    console.error(error);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("logSymptoms failed:", error.message);
+    } else {
+      const unknownErrorString = String(error);
+      console.error(
+        "logSymptoms failed: An unknown error occurred.",
+        unknownErrorString,
+      );
+    }
   }
 };
 
