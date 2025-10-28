@@ -1,4 +1,5 @@
 import { computed, type Ref } from "vue";
+import type { PollenRecord } from '../interfaces/Pollen'
 import type { ChartData, ChartDataset, ChartOptions } from "chart.js";
 import { OPENMETEO_POLLEN_TYPES } from "../config";
 import { useOpenMeteoAPI } from "./useOpenMeteo";
@@ -23,7 +24,7 @@ export function usePollenChartData(minLevel: Ref<number>, selectedPollenTypes: R
       return 0;
     }
     let maxLevel = 0;
-    rawPollenData.value.records.forEach((record) => {
+    rawPollenData.value.records.forEach((record: PollenRecord) => {
       OPENMETEO_POLLEN_TYPES.forEach((pollenType) => {
         const level = record.levels[pollenType];
         if (typeof level === "number" && level > maxLevel) {
@@ -61,7 +62,7 @@ export function usePollenChartData(minLevel: Ref<number>, selectedPollenTypes: R
     OPENMETEO_POLLEN_TYPES.forEach((pollenType, index) => {
       const dataPoints: { x: number; y: number }[] = [];
 
-      filteredPollenData.records.forEach((record) => {
+      filteredPollenData.records.forEach((record: PollenRecord) => {
         const level = record.levels[pollenType];
         if (level !== null) {
           const timestamp = record.timestamp.getTime();
