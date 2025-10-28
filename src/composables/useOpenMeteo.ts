@@ -63,7 +63,8 @@ async function openMeteoFetch(parameters: OpenMeteoAPIParams): Promise<void> {
     const records: PollenRecord[] = timeArray.map((time, index) => {
       const levels: PollenLevels = {} as PollenLevels;
       OPENMETEO_POLLEN_TYPES.forEach((pollenType: PollenType, pollenIndex: number) => {
-        levels[pollenType] = getVariableData(pollenIndex)[index] as number | null;
+        const value = getVariableData(pollenIndex)[index];
+        levels[pollenType] = (typeof value === 'number' && !isNaN(value)) ? value : null;
       });
       return { timestamp: time, levels };
     });
