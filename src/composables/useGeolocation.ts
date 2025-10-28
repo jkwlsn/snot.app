@@ -1,4 +1,4 @@
-import { ref, computed } from "vue";
+import { ref, computed, type Ref } from "vue";
 import { useNominatim } from "./useNominatim";
 import type { Coordinates } from "../interfaces/Coordinates";
 
@@ -30,7 +30,12 @@ const submitTextLocation = async (): Promise<void> => {
     }
     location.value = newLocation;
   } catch (error: unknown) {
-    console.error(error as Error);
+    if (error instanceof Error) {
+      console.error("submitTextLocation failed:", error.message);
+    } else {
+      const unknownErrorString = String(error);
+      console.error("submitTextLocation failed: An unknown error occurred.", unknownErrorString);
+    }
   }
   gpsButtonText.value = "Use GPS";
 };
@@ -54,7 +59,7 @@ const success = (position: GeolocationPosition): void => {
     longitude: position.coords.longitude,
   };
   location.value = newLocation;
-  reverseGeocode(newLocation);
+  void reverseGeocode(newLocation);
 
   isLoading.value = false;
   gpsButtonText.value = "Refresh GPS";
@@ -82,7 +87,15 @@ const error = (err: GeolocationPositionError): void => {
   }
 };
 
-export const useGeolocation = () => {
+export const useGeolocation = (): {
+  gpsButtonText: Ref<"Use GPS" | "Refresh GPS">;
+  textLocation: Ref<string>;
+  location: Ref<Coordinates | null>;
+  anyLoading: Ref<boolean>;
+  anyError: Ref<string | null>;
+  submitTextLocation: () => Promise<void>;
+  requestGeolocation: () => void;
+} => {
   return {
     gpsButtonText,
     textLocation,

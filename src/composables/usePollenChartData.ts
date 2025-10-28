@@ -1,16 +1,19 @@
 import { computed, type Ref } from "vue";
-import type { PollenRecord } from '../interfaces/Pollen'
-import type { ChartData, ChartDataset, ChartOptions } from "chart.js";
 import { OPENMETEO_POLLEN_TYPES } from "../config";
 import { useOpenMeteoAPI } from "./useOpenMeteo";
-import { chartColors } from "../utils/chartColors";
 import {
   filterPollenByLevel,
   filterPollenByType,
 } from "../composables/usePollenFilters";
+import { chartColors } from "../utils/chartColors";
+import type { ChartData, ChartDataset, ChartOptions } from "chart.js";
 import type { PollenType } from "../interfaces/PollenTypes";
+import type { PollenRecord } from "../interfaces/Pollen";
 
-export function usePollenChartData(minLevel: Ref<number>, selectedPollenTypes: Ref<PollenType[]>): {
+export function usePollenChartData(
+  minLevel: Ref<number>,
+  selectedPollenTypes: Ref<PollenType[]>,
+): {
   chartData: Ref<ChartData<"line">>;
   chartOptions: Ref<ChartOptions<"line">>;
   loading: Ref<boolean>;

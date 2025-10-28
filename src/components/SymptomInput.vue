@@ -45,11 +45,12 @@ import { ref, computed, watch } from "vue";
 import { SYMPTOM_LIST } from "../config";
 import { db } from "../db";
 import { useGeolocation } from "../composables/useGeolocation";
-import { Coordinates } from "../interfaces/Coordinates";
-import { SymptomRecord } from "../interfaces/SymptomRecord";
 import { useOpenMeteoAPI } from "../composables/useOpenMeteo";
 import { usefilterPollenDataByTimeframe } from "../utils/filterPollenLevelsByTimeframe";
 import { createTimeframe } from "../utils/createTimeframe";
+import type { Coordinates } from "../interfaces/Coordinates";
+import type { SymptomRecord } from "../interfaces/SymptomRecord";
+import type { PollenRecord } from "../interfaces/Pollen";
 
 const { data: openMeteoApiData, openMeteoFetch } = useOpenMeteoAPI();
 const apiData = computed(() => openMeteoApiData.value);
@@ -61,7 +62,7 @@ const location = computed<Coordinates | null>(() => geolocation.location.value);
 
 const selectedSymptoms = ref<string[]>([]);
 
-const symptomSeverity = defineModel({ default: 1 });
+const symptomSeverity = defineModel<number>({ default: 1 });
 
 const noLocation = computed(() => geolocation.location.value === null);
 
@@ -70,7 +71,7 @@ const symptomObjects = SYMPTOM_LIST.map((symptom: string, index: number) => ({
   name: symptom,
 }));
 
-const clearForm = () => {
+const clearForm = (): void => {
   selectedSymptoms.value = [];
   symptomSeverity.value = 1;
 };
@@ -102,11 +103,21 @@ const createSymptomRecord = (symptom: string): SymptomRecord | null => {
           latitude: location.value.latitude,
           longitude: location.value.longitude,
         }),
-      ),
-      pollenData: JSON.parse(JSON.stringify(currentPollenData)),
+      ) as Coordinates,
+      pollenData: JSON.parse(
+        JSON.stringify(currentPollenData),
+      ) as PollenRecord[],
     };
-  } catch (error: any) {
-    console.error(error);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("createSymptomRecord failed:", error.message);
+    } else {
+      const unknownErrorString = String(error);
+      console.error(
+        "createSymptomRecord failed: An unknown error occurred.",
+        unknownErrorString,
+      );
+    }
     return null;
   }
 };
@@ -122,17 +133,33 @@ const addSymptom = async (symptom: string): Promise<void> => {
     if (newSymptomRecord === null) return;
 
     await db.symptoms.add(newSymptomRecord);
-  } catch (error: any) {
-    console.error("Failed to add symptom:", error);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("addSymptom failed:", error.message);
+    } else {
+      const unknownErrorString = String(error);
+      console.error(
+        "addSymptom failed: An unknown error occurred.",
+        unknownErrorString,
+      );
+    }
   }
 };
 
-const logSymptoms = async () => {
+const logSymptoms = async (): Promise<void> => {
   try {
     await Promise.all(selectedSymptoms.value.map(addSymptom));
     clearForm();
-  } catch (error: any) {
-    console.error(error);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("logSymptoms failed:", error.message);
+    } else {
+      const unknownErrorString = String(error);
+      console.error(
+        "logSymptoms failed: An unknown error occurred.",
+        unknownErrorString,
+      );
+    }
   }
 };
 
@@ -140,7 +167,7 @@ watch(
   location,
   (newLocation) => {
     if (newLocation) {
-      openMeteoFetch({
+      void openMeteoFetch({
         latitude: newLocation.latitude,
         longitude: newLocation.longitude,
       });

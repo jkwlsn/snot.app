@@ -28,14 +28,14 @@
     <pre>{{ JSON.stringify(filteredLevels, null, 2) }}</pre>
   </section>
 </template>
+
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { useOpenMeteoAPI } from "../composables/useOpenMeteo";
-import { usefilterPollenDataByTimeframe } from "../utils/filterPollenLevelsByTimeframe";
-import { PollenData } from "../interfaces/Pollen";
-import { Timeframe } from "../interfaces/Timeframe";
 import { formatDateForInput } from "../utils/formatDateForInput";
+import { usefilterPollenDataByTimeframe } from "../utils/filterPollenLevelsByTimeframe";
 import { parseLocalDatetimeToUTC } from "../utils/parseLocalDatetimeToUTC";
+import type { Timeframe } from "../interfaces/Timeframe";
 
 const { data } = useOpenMeteoAPI();
 const filter = usefilterPollenDataByTimeframe();
@@ -54,7 +54,7 @@ const filteredLevels = computed(() => {
   if (!data.value?.records) {
     return [];
   }
-  const rawPollenData = data.value?.records;
+  const rawPollenData = data.value.records;
 
   const timeframe: Timeframe = {
     startTime: parseLocalDatetimeToUTC(startTime.value),

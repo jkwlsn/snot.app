@@ -1,13 +1,13 @@
-import { ref, readonly } from "vue";
+import { ref, readonly, type Ref } from "vue";
 import { fetchWeatherApi } from "openmeteo";
-import type { OpenMeteoAPIParams } from "../interfaces/openmeteoapiparams";
 import {
   OPENMETEO_API_PARAMS,
   OPENMETEO_API_URL,
   OPENMETEO_POLLEN_TYPES,
 } from "../config";
-import { PollenData, PollenRecord } from "../interfaces/Pollen";
-import { PollenType, PollenLevels } from "../interfaces/PollenTypes";
+import type { PollenData, PollenRecord } from "../interfaces/Pollen";
+import type { PollenType, PollenLevels } from "../interfaces/PollenTypes";
+import type { OpenMeteoAPIParams } from "../interfaces/openmeteoapiparams";
 
 const openMeteoData = ref<PollenData | null>(null);
 const openMeteoLoading = ref<boolean>(false);
@@ -43,8 +43,10 @@ async function openMeteoFetch(parameters: OpenMeteoAPIParams): Promise<void> {
       throw new Error("Hourly data is unavailable");
     }
 
-    const getVariableData = (index: number) =>
-      hourly.variables(index)?.valuesArray() ?? [];
+    const getVariableData = (index: number): number[] => {
+      const values = hourly.variables(index)?.valuesArray();
+      return values ? Array.from(values) : [];
+    };
 
     // Attributes for timezone and location
     const startTime = Number(hourly.time());
@@ -62,10 +64,13 @@ async function openMeteoFetch(parameters: OpenMeteoAPIParams): Promise<void> {
 
     const records: PollenRecord[] = timeArray.map((time, index) => {
       const levels: PollenLevels = {} as PollenLevels;
-      OPENMETEO_POLLEN_TYPES.forEach((pollenType: PollenType, pollenIndex: number) => {
-        const value = getVariableData(pollenIndex)[index];
-        levels[pollenType] = (typeof value === 'number' && !isNaN(value)) ? value : null;
-      });
+      OPENMETEO_POLLEN_TYPES.forEach(
+        (pollenType: PollenType, pollenIndex: number) => {
+          const value = getVariableData(pollenIndex)[index];
+          levels[pollenType] =
+            typeof value === "number" && !isNaN(value) ? value : null;
+        },
+      );
       return { timestamp: time, levels };
     });
 
@@ -76,14 +81,31 @@ async function openMeteoFetch(parameters: OpenMeteoAPIParams): Promise<void> {
       records: records,
     };
   } catch (error: unknown) {
-    openMeteoError.value = error as Error;
+    if (error instanceof Error) {
+      console.error("openMeteoFetch failed:", error.message);
+      openMeteoError.value = error;
+    } else {
+      const unknownErrorString = String(error);
+      console.error(
+        "openMeteoFetch failed: An unknown error occurred.",
+        unknownErrorString,
+      );
+      openMeteoError.value = new Error(
+        `An unknown error occurred: ${unknownErrorString}`,
+      );
+    }
     openMeteoData.value = null;
   } finally {
     openMeteoLoading.value = false;
   }
 }
 
-export function useOpenMeteoAPI() {
+export function useOpenMeteoAPI(): {
+  data: Readonly<Ref<PollenData | null>>;
+  loading: Readonly<Ref<boolean>>;
+  error: Readonly<Ref<Error | null>>;
+  openMeteoFetch: (parameters: OpenMeteoAPIParams) => Promise<void>;
+} {
   return {
     data: readonly(openMeteoData),
     loading: readonly(openMeteoLoading),

@@ -11,14 +11,14 @@ function filterPollenDataByTimeframe(
   const startTimestamp = zeroUTCMinutes(timeframe.startTime).getTime();
   const endTimestamp = timeframe.endTime.getTime();
 
-  for (let i = 0; i < data.length; i++) {
-    const currentTimestamp = data[i].timestamp.getTime();
+  for (const record of data) {
+    const currentTimestamp = record.timestamp.getTime();
 
     if (
       currentTimestamp >= startTimestamp &&
       currentTimestamp <= endTimestamp
     ) {
-      result.push(data[i]);
+      result.push(record);
     } else if (currentTimestamp > endTimestamp) {
       break;
     }
@@ -27,7 +27,12 @@ function filterPollenDataByTimeframe(
   return result;
 }
 
-export const usefilterPollenDataByTimeframe = () => {
+export const usefilterPollenDataByTimeframe = (): {
+  filterPollenDataByTimeframe: (
+    data: readonly PollenRecord[],
+    timeframe: Timeframe,
+  ) => PollenRecord[];
+} => {
   return {
     filterPollenDataByTimeframe,
   };

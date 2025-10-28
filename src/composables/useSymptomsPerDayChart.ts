@@ -1,11 +1,11 @@
 import type { Ref } from "vue";
-import type { ChartOptions } from "chart.js";
+import type { ChartOptions, ChartData } from "chart.js";
 import type { SymptomRecord } from "../interfaces/SymptomRecord";
 import { useDailyBarChart } from "./useDailyBarChart";
 
 export function useSymptomsPerDayChart(
   symptomsGroupedByDay: Ref<Map<string, SymptomRecord[]>>,
-) {
+): { data: Ref<ChartData<"bar", { x: number; y: number }[]>>; options: ChartOptions<"bar"> } {
   const data = useDailyBarChart(
     symptomsGroupedByDay,
     (symptomsForDay) => symptomsForDay.length,

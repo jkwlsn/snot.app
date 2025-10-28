@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { ref, type Ref } from "vue";
 import type { Coordinates } from "../interfaces/Coordinates";
 import type { NominatimForwardResult } from "../interfaces/NominatimForwardResult";
 import type { NominatimReverseResult } from "../interfaces/NominatimReverseResult";
@@ -45,12 +45,14 @@ const forwardGeocode = async (query: string): Promise<Coordinates | null> => {
     }
   } catch (error: unknown) {
     if (error instanceof Error) {
+      console.error("forwardGeocode failed:", error.message);
       nominatimState.value.errorMessage = error.message;
-      return null;
     } else {
-      nominatimState.value.errorMessage = "An unknown error occurred";
-      return null;
+      const unknownErrorString = String(error);
+      console.error("forwardGeocode failed: An unknown error occurred.", unknownErrorString);
+      nominatimState.value.errorMessage = `An unknown error occurred: ${unknownErrorString}`;
     }
+    return null;
   } finally {
     nominatimState.value.isLoading = false;
   }
@@ -81,18 +83,24 @@ const reverseGeocode = async (
     return `${district}, ${city}, ${country}`;
   } catch (error: unknown) {
     if (error instanceof Error) {
+      console.error("reverseGeocode failed:", error.message);
       nominatimState.value.errorMessage = error.message;
-      return null;
     } else {
-      nominatimState.value.errorMessage = "An unknown error occurred";
-      return null;
+      const unknownErrorString = String(error);
+      console.error("reverseGeocode failed: An unknown error occurred.", unknownErrorString);
+      nominatimState.value.errorMessage = `An unknown error occurred: ${unknownErrorString}`;
     }
+    return null;
   } finally {
     nominatimState.value.isLoading = false;
   }
 };
 
-export function useNominatim() {
+export function useNominatim(): {
+  nominatimState: Ref<NominatimState>;
+  forwardGeocode: (query: string) => Promise<Coordinates | null>;
+  reverseGeocode: (coordinates: Coordinates) => Promise<string | null>;
+} {
   return {
     nominatimState,
     forwardGeocode,
