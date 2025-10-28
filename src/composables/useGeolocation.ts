@@ -82,7 +82,15 @@ const error = (err: GeolocationPositionError): void => {
   }
 };
 
-export const useGeolocation = () => {
+export const useGeolocation = (): {
+  gpsButtonText: Ref<"Use GPS" | "Refresh GPS">;
+  textLocation: Ref<string>;
+  location: Ref<Coordinates | null>;
+  anyLoading: Ref<boolean>;
+  anyError: Ref<string | null>;
+  submitTextLocation: () => Promise<void>;
+  requestGeolocation: () => void;
+} => {
   return {
     gpsButtonText,
     textLocation,

@@ -3,7 +3,7 @@ import { db } from "../db";
 import { liveQuery } from "dexie";
 import type { SymptomRecord } from "../interfaces/SymptomRecord";
 
-export function useSymptoms() {
+export function useSymptoms(): { symptoms: Ref<SymptomRecord[]> } {
   const symptoms = ref<SymptomRecord[]>([]);
 
   let liveSubscription: { unsubscribe: () => void } | null = null;

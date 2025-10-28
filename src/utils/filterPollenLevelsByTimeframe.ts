@@ -27,7 +27,12 @@ function filterPollenDataByTimeframe(
   return result;
 }
 
-export const usefilterPollenDataByTimeframe = () => {
+export const usefilterPollenDataByTimeframe = (): {
+  filterPollenDataByTimeframe: (
+    data: readonly PollenRecord[],
+    timeframe: Timeframe,
+  ) => PollenRecord[];
+} => {
   return {
     filterPollenDataByTimeframe,
   };

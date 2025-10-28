@@ -92,7 +92,11 @@ const reverseGeocode = async (
   }
 };
 
-export function useNominatim() {
+export function useNominatim(): {
+  nominatimState: Ref<NominatimState>;
+  forwardGeocode: (query: string) => Promise<Coordinates | null>;
+  reverseGeocode: (coordinates: Coordinates) => Promise<string | null>;
+} {
   return {
     nominatimState,
     forwardGeocode,

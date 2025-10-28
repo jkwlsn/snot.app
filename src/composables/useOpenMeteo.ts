@@ -83,7 +83,12 @@ async function openMeteoFetch(parameters: OpenMeteoAPIParams): Promise<void> {
   }
 }
 
-export function useOpenMeteoAPI() {
+export function useOpenMeteoAPI(): {
+  data: Readonly<Ref<PollenData | null>>;
+  loading: Readonly<Ref<boolean>>;
+  error: Readonly<Ref<Error | null>>;
+  openMeteoFetch: (parameters: OpenMeteoAPIParams) => Promise<void>;
+} {
   return {
     data: readonly(openMeteoData),
     loading: readonly(openMeteoLoading),

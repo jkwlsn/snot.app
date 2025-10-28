@@ -10,7 +10,10 @@ import type { ChartData, ChartDataset, ChartOptions } from "chart.js";
 import type { PollenType } from "../interfaces/PollenTypes";
 import type { PollenRecord } from "../interfaces/Pollen";
 
-export function usePollenChartData(minLevel: Ref<number>, selectedPollenTypes: Ref<PollenType[]>): {
+export function usePollenChartData(
+  minLevel: Ref<number>,
+  selectedPollenTypes: Ref<PollenType[]>,
+): {
   chartData: Ref<ChartData<"line">>;
   chartOptions: Ref<ChartOptions<"line">>;
   loading: Ref<boolean>;

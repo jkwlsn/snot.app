@@ -5,7 +5,7 @@ import { useDailyBarChart } from "./useDailyBarChart";
 
 export function useSymptomsPerDayChart(
   symptomsGroupedByDay: Ref<Map<string, SymptomRecord[]>>,
-) {
+): { data: Ref<ChartData<"bar", { x: number; y: number }[]>>; options: ChartOptions<"bar"> } {
   const data = useDailyBarChart(
     symptomsGroupedByDay,
     (symptomsForDay) => symptomsForDay.length,
