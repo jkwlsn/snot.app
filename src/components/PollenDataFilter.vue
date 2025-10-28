@@ -54,7 +54,7 @@ const filteredLevels = computed(() => {
   if (!data.value?.records) {
     return [];
   }
-  const rawPollenData = data.value?.records;
+  const rawPollenData = data.value.records;
 
   const timeframe: Timeframe = {
     startTime: parseLocalDatetimeToUTC(startTime.value),
