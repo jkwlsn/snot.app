@@ -64,10 +64,13 @@ async function openMeteoFetch(parameters: OpenMeteoAPIParams): Promise<void> {
 
     const records: PollenRecord[] = timeArray.map((time, index) => {
       const levels: PollenLevels = {} as PollenLevels;
-      OPENMETEO_POLLEN_TYPES.forEach((pollenType: PollenType, pollenIndex: number) => {
-        const value = getVariableData(pollenIndex)[index];
-        levels[pollenType] = (typeof value === 'number' && !isNaN(value)) ? value : null;
-      });
+      OPENMETEO_POLLEN_TYPES.forEach(
+        (pollenType: PollenType, pollenIndex: number) => {
+          const value = getVariableData(pollenIndex)[index];
+          levels[pollenType] =
+            typeof value === "number" && !isNaN(value) ? value : null;
+        },
+      );
       return { timestamp: time, levels };
     });
 
@@ -83,8 +86,13 @@ async function openMeteoFetch(parameters: OpenMeteoAPIParams): Promise<void> {
       openMeteoError.value = error;
     } else {
       const unknownErrorString = String(error);
-      console.error("openMeteoFetch failed: An unknown error occurred.", unknownErrorString);
-      openMeteoError.value = new Error(`An unknown error occurred: ${unknownErrorString}`);
+      console.error(
+        "openMeteoFetch failed: An unknown error occurred.",
+        unknownErrorString,
+      );
+      openMeteoError.value = new Error(
+        `An unknown error occurred: ${unknownErrorString}`,
+      );
     }
     openMeteoData.value = null;
   } finally {
