@@ -43,8 +43,10 @@ async function openMeteoFetch(parameters: OpenMeteoAPIParams): Promise<void> {
       throw new Error("Hourly data is unavailable");
     }
 
-    const getVariableData = (index: number) =>
-      hourly.variables(index)?.valuesArray() ?? [];
+    const getVariableData = (index: number): number[] => {
+      const values = hourly.variables(index)?.valuesArray();
+      return values ? Array.from(values) : [];
+    };
 
     // Attributes for timezone and location
     const startTime = Number(hourly.time());
