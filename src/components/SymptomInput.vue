@@ -45,11 +45,11 @@ import { ref, computed, watch } from "vue";
 import { SYMPTOM_LIST } from "../config";
 import { db } from "../db";
 import { useGeolocation } from "../composables/useGeolocation";
-import { Coordinates } from "../interfaces/Coordinates";
-import { SymptomRecord } from "../interfaces/SymptomRecord";
 import { useOpenMeteoAPI } from "../composables/useOpenMeteo";
 import { usefilterPollenDataByTimeframe } from "../utils/filterPollenLevelsByTimeframe";
 import { createTimeframe } from "../utils/createTimeframe";
+import type { Coordinates } from "../interfaces/Coordinates";
+import type { SymptomRecord } from "../interfaces/SymptomRecord";
 
 const { data: openMeteoApiData, openMeteoFetch } = useOpenMeteoAPI();
 const apiData = computed(() => openMeteoApiData.value);

@@ -1,5 +1,5 @@
 import type { Ref } from "vue";
-import type { ChartOptions } from "chart.js";
+import type { ChartOptions, ChartData } from "chart.js";
 import type { SymptomRecord } from "../interfaces/SymptomRecord";
 import { useDailyBarChart } from "./useDailyBarChart";
 

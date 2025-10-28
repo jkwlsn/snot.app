@@ -1,4 +1,4 @@
-import { ref, computed } from "vue";
+import { ref, computed, type Ref } from "vue";
 import { useNominatim } from "./useNominatim";
 import type { Coordinates } from "../interfaces/Coordinates";
 

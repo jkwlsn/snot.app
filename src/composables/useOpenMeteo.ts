@@ -1,13 +1,13 @@
-import { ref, readonly } from "vue";
+import { ref, readonly, type Ref } from "vue";
 import { fetchWeatherApi } from "openmeteo";
-import type { OpenMeteoAPIParams } from "../interfaces/openmeteoapiparams";
 import {
   OPENMETEO_API_PARAMS,
   OPENMETEO_API_URL,
   OPENMETEO_POLLEN_TYPES,
 } from "../config";
-import { PollenData, PollenRecord } from "../interfaces/Pollen";
-import { PollenType, PollenLevels } from "../interfaces/PollenTypes";
+import type { PollenData, PollenRecord } from "../interfaces/Pollen";
+import type { PollenType, PollenLevels } from "../interfaces/PollenTypes";
+import type { OpenMeteoAPIParams } from "../interfaces/openmeteoapiparams";
 
 const openMeteoData = ref<PollenData | null>(null);
 const openMeteoLoading = ref<boolean>(false);

@@ -1,5 +1,5 @@
 import type { Coordinates } from "./Coordinates";
-import { PollenData, PollenRecord } from "./Pollen";
+import type { PollenRecord } from "./Pollen";
 
 interface SymptomRecord {
   id?: number;

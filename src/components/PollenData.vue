@@ -24,10 +24,9 @@
 
 <script setup lang="ts">
 import { computed, watch } from "vue";
-import { useOpenMeteoAPI } from "../composables/useOpenMeteo";
 import { useGeolocation } from "../composables/useGeolocation";
-import { OpenMeteoAPIParams } from "../interfaces/openmeteoapiparams";
-
+import { useOpenMeteoAPI } from "../composables/useOpenMeteo";
+import type { OpenMeteoAPIParams } from "../interfaces/openmeteoapiparams";
 
 const { textLocation, location } = useGeolocation();
 const { data, loading, error, openMeteoFetch } = useOpenMeteoAPI();
@@ -43,7 +42,7 @@ watch(
         data.value.latitude !== newLocation.latitude ||
         data.value.longitude !== newLocation.longitude
       ) {
-        openMeteoFetch({
+        void openMeteoFetch({
           latitude: newLocation.latitude,
           longitude: newLocation.longitude,
         } as OpenMeteoAPIParams);

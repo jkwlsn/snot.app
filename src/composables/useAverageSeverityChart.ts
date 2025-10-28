@@ -1,7 +1,7 @@
 import { type Ref } from "vue";
-import type { ChartOptions } from "chart.js";
-import type { SymptomRecord } from "../interfaces/SymptomRecord";
 import { useDailyBarChart } from "./useDailyBarChart";
+import type { ChartOptions, ChartData } from "chart.js";
+import type { SymptomRecord } from "../interfaces/SymptomRecord";
 
 export function useAverageSeverityChart(
   symptomsGroupedByDay: Ref<Map<string, SymptomRecord[]>>,

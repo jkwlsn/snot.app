@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { ref, type Ref } from "vue";
 import type { Coordinates } from "../interfaces/Coordinates";
 import type { NominatimForwardResult } from "../interfaces/NominatimForwardResult";
 import type { NominatimReverseResult } from "../interfaces/NominatimReverseResult";

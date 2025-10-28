@@ -1,7 +1,7 @@
-import { ref, onMounted, onBeforeUnmount } from "vue";
+import { ref, onMounted, onBeforeUnmount, type Ref } from "vue";
 import { db } from "../db";
 import { liveQuery } from "dexie";
-import { SymptomRecord } from "../interfaces/SymptomRecord";
+import type { SymptomRecord } from "../interfaces/SymptomRecord";
 
 export function useSymptoms() {
   const symptoms = ref<SymptomRecord[]>([]);
