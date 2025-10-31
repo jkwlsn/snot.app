@@ -7,7 +7,12 @@
         type="range"
         id="minLevel"
         :value="minLevel"
-        @input="emit('update:minLevel', parseInt(($event.target as HTMLInputElement).value))"
+        @input="
+          emit(
+            'update:minLevel',
+            parseInt(($event.target as HTMLInputElement).value),
+          )
+        "
         min="0"
         :max="maxPollenLevel + 1"
       />
@@ -45,16 +50,19 @@ const emit = defineEmits<{
   (e: "update:selectedPollenTypes", value: PollenType[]): void;
 }>();
 
-const updateSelected = (event: Event) => {
+const updateSelected = (event: Event): void => {
   const target = event.target as HTMLInputElement;
-  const pollenType = target.value as PollenType;
+  const pollenType = target.value;
 
   if (target.checked) {
-    emit("update:selectedPollenTypes", [...props.selectedPollenTypes, pollenType]);
+    emit("update:selectedPollenTypes", [
+      ...props.selectedPollenTypes,
+      pollenType,
+    ]);
   } else {
     emit(
       "update:selectedPollenTypes",
-      props.selectedPollenTypes.filter((type) => type !== pollenType)
+      props.selectedPollenTypes.filter((type) => type !== pollenType),
     );
   }
 };

@@ -11,7 +11,7 @@
           {{ location?.latitude }}, Longitude: {{ location?.longitude }})
         </strong>
       </div>
-      <p v-if="data.records.length == 0">No data</p>
+      <p v-if="data?.records.length == 0">No data</p>
       <pre v-else>{{ JSON.stringify(data?.records, null, 2) }}</pre>
     </div>
   </section>

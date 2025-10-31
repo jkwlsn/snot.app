@@ -27,6 +27,8 @@ import type { PollenType } from "../interfaces/PollenTypes";
 const minLevel = ref(0);
 const selectedPollenTypes = ref<PollenType[]>([]);
 
-const { chartData, chartOptions, loading, error, maxPollenLevel } =
-  usePollenChartData(minLevel, selectedPollenTypes);
+const { chartData, chartOptions, maxPollenLevel } = usePollenChartData(
+  minLevel,
+  selectedPollenTypes,
+);
 </script>
