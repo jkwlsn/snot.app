@@ -1,8 +1,9 @@
 <template>
-  <form @submit.prevent>
-    <fieldset>
-      <div v-if="noLocation">Set location to log symptoms</div>
-      <div v-else>
+  <section>
+    <h2>Symptom input</h2>
+    <p v-if="noLocation">Set location to log symptoms</p>
+    <form v-else @submit.prevent>
+      <fieldset>
         <label>Select symptoms:</label>
         <div v-for="symptom in symptomObjects" :key="symptom.id">
           <input
@@ -35,9 +36,9 @@
         <button :disabled="selectedSymptoms.length === 0" @click="logSymptoms">
           Log Symptom
         </button>
-      </div>
-    </fieldset>
-  </form>
+      </fieldset>
+    </form>
+  </section>
 </template>
 
 <script setup lang="ts">

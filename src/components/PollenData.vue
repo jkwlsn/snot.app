@@ -1,23 +1,18 @@
 <template>
   <section>
     <h2>Pollen Data</h2>
-    <div v-if="noLocation">
-      <p>Set location to view pollen data</p>
-    </div>
+    <p v-if="noLocation">Set location to view pollen data</p>
     <div v-else>
-      <div v-if="loading">
-        <p>Loading data...</p>
-      </div>
-      <div v-else-if="error">
-        <p>Error: {{ error.message }}</p>
-      </div>
+      <p v-if="loading">Loading data...</p>
+      <p v-else-if="error">Error: {{ error.message }}</p>
       <div v-else-if="data">
-        <h3>
+        <strong>
           Showing data for: {{ textLocation }} (Latitude:
           {{ location?.latitude }}, Longitude: {{ location?.longitude }})
-        </h3>
-        <pre>{{ JSON.stringify(data.records, null, 2) }}</pre>
+        </strong>
       </div>
+      <p v-if="data.records.length == 0">No data</p>
+      <pre v-else>{{ JSON.stringify(data?.records, null, 2) }}</pre>
     </div>
   </section>
 </template>

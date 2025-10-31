@@ -1,37 +1,39 @@
 <template>
-  <h2>Symptom History</h2>
-  <div>
-    <ChartBarPerDay
-      id="symptomsPerDay"
-      chartTitle="Symptoms Per Day"
-      :data="symptomsPerDayChartData"
-      :options="symptomsPerDayChartOptions"
-    />
-  </div>
-  <div>
-    <ChartBarPerDay
-      id="averageSeverity"
-      chartTitle="Average Symptom Severity Per Day"
-      :data="averageSeverityChartData"
-      :options="averageSeverityChartOptions"
-    />
-  </div>
-  <div>
-    <ChartDoughnut
-      id="symptomsPerTotal"
-      chartTitle="Symptom Type Distribution"
-      :data="symptomsPerTotalChartData"
-      :options="symptomsPerTotalChartOptions"
-    />
-  </div>
-  <div>
-    <ChartDoughnut
-      id="pollenTypes"
-      chartTitle="Pollen Types in Symptoms"
-      :data="pollenTypeChartData"
-      :options="pollenTypeChartOptions"
-    />
-  </div>
+  <section>
+    <h2>Symptom History</h2>
+    <div>
+      <ChartBarPerDay
+        id="symptomsPerDay"
+        chartTitle="Symptoms Per Day"
+        :data="symptomsPerDayChartData"
+        :options="symptomsPerDayChartOptions"
+      />
+    </div>
+    <div>
+      <ChartBarPerDay
+        id="averageSeverity"
+        chartTitle="Average Symptom Severity Per Day"
+        :data="averageSeverityChartData"
+        :options="averageSeverityChartOptions"
+      />
+    </div>
+    <div>
+      <ChartDoughnut
+        id="symptomsPerTotal"
+        chartTitle="Symptom Type Distribution"
+        :data="symptomsPerTotalChartData"
+        :options="symptomsPerTotalChartOptions"
+      />
+    </div>
+    <div>
+      <ChartDoughnut
+        id="pollenTypes"
+        chartTitle="Pollen Types in Symptoms"
+        :data="pollenTypeChartData"
+        :options="pollenTypeChartOptions"
+      />
+    </div>
+  </section>
 </template>
 
 <script setup lang="ts">
