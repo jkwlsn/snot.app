@@ -25,7 +25,8 @@
         </div>
       </fieldset>
     </form>
-    <pre>{{ JSON.stringify(filteredLevels, null, 2) }}</pre>
+    <p v-if="filteredLevels.length == 0">No data</p>
+    <pre v-else>{{ JSON.stringify(filteredLevels, null, 2) }}</pre>
   </section>
 </template>
 

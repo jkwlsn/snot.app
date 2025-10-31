@@ -1,5 +1,6 @@
 <template>
-  <pre> {{ symptoms }} </pre>
+  <p v-if="symptoms.length == 0">No data</p>
+  <pre v-else> {{ symptoms }} </pre>
 </template>
 
 <script setup lang="ts">

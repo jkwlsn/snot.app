@@ -36,22 +36,13 @@ const { chartData, chartOptions, loading, error, maxPollenLevel } = usePollenCha
         </div>
       </div>
     </fieldset>
-    <div v-if="loading">
-      <p>Loading pollen data for chart...</p>
-    </div>
-    <div v-else-if="error">
-      <p>Error loading pollen data: {{ error.message }}</p>
-    </div>
-    <div v-else-if="chartData.datasets.length > 0">
+    <div>
       <ChartLine
         id="pollen-forecast-chart"
         chartTitle="Pollen Levels Over Time"
         :data="chartData"
         :options="chartOptions"
       />
-    </div>
-    <div v-else>
-      <p>No pollen data available.</p>
     </div>
   </section>
 </template>

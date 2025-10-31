@@ -16,8 +16,9 @@
           Showing data for: {{ textLocation }} (Latitude:
           {{ location?.latitude }}, Longitude: {{ location?.longitude }})
         </h3>
-        <pre>{{ JSON.stringify(data.records, null, 2) }}</pre>
       </div>
+      <p v-if="data.records.length == 0">No data</p>
+      <pre v-else>{{ JSON.stringify(data?.records, null, 2) }}</pre>
     </div>
   </section>
 </template>
