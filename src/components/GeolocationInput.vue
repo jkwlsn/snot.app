@@ -1,10 +1,11 @@
 <template>
   <form @submit.prevent>
-    <fieldset>
+    <fieldset class="flex">
       <button
         id="requestGeolocation"
         :disabled="anyLoading"
         @click="requestGeolocation"
+        class="p-2 me-4 bg-purple-300 rounded-lg hover:bg-purple-500 hover:text-white hover:cursor-pointer"
       >
         {{ gpsButtonText }}
       </button>
@@ -14,7 +15,11 @@
         placeholder="e.g., Paris, France..."
         v-model="textLocation"
       />
-      <button :disabled="anyLoading" @click="submitTextLocation">
+      <button
+        :disabled="anyLoading"
+        @click="submitTextLocation"
+        class="p-2 ms-4 bg-purple-300 rounded-lg hover:bg-purple-500 hover:text-white hover:cursor-pointer"
+      >
         Find my location
       </button>
     </fieldset>
