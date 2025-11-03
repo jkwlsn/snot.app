@@ -15,6 +15,7 @@
         "
         min="0"
         :max="maxPollenLevel + 1"
+        class="w-full cursor-pointer appearance-none bg-gradient-to-r from-yellow-200 to-red-500 rounded-lg"
       />
     </div>
     <div>
@@ -31,7 +32,7 @@
           />
           <label
             :for="pollenType"
-            class="cursor-pointer p-2 me-2 rounded-lg ring-2 ring-purple-400 hover:bg-purple-400 hover:text-white peer-checked:text-white peer-checked:bg-purple-400 peer-checked:hover:bg-purple-500 peer-checked:hover:ring-purple-500"
+            class="cursor-pointer inline-block p-2 rounded-lg ring-2 ring-purple-400 hover:bg-purple-400 hover:text-white peer-checked:text-white peer-checked:bg-purple-400 peer-checked:hover:bg-purple-500 peer-checked:hover:ring-purple-500"
           >
             {{ pollenType.replace("_pollen", "").replace("_", " ") }}
           </label>
