@@ -2,17 +2,23 @@
   <p v-if="noLocation">Set location to log symptoms</p>
   <form v-else @submit.prevent>
     <fieldset>
-      <label>Select symptoms:</label>
-      <div v-for="symptom in symptomObjects" :key="symptom.id">
-        <input
-          :id="`symptom-${symptom.id}`"
-          v-model="selectedSymptoms"
-          :value="symptom.name"
-          type="checkbox"
-        />
-        <label :for="`symptom-${symptom.id}`">
-          {{ symptom.name }}
-        </label>
+      <legend>Select symptoms:</legend>
+      <div class="flex flex-row flex-wrap justify-center gap-2 mb-4">
+        <div v-for="symptom in symptomObjects" :key="symptom.id">
+          <input
+            :id="`symptom-${symptom.id}`"
+            v-model="selectedSymptoms"
+            :value="symptom.name"
+            type="checkbox"
+            class="peer sr-only"
+          />
+          <label
+            :for="`symptom-${symptom.id}`"
+            class="cursor-pointer p-2 me-2 rounded-lg ring-2 ring-purple-400 hover:bg-purple-400 hover:text-white peer-checked:text-white peer-checked:bg-purple-400 peer-checked:hover:bg-purple-500 peer-checked:hover:ring-purple-500"
+          >
+            {{ symptom.name }}
+          </label>
+        </div>
       </div>
       <div>
         <label for="severity"
