@@ -14,7 +14,7 @@
           />
           <label
             :for="`symptom-${symptom.id}`"
-            class="cursor-pointer p-2 me-2 rounded-lg ring-2 ring-purple-400 hover:bg-purple-400 hover:text-white peer-checked:text-white peer-checked:bg-purple-400 peer-checked:hover:bg-purple-500 peer-checked:hover:ring-purple-500"
+            class="cursor-pointer inline-block p-2 rounded-lg ring-2 ring-purple-400 hover:bg-purple-400 hover:text-white peer-checked:text-white peer-checked:bg-purple-400 peer-checked:hover:bg-purple-500 peer-checked:hover:ring-purple-500"
           >
             {{ symptom.name }}
           </label>
@@ -32,6 +32,7 @@
           max="5"
           v-model.number="symptomSeverity"
           step="1"
+          class="w-full cursor-pointer appearance-none bg-gradient-to-r from-yellow-200 to-red-500 rounded-lg"
         />
       </div>
       <button
