@@ -24,7 +24,11 @@
     </fieldset>
   </form>
   <p v-if="filteredLevels.length == 0">No data</p>
-  <pre v-else>{{ JSON.stringify(filteredLevels, null, 2) }}</pre>
+  <Pre v-else
+    ><template #content>{{
+      JSON.stringify(filteredLevels, null, 2)
+    }}</template></Pre
+  >
 </template>
 
 <script setup lang="ts">
@@ -33,6 +37,7 @@ import { useOpenMeteoAPI } from "../composables/useOpenMeteo";
 import { formatDateForInput } from "../utils/formatDateForInput";
 import { usefilterPollenDataByTimeframe } from "../utils/filterPollenLevelsByTimeframe";
 import { parseLocalDatetimeToUTC } from "../utils/parseLocalDatetimeToUTC";
+import Pre from "./Pre.vue";
 import type { Timeframe } from "../interfaces/Timeframe";
 
 const { data } = useOpenMeteoAPI();
