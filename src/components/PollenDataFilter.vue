@@ -1,33 +1,30 @@
 <template>
-  <section>
-    <h2>Filter Pollen Data</h2>
-    <form>
-      <fieldset>
-        <div>
-          <label for="startTimeInput">Start</label>
-          <input
-            type="datetime-local"
-            id="startTimeInput"
-            v-model="startTime"
-            :min="minimumLocalDatetime"
-            step="3600"
-          />
-        </div>
-        <div>
-          <label for="endTimeInput">End</label>
-          <input
-            type="datetime-local"
-            id="endTimeInput"
-            v-model="endTime"
-            :min="startTime"
-            step="3600"
-          />
-        </div>
-      </fieldset>
-    </form>
-    <p v-if="filteredLevels.length == 0">No data</p>
-    <pre v-else>{{ JSON.stringify(filteredLevels, null, 2) }}</pre>
-  </section>
+  <form>
+    <fieldset>
+      <div>
+        <label for="startTimeInput">Start</label>
+        <input
+          type="datetime-local"
+          id="startTimeInput"
+          v-model="startTime"
+          :min="minimumLocalDatetime"
+          step="3600"
+        />
+      </div>
+      <div>
+        <label for="endTimeInput">End</label>
+        <input
+          type="datetime-local"
+          id="endTimeInput"
+          v-model="endTime"
+          :min="startTime"
+          step="3600"
+        />
+      </div>
+    </fieldset>
+  </form>
+  <p v-if="filteredLevels.length == 0">No data</p>
+  <pre v-else>{{ JSON.stringify(filteredLevels, null, 2) }}</pre>
 </template>
 
 <script setup lang="ts">

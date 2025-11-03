@@ -1,6 +1,4 @@
 <template>
-  <section>
-    <h2>Symptom input</h2>
     <p v-if="noLocation">Set location to log symptoms</p>
     <form v-else @submit.prevent>
       <fieldset>
@@ -38,7 +36,6 @@
         </button>
       </fieldset>
     </form>
-  </section>
 </template>
 
 <script setup lang="ts">
