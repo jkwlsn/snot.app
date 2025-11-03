@@ -7,17 +7,50 @@ import PollenData from "./components/PollenData.vue";
 import PollenDataFilter from "./components/PollenDataFilter.vue";
 import PollenForecastChart from "./components/PollenForecastChart.vue";
 import About from "./components/About.vue";
+import Card from "./components/Card.vue";
 </script>
 
 <template>
-  <About />
-  <GeolocationInput />
-  <PollenForecastChart />
-  <SymptomInput />
-  <SymptomCharts />
-  <SymptomLog />
-  <PollenDataFilter />
-  <PollenData />
+  <Card>
+    <template #content>
+      <About />
+    </template>
+  </Card>
+  <Card>
+    <template #content>
+      <GeolocationInput />
+    </template>
+  </Card>
+  <Card>
+    <template #content>
+      <PollenForecastChart />
+    </template>
+  </Card>
+  <Card>
+    <template #content>
+      <SymptomInput />
+    </template>
+  </Card>
+  <Card>
+    <template #content>
+      <SymptomCharts />
+    </template>
+  </Card>
+  <Card>
+    <template #content>
+      <SymptomLog />
+    </template>
+  </Card>
+  <Card>
+    <template #content>
+      <PollenDataFilter />
+    </template>
+  </Card>
+  <Card>
+    <template #content>
+      <PollenData />
+    </template>
+  </Card>
 </template>
 
 <style scoped></style>
