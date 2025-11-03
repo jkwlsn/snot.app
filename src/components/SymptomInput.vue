@@ -1,41 +1,49 @@
 <template>
-    <p v-if="noLocation">Set location to log symptoms</p>
-    <form v-else @submit.prevent>
-      <fieldset>
-        <label>Select symptoms:</label>
-        <div v-for="symptom in symptomObjects" :key="symptom.id">
-          <input
-            :id="`symptom-${symptom.id}`"
-            v-model="selectedSymptoms"
-            :value="symptom.name"
-            type="checkbox"
-          />
-          <label :for="`symptom-${symptom.id}`">
-            {{ symptom.name }}
-          </label>
-        </div>
-        <div>
-          <label for="severity"
-            >Severity: <output>{{ symptomSeverity }}</output></label
-          >
-          <input
-            type="range"
-            id="severity"
-            name="severity"
-            min="1"
-            max="5"
-            v-model.number="symptomSeverity"
-            step="1"
-          />
-        </div>
-        <button :disabled="selectedSymptoms.length === 0" @click="clearForm">
-          Clear all
-        </button>
-        <button :disabled="selectedSymptoms.length === 0" @click="logSymptoms">
-          Log Symptom
-        </button>
-      </fieldset>
-    </form>
+  <p v-if="noLocation">Set location to log symptoms</p>
+  <form v-else @submit.prevent>
+    <fieldset>
+      <label>Select symptoms:</label>
+      <div v-for="symptom in symptomObjects" :key="symptom.id">
+        <input
+          :id="`symptom-${symptom.id}`"
+          v-model="selectedSymptoms"
+          :value="symptom.name"
+          type="checkbox"
+        />
+        <label :for="`symptom-${symptom.id}`">
+          {{ symptom.name }}
+        </label>
+      </div>
+      <div>
+        <label for="severity"
+          >Severity: <output>{{ symptomSeverity }}</output></label
+        >
+        <input
+          type="range"
+          id="severity"
+          name="severity"
+          min="1"
+          max="5"
+          v-model.number="symptomSeverity"
+          step="1"
+        />
+      </div>
+      <button
+        :disabled="selectedSymptoms.length === 0"
+        @click="clearForm"
+        class="p-2 me-4 bg-purple-300 rounded-lg hover:bg-purple-500 hover:text-white hover:cursor-pointer"
+      >
+        Clear all
+      </button>
+      <button
+        :disabled="selectedSymptoms.length === 0"
+        @click="logSymptoms"
+        class="p-2 me-4 bg-purple-300 rounded-lg hover:bg-purple-500 hover:text-white hover:cursor-pointer"
+      >
+        Log Symptom
+      </button>
+    </fieldset>
+  </form>
 </template>
 
 <script setup lang="ts">
