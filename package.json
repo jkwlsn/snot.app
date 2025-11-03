@@ -10,10 +10,12 @@
     "lint": "npx eslint src; npx vue-tsc --noEmit"
   },
   "dependencies": {
+    "@tailwindcss/vite": "^4.1.16",
     "chart.js": "^4.5.1",
     "chartjs-adapter-date-fns": "^3.0.0",
     "dexie": "^4.2.0",
     "openmeteo": "^1.2.1",
+    "tailwindcss": "^4.1.16",
     "vue": "^3.5.22",
     "vue-chartjs": "^5.3.2"
   },
