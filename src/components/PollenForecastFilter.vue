@@ -19,17 +19,23 @@
     </div>
     <div>
       <label>Pollen Types:</label>
-      <div v-for="pollenType in OPENMETEO_POLLEN_TYPES" :key="pollenType">
-        <input
-          type="checkbox"
-          :id="pollenType"
-          :value="pollenType"
-          :checked="selectedPollenTypes.includes(pollenType)"
-          @change="updateSelected"
-        />
-        <label :for="pollenType">{{
-          pollenType.replace("_pollen", "").replace("_", " ")
-        }}</label>
+      <div class="flex flex-row flex-wrap justify-center gap-2 mb-4">
+        <div v-for="pollenType in OPENMETEO_POLLEN_TYPES" :key="pollenType">
+          <input
+            type="checkbox"
+            :id="pollenType"
+            :value="pollenType"
+            :checked="selectedPollenTypes.includes(pollenType)"
+            @change="updateSelected"
+            class="peer sr-only"
+          />
+          <label
+            :for="pollenType"
+            class="cursor-pointer p-2 me-2 rounded-lg ring-2 ring-purple-400 hover:bg-purple-400 hover:text-white peer-checked:text-white peer-checked:bg-purple-400 peer-checked:hover:bg-purple-500 peer-checked:hover:ring-purple-500"
+          >
+            {{ pollenType.replace("_pollen", "").replace("_", " ") }}
+          </label>
+        </div>
       </div>
     </div>
   </fieldset>
