@@ -1,20 +1,17 @@
 <template>
-  <section>
-    <h2>Pollen Forecast Chart</h2>
-    <PollenForecastFilter
-      v-model:min-level="minLevel"
-      v-model:selected-pollen-types="selectedPollenTypes"
-      :max-pollen-level="maxPollenLevel"
+  <PollenForecastFilter
+    v-model:min-level="minLevel"
+    v-model:selected-pollen-types="selectedPollenTypes"
+    :max-pollen-level="maxPollenLevel"
+  />
+  <div>
+    <ChartLine
+      id="pollen-forecast-chart"
+      chartTitle="Pollen Levels Over Time"
+      :data="chartData"
+      :options="chartOptions"
     />
-    <div>
-      <ChartLine
-        id="pollen-forecast-chart"
-        chartTitle="Pollen Levels Over Time"
-        :data="chartData"
-        :options="chartOptions"
-      />
-    </div>
-  </section>
+  </div>
 </template>
 
 <script setup lang="ts">

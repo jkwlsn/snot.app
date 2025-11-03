@@ -1,9 +1,6 @@
 <template>
-  <section>
-    <h2>Symptom History</h2>
-    <p v-if="symptoms.length == 0">No data</p>
-    <pre v-else>{{ symptoms }}</pre>
-  </section>
+  <p v-if="symptoms.length == 0">No data</p>
+  <pre v-else>{{ symptoms }}</pre>
 </template>
 
 <script setup lang="ts">

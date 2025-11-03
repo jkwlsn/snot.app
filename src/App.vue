@@ -17,36 +17,43 @@ import Card from "./components/Card.vue";
     </template>
   </Card>
   <Card>
+    <template #title>Your location</template>
     <template #content>
       <GeolocationInput />
     </template>
   </Card>
   <Card>
+    <template #title>Pollen forecast filters</template>
     <template #content>
       <PollenForecastChart />
     </template>
   </Card>
   <Card>
+    <template #title>Symptom input</template>
     <template #content>
       <SymptomInput />
     </template>
   </Card>
   <Card>
+    <template #title>Symptom charts</template>
     <template #content>
       <SymptomCharts />
     </template>
   </Card>
   <Card>
+    <template #title>Symptom log</template>
     <template #content>
       <SymptomLog />
     </template>
   </Card>
   <Card>
+    <template #title>Pollen forecast data filter</template>
     <template #content>
       <PollenDataFilter />
     </template>
   </Card>
   <Card>
+    <template #title>Pollen forecast data</template>
     <template #content>
       <PollenData />
     </template>

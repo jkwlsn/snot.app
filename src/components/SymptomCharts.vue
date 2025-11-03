@@ -1,6 +1,4 @@
 <template>
-  <section>
-    <h2>Symptom History</h2>
     <div>
       <ChartBarPerDay
         id="symptomsPerDay"
@@ -33,7 +31,6 @@
         :options="pollenTypeChartOptions"
       />
     </div>
-  </section>
 </template>
 
 <script setup lang="ts">
