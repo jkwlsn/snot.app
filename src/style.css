@@ -1,1 +1,51 @@
 @import "tailwindcss";
+
+@layer base {
+  html {
+    @apply font-mono;
+  }
+
+  a {
+    @apply underline font-bold;
+  }
+
+  h1 {
+    @apply font-bold text-center mb-3;
+  }
+
+  h2 {
+    @apply font-bold text-center mb-3;
+  }
+
+  h3 {
+    @apply font-bold text-center mb-3;
+  }
+
+  h4 {
+    @apply font-bold text-center mb-3;
+  }
+
+  legend {
+    @apply font-bold text-center mb-3;
+  }
+
+  p {
+    @apply mb-3;
+  }
+
+  ol {
+    @apply mb-3 ms-3;
+  }
+
+  ul {
+    @apply mb-3 ms-3;
+  }
+
+  ul {
+    @apply list-disc list-inside;
+  }
+
+  ol {
+    @apply list-decimal list-inside;
+  }
+}
