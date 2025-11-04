@@ -1,24 +1,30 @@
 <template>
   <form>
-    <fieldset>
-      <div>
-        <label for="startTimeInput">Start</label>
+    <fieldset class="flex flex-col gap-2 sm:flex-row justify-center">
+      <div
+        class="flex flex-col p-2 rounded-xl sm:rounded-s-xl sm:rounded-e-none bg-white"
+      >
+        <label for="startTimeInput" class="text-xs font-bold">From:</label>
         <input
           type="datetime-local"
           id="startTimeInput"
           v-model="startTime"
           :min="minimumLocalDatetime"
           step="3600"
+          class="hover:cursor-pointer"
         />
       </div>
-      <div>
-        <label for="endTimeInput">End</label>
+      <div
+        class="flex flex-col p-2 rounded-xl sm:rounded-s-none sm:rounded-e-xl bg-white"
+      >
+        <label for="endTimeInput" class="text-xs font-bold">To:</label>
         <input
           type="datetime-local"
           id="endTimeInput"
           v-model="endTime"
           :min="startTime"
           step="3600"
+          class="hover:cursor-pointer"
         />
       </div>
     </fieldset>
