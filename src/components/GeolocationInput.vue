@@ -14,11 +14,12 @@
         type="text"
         placeholder="e.g., Paris, France..."
         v-model="textLocation"
+        class="flex-grow ps-2 bg-white rounded-s-lg"
       />
       <button
         :disabled="anyLoading"
         @click="submitTextLocation"
-        class="p-2 ms-4 bg-purple-300 rounded-lg hover:bg-purple-500 hover:text-white hover:cursor-pointer"
+        class="p-2 bg-purple-300 rounded-e-lg hover:bg-purple-500 hover:text-white hover:cursor-pointer"
       >
         Find my location
       </button>
