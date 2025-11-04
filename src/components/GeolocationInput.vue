@@ -26,11 +26,15 @@
   </form>
   <p v-if="anyError">{{ anyError }}</p>
   <p v-if="anyLoading">Finding location...</p>
-  <pre v-if="location">{{ location }}</pre>
+  <Pre v-if="location"
+    ><template #content>{{ location }}</template></Pre
+  >
 </template>
 
 <script setup lang="ts">
 import { useGeolocation } from "../composables/useGeolocation";
+import Pre from "./Pre.vue";
+
 const {
   gpsButtonText,
   textLocation,

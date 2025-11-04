@@ -10,7 +10,11 @@
       </strong>
     </div>
     <p v-if="data?.records.length == 0">No data</p>
-    <pre v-else>{{ JSON.stringify(data?.records, null, 2) }}</pre>
+    <Pre v-else
+      ><template #content>{{
+        JSON.stringify(data?.records, null, 2)
+      }}</template></Pre
+    >
   </div>
 </template>
 
@@ -18,6 +22,7 @@
 import { computed, watch } from "vue";
 import { useGeolocation } from "../composables/useGeolocation";
 import { useOpenMeteoAPI } from "../composables/useOpenMeteo";
+import Pre from "./Pre.vue";
 import type { OpenMeteoAPIParams } from "../interfaces/openmeteoapiparams";
 
 const { textLocation, location } = useGeolocation();
