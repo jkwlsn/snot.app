@@ -1,6 +1,11 @@
 <template>
   <h3>{{ props.chartTitle }}</h3>
-  <p v-if="props.data.datasets.length == 0">No data</p>
+  <p
+    v-if="props.data.datasets[0].data.length == 0"
+    class="text-center text-gray-500 mt-2"
+  >
+    No data
+  </p>
   <Doughnut v-else :id="props.id" :options="props.options" :data="props.data" />
 </template>
 
