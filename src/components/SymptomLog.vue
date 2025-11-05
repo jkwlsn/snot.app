@@ -1,13 +1,10 @@
 <template>
-  <p v-if="symptoms.length == 0">No data</p>
-  <Pre v-else
-    ><template #content>{{ symptoms }}</template></Pre
-  >
+  <SymptomDataTable :records="symptoms" />
 </template>
 
 <script setup lang="ts">
 import { useSymptoms } from "../composables/useSymptoms";
-import Pre from "./Pre.vue";
+import SymptomDataTable from "./SymptomDataTable.vue";
 
 const { symptoms } = useSymptoms();
 </script>
