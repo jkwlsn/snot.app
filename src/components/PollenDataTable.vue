@@ -5,10 +5,11 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import type { PollenRecord } from "../interfaces/Pollen";
+import type { DataTableRow } from "../interfaces/DataTable";
 import DataTable from "./DataTable.vue";
 
 const props = defineProps<{
-  records: PollenRecord[];
+  records: readonly PollenRecord[];
   pollenTypes: string[];
 }>();
 
@@ -21,7 +22,7 @@ const headers = computed(() => [
 
 const transformedRecords = computed(() =>
   props.records.map((record) => {
-    const transformedRecord: Record<string, any> = {
+    const transformedRecord: DataTableRow = {
       Time: new Date(record.timestamp).toLocaleString(),
     };
     for (const pollenType of props.pollenTypes) {

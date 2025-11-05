@@ -36,8 +36,10 @@
 </template>
 
 <script setup lang="ts">
+import type { DataTableRow } from "../interfaces/DataTable";
+
 defineProps<{
-  records: Record<string, any>[];
+  records: DataTableRow[];
   headers: string[];
 }>();
 </script>
