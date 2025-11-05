@@ -4,17 +4,11 @@
     <p v-if="loading">Loading data...</p>
     <p v-else-if="error">Error: {{ error.message }}</p>
     <div v-else-if="data">
-      <strong>
-        Showing data for: {{ textLocation }} (Latitude:
-        {{ location?.latitude }}, Longitude: {{ location?.longitude }})
-      </strong>
+      <PollenDataTable
+        :records="data.records"
+        :pollen-types="OPENMETEO_POLLEN_TYPES"
+      />
     </div>
-    <p v-if="data?.records.length == 0">No data</p>
-    <Pre v-else
-      ><template #content>{{
-        JSON.stringify(data?.records, null, 2)
-      }}</template></Pre
-    >
   </div>
 </template>
 
@@ -22,10 +16,11 @@
 import { computed, watch } from "vue";
 import { useGeolocation } from "../composables/useGeolocation";
 import { useOpenMeteoAPI } from "../composables/useOpenMeteo";
-import Pre from "./Pre.vue";
 import type { OpenMeteoAPIParams } from "../interfaces/openmeteoapiparams";
+import { OPENMETEO_POLLEN_TYPES } from "../config";
+import PollenDataTable from "./PollenDataTable.vue";
 
-const { textLocation, location } = useGeolocation();
+const { location } = useGeolocation();
 const { data, loading, error, openMeteoFetch } = useOpenMeteoAPI();
 
 const noLocation = computed(() => location.value === null);

@@ -29,12 +29,10 @@
       </div>
     </fieldset>
   </form>
-  <p v-if="filteredLevels.length == 0">No data</p>
-  <Pre v-else
-    ><template #content>{{
-      JSON.stringify(filteredLevels, null, 2)
-    }}</template></Pre
-  >
+  <PollenDataTable
+    :records="filteredLevels"
+    :pollen-types="OPENMETEO_POLLEN_TYPES"
+  />
 </template>
 
 <script setup lang="ts">
@@ -43,8 +41,10 @@ import { useOpenMeteoAPI } from "../composables/useOpenMeteo";
 import { formatDateForInput } from "../utils/formatDateForInput";
 import { usefilterPollenDataByTimeframe } from "../utils/filterPollenLevelsByTimeframe";
 import { parseLocalDatetimeToUTC } from "../utils/parseLocalDatetimeToUTC";
-import Pre from "./Pre.vue";
+import { OPENMETEO_POLLEN_TYPES } from "../config";
+import PollenDataTable from "./PollenDataTable.vue";
 import type { Timeframe } from "../interfaces/Timeframe";
+import type { PollenRecord } from "../interfaces/Pollen";
 
 const { data } = useOpenMeteoAPI();
 const filter = usefilterPollenDataByTimeframe();
@@ -59,10 +59,11 @@ const minimumLocalDatetime = getStartOfCurrentHourLocal();
 const startTime = ref<string>(minimumLocalDatetime);
 const endTime = ref<string>("");
 
-const filteredLevels = computed(() => {
+const filteredLevels = computed<PollenRecord[]>(() => {
   if (!data.value?.records) {
     return [];
   }
+
   const rawPollenData = data.value.records;
 
   const timeframe: Timeframe = {
