@@ -7,6 +7,7 @@ import { computed } from "vue";
 import type { PollenRecord } from "../interfaces/Pollen";
 import type { DataTableRow } from "../interfaces/DataTable";
 import DataTable from "./DataTable.vue";
+import { formatDateToLocaleString } from "../utils/dateUtils";
 
 const props = defineProps<{
   records: readonly PollenRecord[];
@@ -23,7 +24,7 @@ const headers = computed(() => [
 const transformedRecords = computed(() =>
   props.records.map((record) => {
     const transformedRecord: DataTableRow = {
-      Time: new Date(record.timestamp).toLocaleString(),
+      Time: formatDateToLocaleString(record.timestamp),
     };
     for (const pollenType of props.pollenTypes) {
       transformedRecord[
