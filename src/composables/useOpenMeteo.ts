@@ -1,3 +1,4 @@
+import { UTCDate } from "@date-fns/utc";
 import { ref, readonly, type Ref } from "vue";
 import { fetchWeatherApi } from "openmeteo";
 import {
@@ -59,7 +60,7 @@ async function openMeteoFetch(parameters: OpenMeteoAPIParams): Promise<void> {
 
     const timeArray = Array.from(
       { length: (endTime - startTime) / interval },
-      (_, i) => new Date((startTime + i * interval) * 1000),
+      (_, i) => new UTCDate((startTime + i * interval) * 1000),
     );
 
     const records: PollenRecord[] = timeArray.map((time, index) => {
