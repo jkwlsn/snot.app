@@ -1,4 +1,6 @@
+import { UTCDate } from "@date-fns/utc";
 import { computed, type Ref } from "vue";
+import { getUnixTime } from "date-fns";
 import { OPENMETEO_POLLEN_TYPES } from "../config";
 import { useOpenMeteoAPI } from "./useOpenMeteo";
 import {
@@ -9,6 +11,7 @@ import { chartColors } from "../utils/chartColors";
 import type { ChartData, ChartDataset, ChartOptions } from "chart.js";
 import type { PollenType } from "../interfaces/PollenTypes";
 import type { PollenRecord } from "../interfaces/Pollen";
+import { formatDateToLocaleString } from "../utils/dateUtils";
 
 export function usePollenChartData(
   minLevel: Ref<number>,
@@ -68,7 +71,7 @@ export function usePollenChartData(
       filteredPollenData.records.forEach((record: PollenRecord) => {
         const level = record.levels[pollenType];
         if (level !== null) {
-          const timestamp = record.timestamp.getTime();
+          const timestamp = getUnixTime(record.timestamp);
           dataPoints.push({ x: timestamp, y: level });
         }
       });
@@ -112,17 +115,7 @@ export function usePollenChartData(
           type: "time",
           ticks: {
             callback: function (value, _index, _ticks): string {
-              const date = new Date(value);
-              if (date.getHours() === 0) {
-                return new Intl.DateTimeFormat(undefined, {
-                  month: "short",
-                  day: "numeric",
-                }).format(date);
-              }
-              return new Intl.DateTimeFormat(undefined, {
-                hour: "numeric",
-                minute: "2-digit",
-              }).format(date);
+              return formatDateToLocaleString(new UTCDate(value));
             },
           },
           time: {
