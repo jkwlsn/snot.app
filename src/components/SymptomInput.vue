@@ -54,16 +54,18 @@
 </template>
 
 <script setup lang="ts">
+import { addHours } from "date-fns";
 import { ref, computed, watch } from "vue";
 import { SYMPTOM_LIST } from "../config";
 import { db } from "../db";
 import { useGeolocation } from "../composables/useGeolocation";
 import { useOpenMeteoAPI } from "../composables/useOpenMeteo";
 import { usefilterPollenDataByTimeframe } from "../utils/filterPollenLevelsByTimeframe";
-import { createTimeframe } from "../utils/createTimeframe";
 import type { Coordinates } from "../interfaces/Coordinates";
 import type { SymptomRecord } from "../interfaces/SymptomRecord";
 import type { PollenRecord } from "../interfaces/Pollen";
+import { createUTCDate } from "../utils/dateUtils";
+import type { Timeframe } from "../interfaces/Timeframe";
 
 const { data: openMeteoApiData, openMeteoFetch } = useOpenMeteoAPI();
 const apiData = computed(() => openMeteoApiData.value);
@@ -98,9 +100,12 @@ const createSymptomRecord = (symptom: string): SymptomRecord | null => {
       throw new Error("No pollen data");
     }
 
-    const currentTime = new Date();
+    const currentTime = createUTCDate();
 
-    const currentTimeframe = createTimeframe(currentTime);
+    const currentTimeframe: Timeframe = {
+      startTime: currentTime,
+      endTime: addHours(createUTCDate(), 1),
+    };
 
     const currentPollenData = filter.filterPollenDataByTimeframe(
       apiData.value.records,
