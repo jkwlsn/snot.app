@@ -1,6 +1,7 @@
 import { computed, type Ref } from "vue";
 import type { ChartData, ChartDataset } from "chart.js";
 import type { SymptomRecord } from "../interfaces/SymptomRecord";
+import { parseISO, getUnixTime } from "date-fns";
 
 // This composable transforms the grouped data into ChartData format
 export function useDailyBarChart(
@@ -15,7 +16,7 @@ export function useDailyBarChart(
       // Change x type to number
       const dataPoints = Array.from(symptomsGroupedByDay.value.entries()).map(
         ([dateString, symptomsForDay]) => ({
-          x: new Date(dateString).getTime(), // Convert to Unix timestamp (number)
+          x: getUnixTime(parseISO(dateString)), // Convert to Unix timestamp (number)
           y: valueExtractor(symptomsForDay),
         }),
       );
