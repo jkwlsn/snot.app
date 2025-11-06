@@ -37,27 +37,26 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
+import { startOfHour, endOfHour } from "date-fns";
 import { useOpenMeteoAPI } from "../composables/useOpenMeteo";
-import { formatDateForInput } from "../utils/formatDateForInput";
 import { usefilterPollenDataByTimeframe } from "../utils/filterPollenLevelsByTimeframe";
-import { parseLocalDatetimeToUTC } from "../utils/parseLocalDatetimeToUTC";
 import { OPENMETEO_POLLEN_TYPES } from "../config";
 import PollenDataTable from "./PollenDataTable.vue";
 import type { Timeframe } from "../interfaces/Timeframe";
 import type { PollenRecord } from "../interfaces/Pollen";
+import { createUTCDate, formatDateForInput, parseDateFromInput } from "../utils/dateUtils";
 
 const { data } = useOpenMeteoAPI();
 const filter = usefilterPollenDataByTimeframe();
 
 const getStartOfCurrentHourLocal = (): string => {
-  const now = new Date();
-  now.setMinutes(0, 0, 0); // Set minutes, seconds, milliseconds to 0 in local time
-  return formatDateForInput(now);
+  const now = createUTCDate();
+  return formatDateForInput(startOfHour(now));
 };
 
 const minimumLocalDatetime = getStartOfCurrentHourLocal();
 const startTime = ref<string>(minimumLocalDatetime);
-const endTime = ref<string>("");
+const endTime = ref<string>(formatDateForInput(createUTCDate()));
 
 const filteredLevels = computed<PollenRecord[]>(() => {
   if (!data.value?.records) {
@@ -67,8 +66,8 @@ const filteredLevels = computed<PollenRecord[]>(() => {
   const rawPollenData = data.value.records;
 
   const timeframe: Timeframe = {
-    startTime: parseLocalDatetimeToUTC(startTime.value),
-    endTime: parseLocalDatetimeToUTC(endTime.value),
+    startTime: parseDateFromInput(startTime.value),
+    endTime: endOfHour(parseDateFromInput(endTime.value)),
   };
 
   return filter.filterPollenDataByTimeframe(rawPollenData, timeframe);

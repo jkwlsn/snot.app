@@ -1,6 +1,6 @@
+import { getUnixTime } from "date-fns";
 import type { Timeframe } from "../interfaces/Timeframe";
 import type { PollenRecord } from "../interfaces/Pollen";
-import { zeroUTCMinutes } from "./zeroUTCMinutes";
 
 function filterPollenDataByTimeframe(
   data: readonly PollenRecord[],
@@ -8,18 +8,18 @@ function filterPollenDataByTimeframe(
 ): PollenRecord[] {
   const result: PollenRecord[] = [];
 
-  const startTimestamp = zeroUTCMinutes(timeframe.startTime).getTime();
-  const endTimestamp = timeframe.endTime.getTime();
+  const startTimestamp = getUnixTime(timeframe.startTime);
+  const endTimestamp = getUnixTime(timeframe.endTime);
 
   for (const record of data) {
-    const currentTimestamp = record.timestamp.getTime();
+    const currentTimestamp = getUnixTime(record.timestamp);
 
     if (
       currentTimestamp >= startTimestamp &&
-      currentTimestamp <= endTimestamp
+      currentTimestamp < endTimestamp
     ) {
       result.push(record);
-    } else if (currentTimestamp > endTimestamp) {
+    } else if (currentTimestamp >= endTimestamp) {
       break;
     }
   }
