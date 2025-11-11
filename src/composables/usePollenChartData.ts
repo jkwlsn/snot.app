@@ -1,3 +1,4 @@
+import { UTCDate } from "@date-fns/utc";
 import { computed, type Ref } from "vue";
 import { OPENMETEO_POLLEN_TYPES } from "../config";
 import { useOpenMeteoAPI } from "./useOpenMeteo";
@@ -9,6 +10,7 @@ import { chartColors } from "../utils/chartColors";
 import type { ChartData, ChartDataset, ChartOptions } from "chart.js";
 import type { PollenType } from "../interfaces/PollenTypes";
 import type { PollenRecord } from "../interfaces/Pollen";
+import { formatDateToLocaleString } from "../utils/dateUtils";
 
 export function usePollenChartData(
   minLevel: Ref<number>,
@@ -111,19 +113,7 @@ export function usePollenChartData(
         x: {
           type: "time",
           ticks: {
-            callback: function (value, _index, _ticks): string {
-              const date = new Date(value);
-              if (date.getHours() === 0) {
-                return new Intl.DateTimeFormat(undefined, {
-                  month: "short",
-                  day: "numeric",
-                }).format(date);
-              }
-              return new Intl.DateTimeFormat(undefined, {
-                hour: "numeric",
-                minute: "2-digit",
-              }).format(date);
-            },
+            // Chart.js will automatically choose appropriate time formats
           },
           time: {
             displayFormats: {

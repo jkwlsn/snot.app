@@ -1,3 +1,6 @@
+import { getUnixTime, addDays, subYears, setHours, setMinutes, getDayOfYear, getDay, getMonth, getFullYear, getDate, getHours, getMinutes, setDate, setMonth, setFullYear, startOfDay } from "date-fns";
+import { UTCDate } from "@date-fns/utc";
+
 // This script is designed to be run in the browser's developer console
 // for the snot.app application. It deletes all existing symptom data
 // and generates a year's worth of realistic, multi-layered seasonal hay fever data
@@ -102,14 +105,12 @@
   };
 
   // --- Helper Functions ---
-
   const createSymptomRecord = (date, dayBaseSeverity, dailyPollenLevels) => {
     const randomType =
       symptomTypes[Math.floor(Math.random() * symptomTypes.length)];
 
-    const timestamp = new Date(date.getTime());
     const hour = Math.floor(Math.random() * 24);
-    timestamp.setHours(hour, Math.floor(Math.random() * 60));
+    const timestamp = setMinutes(setHours(date, hour), Math.floor(Math.random() * 60));
 
     let finalSeverity = dayBaseSeverity;
     if (hour >= 6 && hour < 12) {
@@ -145,21 +146,18 @@
     console.log(
       "Generating 1 year of realistic data with associated pollen levels...",
     );
-    const today = new Date();
-    const oneYearAgo = new Date(
-      new Date().setFullYear(today.getFullYear() - 1),
-    );
-    const startDayOfYear = Math.floor(
-      (oneYearAgo - new Date(oneYearAgo.getFullYear(), 0, 0)) /
-        (1000 * 60 * 60 * 24),
-    );
+    const today = new UTCDate();
+    const oneYearAgo = subYears(today, 1);
+    
+    const startDayOfYear = getDayOfYear(oneYearAgo);
 
     const recordsToAdd = [];
 
     for (let i = 0; i < 365; i++) {
-      const day = new Date(oneYearAgo.getTime() + i * 24 * 60 * 60 * 1000);
+      const day = startOfDay(addDays(oneYearAgo, i));
+      
       const dayOfYear = (startDayOfYear + i) % 365;
-      const dayOfWeek = day.getDay();
+      const dayOfWeek = getDay(day);
 
       const dailyPollenLevels = getDailyPollenLevels(dayOfYear);
       const totalPollenScore =
@@ -179,7 +177,7 @@
         for (let j = 0; j < numSymptomsToday; j++) {
           recordsToAdd.push(
             createSymptomRecord(
-              new Date(day),
+              day,
               dayBaseSeverity,
               dailyPollenLevels,
             ),
