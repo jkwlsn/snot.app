@@ -1,4 +1,3 @@
-import { UTCDate } from "@date-fns/utc";
 import { computed, type Ref } from "vue";
 import { OPENMETEO_POLLEN_TYPES } from "../config";
 import { useOpenMeteoAPI } from "./useOpenMeteo";
@@ -10,7 +9,6 @@ import { chartColors } from "../utils/chartColors";
 import type { ChartData, ChartDataset, ChartOptions } from "chart.js";
 import type { PollenType } from "../interfaces/PollenTypes";
 import type { PollenRecord } from "../interfaces/Pollen";
-import { formatDateToLocaleString } from "../utils/dateUtils";
 
 export function usePollenChartData(
   minLevel: Ref<number>,
@@ -144,3 +142,4 @@ export function usePollenChartData(
     maxPollenLevel,
   };
 }
+

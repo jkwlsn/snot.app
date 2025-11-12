@@ -1,7 +1,7 @@
 import { computed, type Ref } from "vue";
 import type { ChartData, ChartDataset } from "chart.js";
 import type { SymptomRecord } from "../interfaces/SymptomRecord";
-import { parseISO, getUnixTime } from "date-fns";
+import { parseISO } from "date-fns";
 
 // This composable transforms the grouped data into ChartData format
 export function useDailyBarChart(
