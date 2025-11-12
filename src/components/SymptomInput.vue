@@ -35,20 +35,29 @@
           class="w-full cursor-pointer appearance-none bg-gradient-to-r from-yellow-200 to-red-500 rounded-lg"
         />
       </div>
-      <button
-        :disabled="selectedSymptoms.length === 0"
-        @click="clearForm"
-        class="p-2 me-4 bg-purple-300 rounded-lg hover:bg-purple-500 hover:text-white hover:cursor-pointer"
-      >
-        Clear all
-      </button>
-      <button
-        :disabled="selectedSymptoms.length === 0"
-        @click="logSymptoms"
-        class="p-2 me-4 bg-purple-300 rounded-lg hover:bg-purple-500 hover:text-white hover:cursor-pointer"
-      >
-        Log Symptom
-      </button>
+      <div class="flex flex-row justify-center my-4">
+        <button
+          :disabled="selectedSymptoms.length === symptomObjects.length"
+          @click="selectAll"
+          class="p-2 me-4 bg-purple-300 rounded-lg hover:bg-purple-500 hover:text-white hover:cursor-pointer"
+        >
+          Select all
+        </button>
+        <button
+          :disabled="selectedSymptoms.length === 0"
+          @click="deselectAll"
+          class="p-2 me-4 bg-purple-300 rounded-lg hover:bg-purple-500 hover:text-white hover:cursor-pointer"
+        >
+          Clear all
+        </button>
+        <button
+          :disabled="selectedSymptoms.length === 0"
+          @click="logSymptoms"
+          class="p-2 me-4 bg-purple-300 rounded-lg hover:bg-purple-500 hover:text-white hover:cursor-pointer"
+        >
+          Log Symptom
+        </button>
+      </div>
     </fieldset>
   </form>
 </template>
@@ -86,9 +95,13 @@ const symptomObjects = SYMPTOM_LIST.map((symptom: string, index: number) => ({
   name: symptom,
 }));
 
-const clearForm = (): void => {
+const deselectAll = (): void => {
   selectedSymptoms.value = [];
   symptomSeverity.value = 1;
+};
+
+const selectAll = (): void => {
+  selectedSymptoms.value = symptomObjects.map((symptom) => symptom.name);
 };
 
 const createSymptomRecord = (symptom: string): SymptomRecord | null => {
@@ -167,7 +180,7 @@ const addSymptom = async (symptom: string): Promise<void> => {
 const logSymptoms = async (): Promise<void> => {
   try {
     await Promise.all(selectedSymptoms.value.map(addSymptom));
-    clearForm();
+    deselectAll();
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("logSymptoms failed:", error.message);
