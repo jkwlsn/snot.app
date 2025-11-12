@@ -1,5 +1,5 @@
 <template>
-  <DataTable :headers="headers" :records="transformedRecords" />
+  <DataTable :columns="columns" :records="transformedRecords" />
 </template>
 
 <script setup lang="ts">
@@ -14,17 +14,23 @@ const props = defineProps<{
   pollenTypes: string[];
 }>();
 
-const headers = computed(() => [
+const columns = computed(() => [
   "Time",
   ...props.pollenTypes.map((pollenType) =>
-    pollenType.replace(/_/g, " ").replace(/pollen/g, "pollen")
+    pollenType.replace(/_/g, " ").replace(/pollen/g, "pollen"),
   ),
 ]);
 
 const transformedRecords = computed(() =>
   props.records.map((record) => {
     const transformedRecord: DataTableRow = {
-      Time: formatDateToLocaleString(record.timestamp, { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }),
+      Time: formatDateToLocaleString(record.timestamp, {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+      }),
     };
     for (const pollenType of props.pollenTypes) {
       transformedRecord[
@@ -32,6 +38,6 @@ const transformedRecords = computed(() =>
       ] = record.levels[pollenType];
     }
     return transformedRecord;
-  })
+  }),
 );
 </script>

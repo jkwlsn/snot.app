@@ -1,5 +1,5 @@
 <template>
-  <DataTable :headers="headers" :records="transformedRecords" />
+  <DataTable :columns="columns" :records="transformedRecords" />
 </template>
 
 <script setup lang="ts">
@@ -12,13 +12,19 @@ const props = defineProps<{
   records: SymptomRecord[];
 }>();
 
-const headers = ["Time", "Symptom", "Severity"];
+const columns = ["Time", "Symptom", "Severity"];
 
 const transformedRecords = computed(() =>
   props.records.map((record) => ({
-    Time: formatDateToLocaleString(record.timestamp, { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }),
+    Time: formatDateToLocaleString(record.timestamp, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+    }),
     Symptom: record.type,
     Severity: record.severity,
-  }))
+  })),
 );
 </script>
