@@ -7,7 +7,13 @@ import vue from "eslint-plugin-vue";
 import prettier from "eslint-config-prettier";
 
 export default defineConfig([
-  globalIgnores(["vite.config.ts", "*.config.ts", "eslint.config.js", "src/*.d.ts", "./dist"]),
+  globalIgnores([
+    "vite.config.ts",
+    "*.config.ts",
+    "eslint.config.js",
+    "src/*.d.ts",
+    "./dist",
+  ]),
 
   eslintjs.configs.recommended,
   ...tseslint.configs.strictTypeChecked,
@@ -84,6 +90,23 @@ export default defineConfig([
       "vue/no-unused-vars": "warn",
       "vue/require-default-prop": "warn",
       "vue/require-prop-types": "warn",
+
+      "sort-vars": ["warn"],
+      "sort-keys": [
+        "warn",
+        "asc",
+        { caseSensitive: true, natural: false, minKeys: 2 },
+      ],
+      "sort-imports": [
+        "warn",
+        {
+          ignoreCase: false,
+          ignoreDeclarationSort: false,
+          ignoreMemberSort: false,
+          memberSyntaxSortOrder: ["none", "all", "multiple", "single"], // Order of import syntaxes
+          allowSeparatedGroups: false, // Whether to allow separated groups in imports
+        },
+      ],
     },
   },
 
