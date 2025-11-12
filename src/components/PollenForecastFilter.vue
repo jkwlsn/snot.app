@@ -37,6 +37,22 @@
             {{ pollenType.replace("_pollen", "").replace("_", " ") }}
           </label>
         </div>
+        <button
+          :disabled="
+            selectedPollenTypes.length === OPENMETEO_POLLEN_TYPES.length
+          "
+          @click="selectAll"
+          class="p-2 me-4 bg-purple-300 rounded-lg hover:bg-purple-500 hover:text-white hover:cursor-pointer"
+        >
+          Select all
+        </button>
+        <button
+          :disabled="selectedPollenTypes.length === 0"
+          @click="deselectAll"
+          class="p-2 me-4 bg-purple-300 rounded-lg hover:bg-purple-500 hover:text-white hover:cursor-pointer"
+        >
+          Deselect all
+        </button>
       </div>
     </div>
   </fieldset>
@@ -56,6 +72,14 @@ const emit = defineEmits<{
   (e: "update:minLevel", value: number): void;
   (e: "update:selectedPollenTypes", value: PollenType[]): void;
 }>();
+
+const selectAll = (): void => {
+  emit("update:selectedPollenTypes", [...OPENMETEO_POLLEN_TYPES]);
+};
+
+const deselectAll = (): void => {
+  emit("update:selectedPollenTypes", []);
+};
 
 const updateSelected = (event: Event): void => {
   const target = event.target as HTMLInputElement;
