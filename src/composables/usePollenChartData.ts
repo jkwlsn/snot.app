@@ -31,7 +31,7 @@ export function usePollenChartData(
       OPENMETEO_POLLEN_TYPES.forEach((pollenType) => {
         const level = record.levels[pollenType];
         if (typeof level === "number" && level > maxLevel) {
-          maxLevel = level;
+          maxLevel = Math.ceil(level);
         }
       });
     });
@@ -142,4 +142,3 @@ export function usePollenChartData(
     maxPollenLevel,
   };
 }
-
