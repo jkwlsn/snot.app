@@ -5,7 +5,7 @@ import type { Coordinates } from "../interfaces/Coordinates";
 const nominatim = useNominatim();
 
 const gpsButtonText = ref<"Use GPS" | "Refresh GPS">("Use GPS");
-const textLocation = ref<string>("");
+const confirmedLocationName = ref<string>("");
 const location = ref<Coordinates | null>(null);
 const errorMessage = ref<string | null>(null);
 const isLoading = ref<boolean>(false);
@@ -19,22 +19,26 @@ const anyError = computed(
     errorMessage.value ?? nominatim.nominatimState.value.errorMessage ?? null,
 );
 
-const submitTextLocation = async (): Promise<void> => {
+const searchLocationByName = async (query: string): Promise<void> => {
   location.value = null;
   errorMessage.value = null;
 
   try {
-    const newLocation = await nominatim.forwardGeocode(textLocation.value);
+    const newLocation = await nominatim.forwardGeocode(query);
     if (newLocation === null) {
       throw new Error("Could not get location");
     }
     location.value = newLocation;
+    confirmedLocationName.value = query;
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("submitTextLocation failed:", error.message);
+      console.error("searchLocationByName failed:", error.message);
     } else {
       const unknownErrorString = String(error);
-      console.error("submitTextLocation failed: An unknown error occurred.", unknownErrorString);
+      console.error(
+        "searchLocationByName failed: An unknown error occurred.",
+        unknownErrorString,
+      );
     }
   }
   gpsButtonText.value = "Use GPS";
@@ -67,7 +71,7 @@ const success = (position: GeolocationPosition): void => {
 
 const reverseGeocode = async (coordinates: Coordinates): Promise<void> => {
   const resultText = await nominatim.reverseGeocode(coordinates);
-  textLocation.value = resultText ?? "";
+  confirmedLocationName.value = resultText ?? "";
 };
 
 const error = (err: GeolocationPositionError): void => {
@@ -89,20 +93,20 @@ const error = (err: GeolocationPositionError): void => {
 
 export const useGeolocation = (): {
   gpsButtonText: Ref<"Use GPS" | "Refresh GPS">;
-  textLocation: Ref<string>;
+  confirmedLocationName: Ref<string>;
   location: Ref<Coordinates | null>;
   anyLoading: Ref<boolean>;
   anyError: Ref<string | null>;
-  submitTextLocation: () => Promise<void>;
+  searchLocationByName: (query: string) => Promise<void>;
   requestGeolocation: () => void;
 } => {
   return {
     gpsButtonText,
-    textLocation,
+    confirmedLocationName,
     location,
     anyLoading,
     anyError,
-    submitTextLocation,
+    searchLocationByName,
     requestGeolocation,
   };
 };
