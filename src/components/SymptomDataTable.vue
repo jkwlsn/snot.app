@@ -16,9 +16,16 @@ const headers = ["Time", "Symptom", "Severity"];
 
 const transformedRecords = computed(() =>
   props.records.map((record) => ({
-    Time: formatDateToLocaleString(record.timestamp, { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }),
+    id: record.id,
+    Time: formatDateToLocaleString(record.timestamp, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+    }),
     Symptom: record.type,
     Severity: record.severity,
-  }))
+  })),
 );
 </script>
