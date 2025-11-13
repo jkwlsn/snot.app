@@ -24,7 +24,14 @@ const headers = computed(() => [
 const transformedRecords = computed(() =>
   props.records.map((record) => {
     const transformedRecord: DataTableRow = {
-      Time: formatDateToLocaleString(record.timestamp, { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }),
+      id: record.timestamp.getTime(),
+      Time: formatDateToLocaleString(record.timestamp, {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+      }),
     };
     for (const pollenType of props.pollenTypes) {
       transformedRecord[
