@@ -87,15 +87,14 @@ export function useSymptomInput(
         type: symptom,
         severity: symptomSeverity.value,
         timestamp: currentTime,
-        location: JSON.parse(
-          JSON.stringify({
-            latitude: location.value.latitude,
-            longitude: location.value.longitude,
-          }),
-        ) as Coordinates,
-        pollenData: JSON.parse(
-          JSON.stringify(currentPollenData),
-        ) as PollenRecord[],
+        location: {
+          latitude: location.value.latitude,
+          longitude: location.value.longitude,
+        },
+        pollenData: currentPollenData.map((record) => ({
+          timestamp: new Date(record.timestamp.getTime()),
+          levels: { ...record.levels },
+        })),
       };
     } catch (error: unknown) {
       if (error instanceof Error) {
