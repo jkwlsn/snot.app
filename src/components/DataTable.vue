@@ -9,20 +9,24 @@
           <th
             v-for="key in columns"
             :key="key"
-            class="p-3 text-start whitespace-nowrap text-xs capitalize cursor-pointer"
-            @click="sortBy(key)"
+            class="p-3 text-start whitespace-nowrap text-xs capitalize"
             :class="{ active: sortKey == key }"
           >
-            {{ key }}
-            <span class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'">
-            </span>
+            <button
+              @click="sortBy(key)"
+              class="w-full text-left bg-transparent cursor-pointer"
+            >
+              {{ key }}
+              <span class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'">
+              </span>
+            </button>
           </th>
         </tr>
       </thead>
       <tbody class="bg-white divide-y divide-green-100">
         <tr
-          v-for="(record, index) in sortedRecords"
-          :key="index"
+          v-for="record in sortedRecords"
+          :key="record.id"
           class="hover:bg-gray-100"
         >
           <td
@@ -40,51 +44,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { toRefs } from "vue";
 import type { DataTableRow } from "../interfaces/DataTable";
+import { useDataTableSorting } from "../composables/useDataTableSorting";
 
 const props = defineProps<{
   records: DataTableRow[];
   columns: string[];
 }>();
 
-const sortKey = ref("");
-const sortOrders = ref(
-  props.columns.reduce((o, key) => ({ ...o, [key]: 1 }), {})
+const { records, columns } = toRefs(props);
+
+const { sortKey, sortOrders, sortedRecords, sortBy } = useDataTableSorting(
+  records,
+  columns,
 );
-
-const sortedRecords = computed(() => {
-  const key = sortKey.value;
-  if (!key) {
-    return props.records;
-  }
-  const order = sortOrders.value[key];
-  return [...props.records].sort((a, b) => {
-    let valA = a[key];
-    let valB = b[key];
-
-    // Handle null values: nulls go to the end
-    if (valA === null && valB === null) return 0;
-    if (valA === null) return order; // If A is null, B comes first (or A last if order is 1)
-    if (valB === null) return -order; // If B is null, A comes first (or B last if order is 1)
-
-    // Case-insensitive string comparison
-    if (typeof valA === "string" && typeof valB === "string") {
-      valA = valA.toLowerCase();
-      valB = valB.toLowerCase();
-    }
-
-    if (valA === valB) {
-      return 0;
-    }
-    return (valA > valB ? 1 : -1) * order;
-  });
-});
-
-function sortBy(key: string) {
-  sortKey.value = key;
-  sortOrders.value[key] *= -1;
-}
 </script>
 
 <style>
