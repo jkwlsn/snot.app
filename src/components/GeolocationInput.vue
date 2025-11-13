@@ -13,12 +13,12 @@
         id="text-location"
         type="text"
         placeholder="e.g., Paris, France..."
-        v-model="textLocation"
+        v-model="locationQuery"
         class="flex-grow ps-2 bg-white rounded-s-lg"
       />
       <button
         :disabled="anyLoading"
-        @click="submitTextLocation"
+        @click="searchLocationByName(locationQuery)"
         class="p-2 bg-purple-300 rounded-e-lg hover:bg-purple-500 hover:text-white hover:cursor-pointer"
       >
         Find my location
@@ -33,16 +33,23 @@
 </template>
 
 <script setup lang="ts">
+import { ref, watch } from "vue";
 import { useGeolocation } from "../composables/useGeolocation";
 import Pre from "./Pre.vue";
 
 const {
   gpsButtonText,
-  textLocation,
+  confirmedLocationName,
   location,
   anyLoading,
   anyError,
-  submitTextLocation,
+  searchLocationByName,
   requestGeolocation,
 } = useGeolocation();
+
+const locationQuery = ref(confirmedLocationName.value);
+
+watch(confirmedLocationName, (newValue) => {
+  locationQuery.value = newValue;
+});
 </script>
