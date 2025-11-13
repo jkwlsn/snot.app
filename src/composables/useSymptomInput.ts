@@ -7,7 +7,10 @@ import { useGeolocation } from "../composables/useGeolocation";
 import { useOpenMeteoAPI } from "../composables/useOpenMeteo";
 import { usefilterPollenDataByTimeframe } from "../utils/filterPollenLevelsByTimeframe";
 import type { Coordinates } from "../interfaces/Coordinates";
-import type { SymptomRecord } from "../interfaces/SymptomRecord";
+import type {
+  SymptomRecord,
+  NewSymptomRecord,
+} from "../interfaces/SymptomRecord";
 import type { PollenRecord } from "../interfaces/Pollen";
 import { createUTCDate } from "../utils/dateUtils";
 import type { Timeframe } from "../interfaces/Timeframe";
@@ -59,7 +62,7 @@ export function useSymptomInput(
     selectedSymptoms.value = symptomObjects.map((symptom) => symptom.name);
   };
 
-  const createSymptomRecord = (symptom: string): SymptomRecord | null => {
+  const createSymptomRecord = (symptom: string): NewSymptomRecord | null => {
     try {
       if (location.value === null) {
         throw new Error("No location set");

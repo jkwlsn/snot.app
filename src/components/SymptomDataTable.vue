@@ -16,6 +16,7 @@ const columns = ["Time", "Symptom", "Severity"];
 
 const transformedRecords = computed(() =>
   props.records.map((record) => ({
+    id: record.id,
     Time: formatDateToLocaleString(record.timestamp, {
       year: "numeric",
       month: "short",

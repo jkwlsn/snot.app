@@ -24,6 +24,7 @@ const columns = computed(() => [
 const transformedRecords = computed(() =>
   props.records.map((record) => {
     const transformedRecord: DataTableRow = {
+      id: record.timestamp.getTime(),
       Time: formatDateToLocaleString(record.timestamp, {
         year: "numeric",
         month: "short",
