@@ -7,7 +7,7 @@ const symptoms = ref<SymptomRecord[]>([]);
 
 liveQuery(() => db.symptoms.toArray()).subscribe(
   (updatedSymptoms: SymptomRecord[]) => {
-    symptoms.value = updatedSymptoms;
+    symptoms.value = updatedSymptoms.reverse();
   },
 );
 
