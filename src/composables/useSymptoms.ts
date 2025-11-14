@@ -1,30 +1,16 @@
-import { ref, onMounted, onBeforeUnmount, type Ref } from "vue";
-import { db } from "../db";
+import { ref, type Ref } from "vue";
 import { liveQuery } from "dexie";
-import type { SymptomRecord } from "../interfaces/SymptomRecord";
+import { db } from "../db";
+import { type SymptomRecord } from "../interfaces/SymptomRecord";
+
+const symptoms = ref<SymptomRecord[]>([]);
+
+liveQuery(() => db.symptoms.toArray()).subscribe(
+  (updatedSymptoms: SymptomRecord[]) => {
+    symptoms.value = updatedSymptoms;
+  },
+);
 
 export function useSymptoms(): { symptoms: Ref<SymptomRecord[]> } {
-  const symptoms = ref<SymptomRecord[]>([]);
-
-  let liveSubscription: { unsubscribe: () => void } | null = null;
-
-  const subscribeToLiveQuery = (): void => {
-    liveSubscription = liveQuery(() =>
-      db.symptoms.orderBy("timestamp").toArray(),
-    ).subscribe((updatedSymptoms: SymptomRecord[]) => {
-      symptoms.value = updatedSymptoms;
-    });
-  };
-
-  onMounted(() => {
-    subscribeToLiveQuery();
-  });
-
-  onBeforeUnmount(() => {
-    if (liveSubscription) {
-      liveSubscription.unsubscribe();
-    }
-  });
-
   return { symptoms };
 }
