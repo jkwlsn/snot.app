@@ -11,15 +11,20 @@ export function useDataTableSorting(
   sortedRecords: ComputedRef<DataTableRow[]>;
   sortBy: (key: string) => void;
 } {
-  const sortKey = ref("");
+  const initialSortKey = columns.value[0];
+  const sortKey = ref(initialSortKey);
+
   const sortOrders = ref<Record<string, number>>(
-    columns.value.reduce((o, key) => ({ ...o, [key]: 1 }), {})
+    columns.value.reduce((o, key) => ({
+      ...o,
+      [key]: key === initialSortKey ? -1 : 1
+    }), {})
   );
 
   const sortedRecords = computed(() => {
     const key = sortKey.value;
     if (!key) {
-      return records.value;
+      return [...records.value];
     }
     const order = sortOrders.value[key];
     return [...records.value].sort((a, b) => {
