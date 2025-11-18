@@ -1,107 +1,98 @@
-import { ref, computed, type Ref } from "vue";
-import { useNominatim } from "./useNominatim";
+import { type Ref, computed, ref, watch } from "vue";
 import type { Coordinates } from "../interfaces/Coordinates";
+import { useBrowserGeolocation } from "./useBrowserGeolocation";
+import { useNominatim } from "./useNominatim";
 
-const nominatim = useNominatim();
-
-const confirmedLocationName = ref<string>("");
-const location = ref<Coordinates | null>(null);
-const errorMessage = ref<string | null>(null);
-const isLoading = ref<boolean>(false);
-
-const anyLoading = computed(
-  () => isLoading.value || nominatim.nominatimState.value.isLoading,
-);
-
-const anyError = computed(
-  () =>
-    errorMessage.value ?? nominatim.nominatimState.value.errorMessage ?? null,
-);
-
-const searchLocationByName = async (query: string): Promise<void> => {
-  location.value = null;
-  errorMessage.value = null;
-
-  try {
-    const newLocation = await nominatim.forwardGeocode(query);
-    if (newLocation === null) {
-      throw new Error("Could not get location");
-    }
-    location.value = newLocation;
-    reverseGeocode(newLocation);
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error("searchLocationByName failed:", error.message);
-    } else {
-      const unknownErrorString = String(error);
-      console.error(
-        "searchLocationByName failed: An unknown error occurred.",
-        unknownErrorString,
-      );
-    }
-  }
-};
-
-const requestGeolocation = (): void => {
-  isLoading.value = true;
-  errorMessage.value = null;
-  location.value = null;
-
-  if ("geolocation" in navigator) {
-    navigator.geolocation.getCurrentPosition(success, error);
-  } else {
-    errorMessage.value = "Geolocation is not available";
-    isLoading.value = false;
-  }
-};
-
-const success = (position: GeolocationPosition): void => {
-  const newLocation: Coordinates = {
-    latitude: position.coords.latitude,
-    longitude: position.coords.longitude,
-  };
-  location.value = newLocation;
-  void reverseGeocode(newLocation);
-
-  isLoading.value = false;
-};
-
-const reverseGeocode = async (coordinates: Coordinates): Promise<void> => {
-  const resultText = await nominatim.reverseGeocode(coordinates);
-  confirmedLocationName.value = resultText ?? "";
-};
-
-const error = (err: GeolocationPositionError): void => {
-  isLoading.value = false;
-  switch (err.code) {
-    case err.PERMISSION_DENIED:
-      errorMessage.value = "User denied the request for Geolocation.";
-      break;
-    case err.POSITION_UNAVAILABLE:
-      errorMessage.value = "Location information is unavailable.";
-      break;
-    case err.TIMEOUT:
-      errorMessage.value = "The request to get user location timed out.";
-      break;
-    default:
-      errorMessage.value = "An unknown error occurred.";
-  }
-};
-
-export const useGeolocation = (): {
+interface UseGeolocationReturn {
   confirmedLocationName: Ref<string>;
-  location: Ref<Coordinates | null>;
+  locationCoordinates: Ref<Coordinates | null>;
+  manualSearchQuery: Ref<string>;
   anyLoading: Ref<boolean>;
+  isLoadingGps: Ref<boolean>;
+  isLoadingManual: Ref<boolean>;
   anyError: Ref<string | null>;
-  searchLocationByName: (query: string) => Promise<void>;
-  requestGeolocation: () => void;
-} => {
-  return {
-    confirmedLocationName,
-    location,
-    anyLoading,
-    anyError,
-    searchLocationByName,
-    requestGeolocation,
+  errorGps: Ref<string | null>;
+  errorManual: Ref<string | null>;
+  requestGpsLocation: () => void;
+  searchManualLocation: (query: string) => Promise<void>;
+}
+
+let geolocationInstance: UseGeolocationReturn | null = null;
+
+export function useGeolocation(): UseGeolocationReturn {
+  if (geolocationInstance) {
+    return geolocationInstance;
+  }
+
+  const nominatim = useNominatim();
+  const browserGeolocation = useBrowserGeolocation();
+
+  const confirmedLocationName = ref<string>("");
+  const locationCoordinates = ref<Coordinates | null>(null);
+  const manualSearchQuery = ref<string>("");
+
+  const isLoadingGps = computed(() => browserGeolocation.loading.value);
+  const isLoadingManual = computed(
+    () => nominatim.nominatimState.value.isLoading,
+  );
+  const anyLoading = computed(
+    () => isLoadingGps.value || isLoadingManual.value,
+  );
+
+  const errorGps = computed(() => browserGeolocation.errorMessage.value);
+  const errorManual = computed(
+    () => nominatim.nominatimState.value.errorMessage,
+  );
+  const anyError = computed(
+    () => (errorGps.value || errorManual.value) ?? null,
+  );
+
+  const updateConfirmedLocation = async (
+    coords: Coordinates,
+  ): Promise<void> => {
+    locationCoordinates.value = coords;
+    const resultText = await nominatim.reverseGeocode(coords);
+    confirmedLocationName.value = resultText ?? "";
   };
-};
+
+  const requestGpsLocation = (): void => {
+    confirmedLocationName.value = "";
+    locationCoordinates.value = null;
+    browserGeolocation.requestGeolocation();
+  };
+
+  const searchManualLocation = async (query: string): Promise<void> => {
+    manualSearchQuery.value = query;
+    confirmedLocationName.value = "";
+    locationCoordinates.value = null;
+    const newLocation = await nominatim.forwardGeocode(query);
+    if (newLocation) {
+      await updateConfirmedLocation(newLocation);
+    }
+  };
+
+  watch(browserGeolocation.coordinates, (newCoords) => {
+    if (newCoords) {
+      void updateConfirmedLocation(newCoords);
+    } else {
+      confirmedLocationName.value = "";
+      locationCoordinates.value = null;
+    }
+  });
+
+  geolocationInstance = {
+    anyError,
+    anyLoading,
+    confirmedLocationName,
+    errorGps,
+    errorManual,
+    isLoadingGps,
+    isLoadingManual,
+    locationCoordinates,
+    manualSearchQuery,
+    requestGpsLocation,
+    searchManualLocation,
+  };
+
+  return geolocationInstance;
+}
