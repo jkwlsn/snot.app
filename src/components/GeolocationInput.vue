@@ -4,7 +4,7 @@
       <button
         id="requestGeolocation"
         :disabled="anyLoading"
-        @click="requestGeolocation"
+        @click="handleGpsSearch"
         class="p-2 me-4 bg-purple-300 rounded-lg hover:bg-purple-500 hover:text-white hover:cursor-pointer"
       >
         {{ gpsButtonText }}
@@ -29,11 +29,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref, computed, watch } from "vue";
 import { useGeolocation } from "../composables/useGeolocation";
 
 const {
-  gpsButtonText,
   confirmedLocationName,
   anyLoading,
   anyError,
@@ -42,8 +41,23 @@ const {
 } = useGeolocation();
 
 const locationQuery = ref(confirmedLocationName.value);
+const gpsButtonText = ref<"Use GPS" | "GPS loading..." | "Refresh GPS">(
+  "Use GPS",
+);
+
+function handleGpsSearch() {
+  gpsButtonText.value = "GPS loading...";
+  requestGeolocation();
+}
+
 
 watch(confirmedLocationName, (newValue) => {
   locationQuery.value = newValue;
+});
+
+watch(anyError, (newError) => {
+  if (newError) {
+    gpsButtonText.value = "Use GPS";
+  }
 });
 </script>
