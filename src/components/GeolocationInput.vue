@@ -7,7 +7,7 @@
         @click="handleGpsSearch"
         class="p-2 me-4 bg-purple-300 rounded-lg hover:bg-purple-500 hover:text-white hover:cursor-pointer"
       >
-        {{ gpsButtonText }}
+        {{ gpsLocationButtonText }}
       </button>
       <input
         id="text-location"
@@ -22,7 +22,7 @@
         @click="handleManualSearch"
         class="p-2 bg-purple-300 rounded-e-lg hover:bg-purple-500 hover:text-white hover:cursor-pointer"
       >
-        {{ manualButtonText }}
+        {{ manualLocationButtonText }}
       </button>
     </fieldset>
   </form>
@@ -33,6 +33,8 @@
 import { ref, computed, watch } from "vue";
 import { useGeolocation } from "../composables/useGeolocation";
 
+type LocationSource = "NONE" | "GPS" | "MANUAL";
+
 const {
   confirmedLocationName,
   anyLoading,
@@ -41,54 +43,63 @@ const {
   requestGeolocation,
 } = useGeolocation();
 
-const locationQuery = ref("");
-const gpsButtonText = ref<"Use GPS" | "GPS loading..." | "Refresh GPS">(
+const gpsLocationButtonText = ref<"Use GPS" | "GPS loading..." | "Refresh GPS">(
   "Use GPS",
 );
-const manualButtonText = ref<
+const manualLocationButtonText = ref<
   "Find my location" | "Finding location..." | "Location found"
 >("Find my location");
+const locationQuery = ref("");
+const locationSource = ref<LocationSource>("NONE");
 
 const isLocationConfirmed = computed(
   () =>
+    locationSource.value !== "NONE" &&
     !!locationQuery.value &&
     locationQuery.value === confirmedLocationName.value,
 );
 
 async function handleManualSearch() {
-  manualButtonText.value = "Finding location...";
+  locationSource.value = "MANUAL";
+  manualLocationButtonText.value = "Finding location...";
   await searchLocationByName(locationQuery.value);
-
-  if (anyError.value) {
-    manualButtonText.value = "Find my location";
-  } else {
-    manualButtonText.value = "Location found";
-  }
 }
 
 function handleGpsSearch() {
-  gpsButtonText.value = "GPS loading...";
+  locationSource.value = "GPS";
+  gpsLocationButtonText.value = "GPS loading...";
   requestGeolocation();
 }
 
+
+
 watch(locationQuery, (newQuery) => {
   if (newQuery !== confirmedLocationName.value) {
-    manualButtonText.value = "Find my location";
+    locationSource.value = "NONE";
+    gpsLocationButtonText.value = "Use GPS";
+    manualLocationButtonText.value = "Find my location";
   }
 });
 
 watch(confirmedLocationName, (newValue) => {
   if (newValue) {
-    locationQuery.value = newValue;
-    gpsButtonText.value = "Refresh GPS";
-    manualButtonText.value = "Location found";
+    if (locationSource.value === "GPS") {
+      locationQuery.value = newValue;
+      gpsLocationButtonText.value = "Refresh GPS";
+      manualLocationButtonText.value = "Find my location";
+    } else if (locationSource.value === "MANUAL") {
+      locationQuery.value = newValue;
+      manualLocationButtonText.value = "Location found";
+      gpsLocationButtonText.value = "Use GPS";
+    }
   }
 });
 
 watch(anyError, (newError) => {
   if (newError) {
-    gpsButtonText.value = "Use GPS";
-    manualButtonText.value = "Find my location";
+    locationSource.value = "NONE";
+    gpsLocationButtonText.value = "Use GPS";
+    manualLocationButtonText.value = "Find my location";
   }
 });
 </script>
