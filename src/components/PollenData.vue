@@ -20,13 +20,13 @@ import type { OpenMeteoAPIParams } from "../interfaces/openmeteoapiparams";
 import { OPENMETEO_POLLEN_TYPES } from "../config";
 import PollenDataTable from "./PollenDataTable.vue";
 
-const { location } = useGeolocation();
+const { locationCoordinates } = useGeolocation();
 const { data, loading, error, openMeteoFetch } = useOpenMeteoAPI();
 
-const noLocation = computed(() => location.value === null);
+const noLocation = computed(() => locationCoordinates.value === null);
 
 watch(
-  location,
+  locationCoordinates,
   (newLocation) => {
     if (newLocation) {
       if (
