@@ -4,7 +4,9 @@ import type { Coordinates } from "../interfaces/Coordinates";
 
 const nominatim = useNominatim();
 
-const gpsButtonText = ref<"Use GPS" | "Refresh GPS">("Use GPS");
+const gpsButtonText = ref<"Use GPS" | "GPS loading..." | "Refresh GPS">(
+  "Use GPS",
+);
 const confirmedLocationName = ref<string>("");
 const location = ref<Coordinates | null>(null);
 const errorMessage = ref<string | null>(null);
@@ -48,6 +50,7 @@ const requestGeolocation = (): void => {
   isLoading.value = true;
   errorMessage.value = null;
   location.value = null;
+  gpsButtonText.value = "GPS loading...";
 
   if ("geolocation" in navigator) {
     navigator.geolocation.getCurrentPosition(success, error);
@@ -92,7 +95,7 @@ const error = (err: GeolocationPositionError): void => {
 };
 
 export const useGeolocation = (): {
-  gpsButtonText: Ref<"Use GPS" | "Refresh GPS">;
+  gpsButtonText: Ref<"Use GPS" | "GPS loading..." | "Refresh GPS">;
   confirmedLocationName: Ref<string>;
   location: Ref<Coordinates | null>;
   anyLoading: Ref<boolean>;
