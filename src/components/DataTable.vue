@@ -21,6 +21,9 @@
               </span>
             </button>
           </th>
+          <th v-if="onDelete" class="p-3 text-start whitespace-nowrap text-xs">
+            Actions
+          </th>
         </tr>
       </thead>
       <tbody class="bg-white divide-y divide-green-100">
@@ -35,6 +38,14 @@
             class="p-3 whitespace-nowrap text-sm"
           >
             {{ record[key] }}
+          </td>
+          <td v-if="onDelete" class="p-3 whitespace-nowrap text-sm">
+            <button
+              @click="onDelete(record)"
+              class="cursor-pointer p-2 bg-transparent text-red-500 ring-2 rounded-lg hover:bg-red-500 hover:text-white"
+            >
+              Delete
+            </button>
           </td>
         </tr>
       </tbody>
@@ -51,6 +62,7 @@ import { useDataTableSorting } from "../composables/useDataTableSorting";
 const props = defineProps<{
   records: DataTableRow[];
   columns: string[];
+  onDelete?: (record: DataTableRow) => void;
 }>();
 
 const { records, columns } = toRefs(props);
