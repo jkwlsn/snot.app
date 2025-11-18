@@ -39,12 +39,12 @@ export function useSymptomInput(
   const geolocation = useGeolocation();
 
   const location = computed<Coordinates | null>(
-    () => geolocation.location.value,
+    () => geolocation.locationCoordinates.value,
   );
 
   const selectedSymptoms = ref<string[]>([]);
 
-  const noLocation = computed(() => geolocation.location.value === null);
+  const noLocation = computed(() => geolocation.locationCoordinates.value === null);
 
   const symptomObjects: SymptomObject[] = SYMPTOM_LIST.map(
     (symptom: string, index: number) => ({
@@ -64,7 +64,7 @@ export function useSymptomInput(
 
   const createSymptomRecord = (symptom: string): NewSymptomRecord | null => {
     try {
-      if (location.value === null) {
+      if (geolocation.locationCoordinates.value === null) { // Changed here
         throw new Error("No location set");
       }
       if (apiData.value === null) {
@@ -88,8 +88,8 @@ export function useSymptomInput(
         severity: symptomSeverity.value,
         timestamp: currentTime,
         location: {
-          latitude: location.value.latitude,
-          longitude: location.value.longitude,
+          latitude: geolocation.locationCoordinates.value.latitude, // Changed here
+          longitude: geolocation.locationCoordinates.value.longitude, // Changed here
         },
         pollenData: currentPollenData.map((record) => ({
           timestamp: new Date(record.timestamp.getTime()),
@@ -112,7 +112,7 @@ export function useSymptomInput(
 
   const addSymptom = async (symptom: string): Promise<void> => {
     try {
-      if (geolocation.location.value === null) {
+      if (geolocation.locationCoordinates.value === null) { // Changed here
         throw new Error("No location set");
       }
 
@@ -152,7 +152,7 @@ export function useSymptomInput(
   };
 
   watch(
-    location,
+    geolocation.locationCoordinates,
     (newLocation) => {
       if (newLocation) {
         void openMeteoFetch({
