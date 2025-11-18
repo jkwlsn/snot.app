@@ -28,7 +28,7 @@ const searchLocationByName = async (query: string): Promise<void> => {
       throw new Error("Could not get location");
     }
     location.value = newLocation;
-    confirmedLocationName.value = query;
+    reverseGeocode(newLocation);
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error("searchLocationByName failed:", error.message);
