@@ -26,7 +26,6 @@
     </fieldset>
   </form>
   <p v-if="anyError">{{ anyError }}</p>
-  <p v-if="anyLoading">Finding location...</p>
 </template>
 
 <script setup lang="ts">
