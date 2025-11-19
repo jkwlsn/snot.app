@@ -2,7 +2,7 @@ import { getUnixTime } from "date-fns";
 import type { Timeframe } from "../interfaces/Timeframe";
 import type { PollenRecord } from "../interfaces/Pollen";
 
-function filterPollenDataByTimeframe(
+export function filterPollenDataByTimeframe(
   data: readonly PollenRecord[],
   timeframe: Timeframe,
 ): PollenRecord[] {
@@ -26,14 +26,3 @@ function filterPollenDataByTimeframe(
 
   return result;
 }
-
-export const usefilterPollenDataByTimeframe = (): {
-  filterPollenDataByTimeframe: (
-    data: readonly PollenRecord[],
-    timeframe: Timeframe,
-  ) => PollenRecord[];
-} => {
-  return {
-    filterPollenDataByTimeframe,
-  };
-};

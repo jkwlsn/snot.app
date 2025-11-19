@@ -5,7 +5,7 @@ import { SYMPTOM_LIST } from "../config";
 import { db } from "../db";
 import { useGeolocation } from "../composables/useGeolocation";
 import { useOpenMeteoAPI } from "../composables/useOpenMeteo";
-import { usefilterPollenDataByTimeframe } from "../utils/filterPollenLevelsByTimeframe";
+import { filterPollenDataByTimeframe } from "../utils/filterPollenLevelsByTimeframe";
 import type { Coordinates } from "../interfaces/Coordinates";
 import type {
   SymptomRecord,
@@ -34,7 +34,6 @@ export function useSymptomInput(
 ): UseSymptomInputReturn {
   const { data: openMeteoApiData, openMeteoFetch } = useOpenMeteoAPI();
   const apiData = computed(() => openMeteoApiData.value);
-  const filter = usefilterPollenDataByTimeframe();
 
   const geolocation = useGeolocation();
 
@@ -78,7 +77,7 @@ export function useSymptomInput(
         endTime: addHours(createUTCDate(), 1),
       };
 
-      const currentPollenData = filter.filterPollenDataByTimeframe(
+      const currentPollenData = filterPollenDataByTimeframe(
         apiData.value.records,
         currentTimeframe,
       );

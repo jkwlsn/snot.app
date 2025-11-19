@@ -39,7 +39,7 @@
 import { computed, ref } from "vue";
 import { startOfHour, endOfHour } from "date-fns";
 import { useOpenMeteoAPI } from "../composables/useOpenMeteo";
-import { usefilterPollenDataByTimeframe } from "../utils/filterPollenLevelsByTimeframe";
+import { filterPollenDataByTimeframe } from "../utils/filterPollenLevelsByTimeframe";
 import { OPENMETEO_POLLEN_TYPES } from "../config";
 import PollenDataTable from "./PollenDataTable.vue";
 import type { Timeframe } from "../interfaces/Timeframe";
@@ -47,7 +47,6 @@ import type { PollenRecord } from "../interfaces/Pollen";
 import { createUTCDate, formatDateForInput, parseDateFromInput } from "../utils/dateUtils";
 
 const { data } = useOpenMeteoAPI();
-const filter = usefilterPollenDataByTimeframe();
 
 const getStartOfCurrentHourLocal = (): string => {
   const now = createUTCDate();
@@ -70,6 +69,6 @@ const filteredLevels = computed<PollenRecord[]>(() => {
     endTime: endOfHour(parseDateFromInput(endTime.value)),
   };
 
-  return filter.filterPollenDataByTimeframe(rawPollenData, timeframe);
+  return filterPollenDataByTimeframe(rawPollenData, timeframe);
 });
 </script>
