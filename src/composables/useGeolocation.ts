@@ -43,9 +43,7 @@ export function useGeolocation(): UseGeolocationReturn {
   const errorManual = computed(
     () => nominatim.nominatimState.value.errorMessage,
   );
-  const anyError = computed(
-    () => (errorGps.value || errorManual.value) ?? null,
-  );
+  const anyError = computed(() => errorGps.value ?? errorManual.value);
 
   const updateConfirmedLocation = async (
     coords: Coordinates,

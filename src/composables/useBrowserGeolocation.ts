@@ -8,12 +8,12 @@ export function useBrowserGeolocation(): {
   requestGeolocation: () => void;
 } {
   const coordinates = ref<Coordinates | null>(null);
-  const errorMessage = ref<string>("");
+  const errorMessage = ref<string | null>(null);
   const loading = ref<boolean>(false);
 
   const requestGeolocation = (): void => {
     loading.value = true;
-    errorMessage.value = "";
+    errorMessage.value = null;
 
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(success, handleGeolocationError);
