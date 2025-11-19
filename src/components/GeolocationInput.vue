@@ -79,13 +79,13 @@ const manualButtonText = computed(() => {
   return "Find my location";
 });
 
-async function handleManualSearch() {
+async function handleManualSearch(): Promise<void> {
   if (locationQuery.value) {
     await searchManualLocation(locationQuery.value);
   }
 }
 
-function handleGpsSearch() {
+function handleGpsSearch(): void {
   requestGpsLocation();
 }
 
