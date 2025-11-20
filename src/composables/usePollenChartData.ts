@@ -1,66 +1,20 @@
 import { computed, type Ref } from "vue";
 import { OPENMETEO_POLLEN_TYPES } from "../config";
-import { useOpenMeteoAPI } from "./useOpenMeteo";
 import { chartColors } from "../utils/chartColors";
-import { usePollenFilters } from "../composables/usePollenFilters";
 import type { ChartData, ChartDataset, ChartOptions } from "chart.js";
-import type { PollenType } from "../interfaces/PollenTypes";
-import type { PollenRecord } from "../interfaces/Pollen";
+import type { PollenData, PollenRecord } from "../interfaces/Pollen";
 
-const { levelFilter, typeFilter, applyFilters } = usePollenFilters();
-
-export function usePollenChartData(
-  minLevel: Ref<number>,
-  selectedPollenTypes: Ref<PollenType[]>,
-): {
+export function usePollenChartData(pollenData: Ref<PollenData>): {
   chartData: Ref<ChartData<"line">>;
   chartOptions: Ref<ChartOptions<"line">>;
-  loading: Ref<boolean>;
-  error: Ref<Error | null>;
-  maxPollenLevel: Ref<number>;
 } {
-  const { data, loading, error } = useOpenMeteoAPI();
-
-  const maxPollenLevel = computed<number>(() => {
-    if (!data.value) return 0;
-
-    let maxLevel = 0;
-    data.value.records.forEach((record: PollenRecord) => {
-      OPENMETEO_POLLEN_TYPES.forEach((pollenType) => {
-        const level = record.levels[pollenType];
-        if (level !== null && level > maxLevel) {
-          maxLevel = Math.ceil(level);
-        }
-      });
-    });
-    return maxLevel;
-  });
-
-  const filteredPollenData = computed(() => {
-    const filters = [];
-
-    if (!data.value) {
-      return { records: [] };
-    }
-
-    if (minLevel.value > 0) {
-      filters.push(levelFilter(minLevel.value));
-    }
-
-    if (selectedPollenTypes.value.length > 0) {
-      filters.push(typeFilter(selectedPollenTypes.value));
-    }
-
-    return applyFilters(data.value, filters);
-  });
-
   const chartData = computed<ChartData<"line">>(() => {
-    if (!data.value) return { datasets: [] };
+    if (!pollenData.value.records.length) return { datasets: [] };
 
     const datasets: ChartDataset<"line">[] = [];
 
     OPENMETEO_POLLEN_TYPES.forEach((pollenType, index) => {
-      const dataPoints = filteredPollenData.value.records.reduce(
+      const dataPoints = pollenData.value.records.reduce(
         (acc: { x: number; y: number }[], record: PollenRecord) => {
           const level = record.levels[pollenType];
           if (level !== null) {
@@ -90,7 +44,6 @@ export function usePollenChartData(
     return { datasets };
   });
 
-  // Chart options computation
   const chartOptions = computed<ChartOptions<"line">>(() => ({
     responsive: true,
     maintainAspectRatio: true,
@@ -130,8 +83,5 @@ export function usePollenChartData(
   return {
     chartData,
     chartOptions,
-    loading,
-    error,
-    maxPollenLevel,
   };
 }
