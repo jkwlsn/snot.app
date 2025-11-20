@@ -30,7 +30,7 @@
     </fieldset>
   </form>
   <PollenDataTable
-    :records="filteredLevels"
+    :records="filteredPollenData"
     :pollen-types="OPENMETEO_POLLEN_TYPES"
   />
 </template>
@@ -39,36 +39,42 @@
 import { computed, ref } from "vue";
 import { startOfHour, endOfHour } from "date-fns";
 import { useOpenMeteoAPI } from "../composables/useOpenMeteo";
-import { filterPollenDataByTimeframe } from "../utils/filterPollenLevelsByTimeframe";
 import { OPENMETEO_POLLEN_TYPES } from "../config";
 import PollenDataTable from "./PollenDataTable.vue";
 import type { Timeframe } from "../interfaces/Timeframe";
-import type { PollenRecord } from "../interfaces/Pollen";
-import { createUTCDate, formatDateForInput, parseDateFromInput } from "../utils/dateUtils";
+import {
+  createUTCDate,
+  formatDateForInput,
+  parseDateFromInput,
+} from "../utils/dateUtils";
+import { usePollenFilters } from "../composables/usePollenFilters";
+import { PollenData, PollenRecord } from "../interfaces/Pollen";
 
 const { data } = useOpenMeteoAPI();
+const { applyFilters, timeframeFilter } = usePollenFilters();
 
 const getStartOfCurrentHourLocal = (): string => {
   const now = createUTCDate();
   return formatDateForInput(startOfHour(now));
 };
-
 const minimumLocalDatetime = getStartOfCurrentHourLocal();
 const startTime = ref<string>(minimumLocalDatetime);
 const endTime = ref<string>(formatDateForInput(createUTCDate()));
 
-const filteredLevels = computed<PollenRecord[]>(() => {
-  if (!data.value?.records) {
-    return [];
-  }
-
-  const rawPollenData = data.value.records;
-
+const filteredPollenData = computed<readonly PollenRecord[]>(() => {
   const timeframe: Timeframe = {
     startTime: parseDateFromInput(startTime.value),
     endTime: endOfHour(parseDateFromInput(endTime.value)),
   };
 
-  return filterPollenDataByTimeframe(rawPollenData, timeframe);
+  if (data.value === null) {
+    return [];
+  }
+
+  const unfilteredData: PollenData = data.value;
+  const filteredData = applyFilters(unfilteredData, [
+    timeframeFilter(timeframe),
+  ]);
+  return filteredData.records;
 });
 </script>
