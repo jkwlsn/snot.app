@@ -17,7 +17,13 @@ interface UseGeolocationReturn {
   searchManualLocation: (query: string) => Promise<void>;
 }
 
+let geolocationInstance: UseGeolocationReturn | null = null;
+
 export function useGeolocation(): UseGeolocationReturn {
+  if (geolocationInstance) {
+    return geolocationInstance;
+  }
+
   const nominatim = useNominatim();
   const browserGeolocation = useBrowserGeolocation();
 
@@ -66,10 +72,13 @@ export function useGeolocation(): UseGeolocationReturn {
   watch(browserGeolocation.coordinates, (newCoords) => {
     if (newCoords) {
       void updateConfirmedLocation(newCoords);
+    } else {
+      confirmedLocationName.value = "";
+      locationCoordinates.value = null;
     }
   });
 
-  return {
+  geolocationInstance = {
     anyError,
     anyLoading,
     confirmedLocationName,
@@ -82,4 +91,6 @@ export function useGeolocation(): UseGeolocationReturn {
     requestGpsLocation,
     searchManualLocation,
   };
+
+  return geolocationInstance;
 }
