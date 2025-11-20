@@ -1,14 +1,13 @@
 import { computed, type Ref } from "vue";
 import { OPENMETEO_POLLEN_TYPES } from "../config";
 import { useOpenMeteoAPI } from "./useOpenMeteo";
-import {
-  filterPollenByLevel,
-  filterPollenByType,
-} from "../composables/usePollenFilters";
 import { chartColors } from "../utils/chartColors";
+import { usePollenFilters } from "../composables/usePollenFilters";
 import type { ChartData, ChartDataset, ChartOptions } from "chart.js";
 import type { PollenType } from "../interfaces/PollenTypes";
 import type { PollenRecord } from "../interfaces/Pollen";
+
+const { levelFilter, typeFilter, applyFilters } = usePollenFilters();
 
 export function usePollenChartData(
   minLevel: Ref<number>,
@@ -20,17 +19,16 @@ export function usePollenChartData(
   error: Ref<Error | null>;
   maxPollenLevel: Ref<number>;
 } {
-  const { data: rawPollenData, loading, error } = useOpenMeteoAPI();
+  const { data, loading, error } = useOpenMeteoAPI();
 
   const maxPollenLevel = computed<number>(() => {
-    if (!rawPollenData.value) {
-      return 0;
-    }
+    if (!data.value) return 0;
+
     let maxLevel = 0;
-    rawPollenData.value.records.forEach((record: PollenRecord) => {
+    data.value.records.forEach((record: PollenRecord) => {
       OPENMETEO_POLLEN_TYPES.forEach((pollenType) => {
         const level = record.levels[pollenType];
-        if (typeof level === "number" && level > maxLevel) {
+        if (level !== null && level > maxLevel) {
           maxLevel = Math.ceil(level);
         }
       });
@@ -38,40 +36,41 @@ export function usePollenChartData(
     return maxLevel;
   });
 
-  const chartData = computed<ChartData<"line">>(() => {
-    const currentRawPollenData = rawPollenData.value;
-    if (!currentRawPollenData) {
-      return { datasets: [] };
+  const filteredPollenData = computed(() => {
+    const filters = [];
+
+    if (!data.value) {
+      return { records: [] };
     }
 
-    let filteredPollenData = currentRawPollenData;
-
     if (minLevel.value > 0) {
-      filteredPollenData = filterPollenByLevel(
-        filteredPollenData,
-        minLevel.value,
-      );
+      filters.push(levelFilter(minLevel.value));
     }
 
     if (selectedPollenTypes.value.length > 0) {
-      filteredPollenData = filterPollenByType(
-        filteredPollenData,
-        selectedPollenTypes.value,
-      );
+      filters.push(typeFilter(selectedPollenTypes.value));
     }
+
+    return applyFilters(data.value, filters);
+  });
+
+  const chartData = computed<ChartData<"line">>(() => {
+    if (!data.value) return { datasets: [] };
 
     const datasets: ChartDataset<"line">[] = [];
 
     OPENMETEO_POLLEN_TYPES.forEach((pollenType, index) => {
-      const dataPoints: { x: number; y: number }[] = [];
-
-      filteredPollenData.records.forEach((record: PollenRecord) => {
-        const level = record.levels[pollenType];
-        if (level !== null) {
-          const timestamp = record.timestamp.getTime();
-          dataPoints.push({ x: timestamp, y: level });
-        }
-      });
+      const dataPoints = filteredPollenData.value.records.reduce(
+        (acc: { x: number; y: number }[], record: PollenRecord) => {
+          const level = record.levels[pollenType];
+          if (level !== null) {
+            const timestamp = record.timestamp.getTime();
+            acc.push({ x: timestamp, y: level });
+          }
+          return acc;
+        },
+        [],
+      );
 
       if (dataPoints.length > 0) {
         const color = chartColors[index % chartColors.length];
@@ -88,51 +87,45 @@ export function usePollenChartData(
       }
     });
 
-    return {
-      datasets: datasets,
-    };
+    return { datasets };
   });
 
-  const chartOptions = computed<ChartOptions<"line">>(() => {
-    return {
-      responsive: true,
-      maintainAspectRatio: true,
-      plugins: {
+  // Chart options computation
+  const chartOptions = computed<ChartOptions<"line">>(() => ({
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: {
+      title: {
+        display: true,
+        text: "Pollen Forecast",
+      },
+      tooltip: {
+        mode: "index",
+        intersect: false,
+      },
+    },
+    scales: {
+      x: {
+        type: "time",
+        time: {
+          displayFormats: {
+            hour: "MMM d, h a",
+          },
+        },
         title: {
           display: true,
-          text: "Pollen Forecast",
-        },
-        tooltip: {
-          mode: "index",
-          intersect: false,
+          text: "Date",
         },
       },
-      scales: {
-        x: {
-          type: "time",
-          ticks: {
-            // Chart.js will automatically choose appropriate time formats
-          },
-          time: {
-            displayFormats: {
-              hour: "MMM d, h a",
-            },
-          },
-          title: {
-            display: true,
-            text: "Date",
-          },
-        },
-        y: {
-          beginAtZero: true,
-          title: {
-            display: true,
-            text: "Pollen Level",
-          },
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: "Pollen Level",
         },
       },
-    };
-  });
+    },
+  }));
 
   return {
     chartData,

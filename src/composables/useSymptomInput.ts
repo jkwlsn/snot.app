@@ -5,15 +5,11 @@ import { SYMPTOM_LIST } from "../config";
 import { db } from "../db";
 import { useGeolocation } from "../composables/useGeolocation";
 import { useOpenMeteoAPI } from "../composables/useOpenMeteo";
-import { usefilterPollenDataByTimeframe } from "../utils/filterPollenLevelsByTimeframe";
+import { usePollenFilters } from "./usePollenFilters";
 import type { Coordinates } from "../interfaces/Coordinates";
-import type {
-  SymptomRecord,
-  NewSymptomRecord,
-} from "../interfaces/SymptomRecord";
-import type { PollenRecord } from "../interfaces/Pollen";
-import { createUTCDate } from "../utils/dateUtils";
+import type { NewSymptomRecord } from "../interfaces/SymptomRecord";
 import type { Timeframe } from "../interfaces/Timeframe";
+import { createUTCDate } from "../utils/dateUtils";
 
 interface SymptomObject {
   id: number;
@@ -32,9 +28,9 @@ export interface UseSymptomInputReturn {
 export function useSymptomInput(
   symptomSeverity: Ref<number>,
 ): UseSymptomInputReturn {
+  const { applyFilters, timeframeFilter } = usePollenFilters();
   const { data: openMeteoApiData, openMeteoFetch } = useOpenMeteoAPI();
   const apiData = computed(() => openMeteoApiData.value);
-  const filter = usefilterPollenDataByTimeframe();
 
   const geolocation = useGeolocation();
 
@@ -44,7 +40,9 @@ export function useSymptomInput(
 
   const selectedSymptoms = ref<string[]>([]);
 
-  const noLocation = computed(() => geolocation.locationCoordinates.value === null);
+  const noLocation = computed(
+    () => geolocation.locationCoordinates.value === null,
+  );
 
   const symptomObjects: SymptomObject[] = SYMPTOM_LIST.map(
     (symptom: string, index: number) => ({
@@ -64,7 +62,7 @@ export function useSymptomInput(
 
   const createSymptomRecord = (symptom: string): NewSymptomRecord | null => {
     try {
-      if (geolocation.locationCoordinates.value === null) { // Changed here
+      if (geolocation.locationCoordinates.value === null) {
         throw new Error("No location set");
       }
       if (apiData.value === null) {
@@ -78,10 +76,9 @@ export function useSymptomInput(
         endTime: addHours(createUTCDate(), 1),
       };
 
-      const currentPollenData = filter.filterPollenDataByTimeframe(
-        apiData.value.records,
-        currentTimeframe,
-      );
+      const currentPollenData = applyFilters(apiData.value, [
+        timeframeFilter(currentTimeframe),
+      ]);
 
       return {
         type: symptom,
@@ -91,7 +88,7 @@ export function useSymptomInput(
           latitude: geolocation.locationCoordinates.value.latitude, // Changed here
           longitude: geolocation.locationCoordinates.value.longitude, // Changed here
         },
-        pollenData: currentPollenData.map((record) => ({
+        pollenData: currentPollenData.records.map((record) => ({
           timestamp: new Date(record.timestamp.getTime()),
           levels: { ...record.levels },
         })),
@@ -112,7 +109,8 @@ export function useSymptomInput(
 
   const addSymptom = async (symptom: string): Promise<void> => {
     try {
-      if (geolocation.locationCoordinates.value === null) { // Changed here
+      if (geolocation.locationCoordinates.value === null) {
+        // Changed here
         throw new Error("No location set");
       }
 

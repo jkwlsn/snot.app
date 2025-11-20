@@ -1,68 +1,105 @@
 import { type PollenData, type PollenRecord } from "../interfaces/Pollen";
-import { type PollenLevels, type PollenType } from "../interfaces/PollenTypes";
+import { type PollenType, type PollenLevels } from "../interfaces/PollenTypes";
+import { type Timeframe } from "../interfaces/Timeframe";
 
-// This function takes a PollenData object, defined in /interfaces/pollen,
-// and a number representing the pollen level threshold for the filter.
-// It returns a new PollenData object containing only the pollen types with
-// levels above the threshold.
-export function filterPollenByLevel(
-  pollenData: PollenData,
-  minLevel: number,
-): PollenData {
-  const newRecords = pollenData.records
-    .map((record) => {
-      // map over all recorsd in pollenData
-      const newLevels: PollenLevels = { ...record.levels };
-      let hasHighPollen = false;
+type PollenFilter = (pollenRecord: PollenRecord) => PollenRecord | null;
 
-      // Create new array containing pollens with levels above threshold
+export function usePollenFilters(): {
+  applyFilters: (pollenData: PollenData, filters: PollenFilter[]) => PollenData;
+  levelFilter: (minLevel: number) => PollenFilter;
+  timeframeFilter: (timeframe: Timeframe) => PollenFilter;
+  typeFilter: (selectedPollenTypes: PollenType[]) => PollenFilter;
+} {
+  const levelFilter =
+    (minLevel: number): PollenFilter =>
+    (pollenRecord: PollenRecord) => {
+      const newLevels: PollenLevels = { ...pollenRecord.levels };
+
+      let hasValidPollenLevel = false;
+
       for (const pollenType in newLevels) {
         const level = newLevels[pollenType];
-        // If the pollen level is below the threshold, set it to null
         if (level !== null && level < minLevel) {
           newLevels[pollenType] = null;
         }
-        // Otherwise, set hasHighPollen to true
         if (newLevels[pollenType] !== null) {
-          hasHighPollen = true;
+          hasValidPollenLevel = true;
         }
       }
 
-      return hasHighPollen ? { ...record, levels: newLevels } : null;
-    })
-    .filter((record): record is PollenRecord => record !== null);
-  //filter out all records which contain null pollen level
+      if (hasValidPollenLevel) {
+        return { ...pollenRecord, levels: newLevels };
+      } else {
+        return null;
+      }
+    };
 
-  return {
-    ...pollenData,
-    records: newRecords,
-  };
-}
-
-export function filterPollenByType(
-  pollenData: PollenData,
-  selectedPollenTypes: PollenType[],
-): PollenData {
-  const newRecords = pollenData.records
-    .map((record) => {
-      const newLevels: PollenLevels = { ...record.levels };
-      let isSelectedPollenType = false;
+  const typeFilter =
+    (selectedPollenTypes: PollenType[]): PollenFilter =>
+    (pollenRecord: PollenRecord) => {
+      const newLevels: PollenLevels = { ...pollenRecord.levels };
+      let hasASelectedPollenType = false;
 
       for (const pollenType in newLevels) {
         if (!selectedPollenTypes.includes(pollenType)) {
           newLevels[pollenType] = null;
-        }
-        if (newLevels[pollenType] !== null) {
-          isSelectedPollenType = true;
+        } else {
+          hasASelectedPollenType = true;
         }
       }
 
-      return isSelectedPollenType ? { ...record, levels: newLevels } : null;
-    })
-    .filter((record): record is PollenRecord => record !== null);
+      if (hasASelectedPollenType) {
+        return { ...pollenRecord, levels: newLevels };
+      } else {
+        return null;
+      }
+    };
+
+  const timeframeFilter =
+    (timeframe: Timeframe): PollenFilter =>
+    (pollenRecord: PollenRecord) => {
+      const recordTimestamp = pollenRecord.timestamp;
+      if (
+        recordTimestamp >= timeframe.startTime &&
+        recordTimestamp <= timeframe.endTime
+      ) {
+        return pollenRecord;
+      } else {
+        return null;
+      }
+    };
+
+  const applyFilters = (
+    pollenData: PollenData,
+    filters: PollenFilter[],
+  ): PollenData => {
+    const newRecords = pollenData.records.reduce(
+      (acc: PollenRecord[], pollenRecord: PollenRecord) => {
+        const modifiedRecord = filters.reduce(
+          (rec: PollenRecord | null, filter) => {
+            if (rec === null) {
+              return null;
+            }
+            return filter(rec);
+          },
+          pollenRecord,
+        );
+
+        if (modifiedRecord !== null) {
+          acc.push(modifiedRecord);
+        }
+        return acc;
+      },
+      [],
+    );
+
+    return { ...pollenData, records: newRecords };
+  };
 
   return {
-    ...pollenData,
-    records: newRecords,
+    applyFilters,
+    levelFilter,
+    timeframeFilter,
+    typeFilter,
   };
 }
