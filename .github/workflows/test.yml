@@ -1,0 +1,39 @@
+name: Run full test suite
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 'lts/*'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Install Playwright Browsers
+        run: pnpm dlx playwright install
+
+      - name: Run Unit tests
+        run: pnpm test:unit
+
+      - name: Run E2E tests (Playwright)
+        if: github.actor != 'dependabot[bot]'
+        run: pnpm run test:e2e
