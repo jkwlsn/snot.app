@@ -1,0 +1,24 @@
+{
+    "extends": "./.svelte-kit/tsconfig.json",
+    "compilerOptions": {
+        "target": "ES2025",
+        "rewriteRelativeImportExtensions": true,
+        "allowJs": true,
+        "checkJs": true,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "resolveJsonModule": true,
+        "skipLibCheck": true,
+        "sourceMap": true,
+        "strict": true,
+        "moduleResolution": "bundler",
+        "verbatimModuleSyntax": true,
+        "noUnusedLocals": true,
+        "noImplicitReturns": true,
+        "incremental": true,
+        "isolatedModules": true,
+        "importHelpers": true,
+        "removeComments": true,
+        "moduleDetection": "force"
+    }
+}
