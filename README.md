@@ -1,42 +1,35 @@
-# sv
+# snot.app
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Foursquare, but for hayfever
 
-## Creating a project
+## About
 
-If you're seeing this, you've probably already done this step. Congrats!
+[**snot.app**](https://snot.app) is a toy project by [jkwlsn](https://jkwlsn.dev) designed to test out TypeScript, SvelteKit 2+, Web APIs, and a variety of local development tools including Vite, Eslint, Prettier, Vitest and Playwright.
 
-```sh
-# create a new project
-npx sv create my-app
+It's also an offline-first web app designed to track and predict hayfever symptoms.
+
+## User Guide
+
+1. Open [`snot.app`](https://snot.app) in your favourite browser.
+2. Enjoy
+
+## Development
+
+1. Clone the repo
+
+```bash
+git clone https://github.com/jkwlsn/snot.app.git
+cd snot.app
 ```
 
-To recreate this project with the same configuration:
+2. Install dependencies
 
-```sh
-# recreate this project
-pnpm dlx sv@0.12.5 create --template minimal --types ts --add prettier eslint vitest="usages:unit,component" playwright --install pnpm snot.app
+```bash
+pnpm install
 ```
 
-## Developing
+3. Run the development server
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+```bash
+pnpm run dev
 ```
-
-## Building
-
-To create a production version of your app:
-
-```sh
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
