@@ -43,6 +43,7 @@
 		"vitest-browser-svelte": "^2.0.2"
 	},
 	"dependencies": {
-		"dexie": "^4.3.0"
+		"dexie": "^4.3.0",
+		"zod": "^4.3.6"
 	}
 }
