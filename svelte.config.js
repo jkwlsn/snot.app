@@ -7,6 +7,7 @@ const config = {
 		adapter: adapter({ fallback: 'index.html' }),
 		alias: {
 			$lib: 'src/lib',
+			$db: 'src/lib/db',
 			$types: 'src/lib/types/'
 		}
 	}
