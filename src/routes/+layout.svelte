@@ -1,4 +1,5 @@
 <script lang="ts">
+	import '$lib/pwa.svelte';
 
 	let { children } = $props();
 </script>
