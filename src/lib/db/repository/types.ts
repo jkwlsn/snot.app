@@ -1,11 +1,11 @@
 // Interfaces for DB repositories
-import type { SymptomEntry } from '$lib/types';
+import type { SymptomRecord } from '$lib/types';
 
 export interface SymptomRepository {
-	add(entry: Omit<SymptomEntry, 'id'>): Promise<number>;
-	update(id: number, patch: Partial<SymptomEntry>): Promise<void>;
+	add(entry: Omit<SymptomRecord, 'id'>): Promise<number>;
+	update(id: number, patch: Partial<SymptomRecord>): Promise<void>;
 	delById(id: number): Promise<void>;
-	getById(id: number): Promise<SymptomEntry | undefined>;
-	getAll(): Promise<SymptomEntry[]>;
-	getRange(from: Date, to: Date): Promise<SymptomEntry[]>;
+	getById(id: number): Promise<SymptomRecord | undefined>;
+	getAll(): Promise<SymptomRecord[]>;
+	getRange(from: Date, to: Date): Promise<SymptomRecord[]>;
 }
