@@ -35,7 +35,7 @@ export type SymptomSeverity = 0 | 1 | 2 | 3 | 4 | 5;
 
 // Describes an entry in the symptom log
 // Describes timestamp, location, location name, areas affected and severity, and a snapshot of the environment at the moment of logging.
-export interface SymptomEntry {
+export interface SymptomRecord {
 	id: number;
 	timestamp: Date;
 	eyes: SymptomSeverity;
