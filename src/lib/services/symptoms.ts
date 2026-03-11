@@ -24,5 +24,18 @@ export function createSymptomService(repo: SymptomRepository, logger: Logger) {
 			throw err;
 		}
 	}
-	return { submitSymptoms };
+
+	async function getAllSymptoms() {
+		try {
+			const result = await repo.getAll();
+			logger.debug('Got all symptoms', { result });
+			return result;
+		} catch (err: unknown) {
+			const error = err instanceof Error ? err : new Error(String(err));
+			logger.error('Failed to get all symptoms', { error });
+			throw err;
+		}
+	}
+
+	return { submitSymptoms, getAllSymptoms };
 }
