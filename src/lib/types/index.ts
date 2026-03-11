@@ -1,5 +1,7 @@
 // Interfaces and types for the app
 
+import type { SymptomName } from '$lib/config';
+
 // Used for location data
 export interface LatLong {
 	lat: number;
@@ -33,19 +35,13 @@ export interface EnvironmentAtLog {
 // Symptoms can be rated between 0-5 in severity
 export type SymptomSeverity = 0 | 1 | 2 | 3 | 4 | 5;
 
-// Describes an entry in the symptom log
-// Describes timestamp, location, location name, areas affected and severity, and a snapshot of the environment at the moment of logging.
-export interface SymptomRecord {
-	id: number;
-	timestamp: Date;
-	eyes: SymptomSeverity;
-	nose: SymptomSeverity;
-	throat: SymptomSeverity;
-	breathing: SymptomSeverity;
-	//	location: LatLong;
-	//	locationLabel: string;
-	//	environment: EnvironmentAtLog | null;
-}
+// Describes a new entry for the database, it will be assigned an ID by the DB.
+// Records timestamp and a list of symptoms (defined by SymptomName, in turn generated from SYMPTOMS constant) and severities (numbers)
+export type NewSymptomRecord = { timestamp: Date } & Record<SymptomName, SymptomSeverity>;
+
+// The same as above, with the ID assigned by the database
+// Used for retrieving and manipulating records
+export type SymptomRecord = NewSymptomRecord & { id: number };
 
 // Basic K:V interface for app settings
 export interface AppSettings {
