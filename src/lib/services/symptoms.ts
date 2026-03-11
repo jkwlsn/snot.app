@@ -37,5 +37,17 @@ export function createSymptomService(repo: SymptomRepository, logger: Logger) {
 		}
 	}
 
-	return { submitSymptoms, getAllSymptoms };
+	async function removeSymptom(id: number) {
+		try {
+			const result = await repo.remove(id);
+			logger.debug('Deleted symptom', { result });
+			return result;
+		} catch (err: unknown) {
+			const error = err instanceof Error ? err : new Error(String(err));
+			logger.error('Failed to delete symptom', { error });
+			throw err;
+		}
+	}
+
+	return { submitSymptoms, getAllSymptoms, removeSymptom };
 }
