@@ -1,8 +1,8 @@
 import Dexie, { type Table } from 'dexie';
-import type { SymptomRecord, AppSettings } from '$lib/types';
+import type { SymptomRecord, AppSettings, NewSymptomRecord } from '$lib/types';
 
 export class SnotDB extends Dexie {
-	symptoms!: Table<SymptomRecord>;
+	symptoms!: Table<SymptomRecord, number, NewSymptomRecord>;
 	settings!: Table<AppSettings>;
 
 	constructor() {
