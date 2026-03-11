@@ -1,10 +1,10 @@
 import type { SymptomRepository } from '$db/repository/types';
 import type { Logger } from '$lib/logging';
-import type { SymptomEntry, SymptomSeverity } from '$lib/types';
+import type { SymptomRecord, SymptomSeverity } from '$lib/types';
 
 export function createSymptomService(repo: SymptomRepository, logger: Logger) {
 	async function submitSymptoms(values: Record<string, number>) {
-		const entry: Omit<SymptomEntry, 'id'> = {
+		const entry: Omit<SymptomRecord, 'id'> = {
 			timestamp: new Date(),
 			eyes: values['eyes'] as SymptomSeverity,
 			nose: values['nose'] as SymptomSeverity,
