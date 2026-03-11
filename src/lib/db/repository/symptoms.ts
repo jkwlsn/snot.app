@@ -1,6 +1,5 @@
 import { db } from '$db/schema';
 import type { Logger } from '$lib/logging';
-import type { SymptomRecord } from '$lib/types';
 import type { SymptomRepository } from './types';
 
 export function createSymptomRepository(logger: Logger): SymptomRepository {
@@ -21,7 +20,7 @@ export function createSymptomRepository(logger: Logger): SymptomRepository {
 	}
 
 	return {
-		add: (entry) => run('add', () => db.symptoms.add(entry as SymptomRecord)),
+		add: (entry) => run('add', () => db.symptoms.add(entry)),
 		update: (id, patch) =>
 			run('update', () => db.symptoms.update(id, patch).then(() => void 0), { id }),
 		delById: (id) => run('delete', () => db.symptoms.delete(id), { id }),
