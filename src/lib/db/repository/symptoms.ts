@@ -23,7 +23,7 @@ export function createSymptomRepository(logger: Logger): SymptomRepository {
 		add: (entry) => run('add', () => db.symptoms.add(entry)),
 		update: (id, patch) =>
 			run('update', () => db.symptoms.update(id, patch).then(() => void 0), { id }),
-		delById: (id) => run('delete', () => db.symptoms.delete(id), { id }),
+		remove: (id) => run('remove', () => db.symptoms.delete(id), { id }),
 		getById: (id) => run('getById', () => db.symptoms.get(id), { id }),
 		getAll: () => run('getAll', () => db.symptoms.orderBy('timestamp').reverse().toArray()),
 		getRange: (from, to) =>
