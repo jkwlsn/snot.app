@@ -22,3 +22,8 @@ export interface GeocodeProvider {
 	forward(query: string): Promise<Location[]>;
 	reverse(coordinates: LocationCoordinates): Promise<Location>;
 }
+
+export interface LocationService {
+	geolocationProvider: GeolocationProvider;
+	geocodeProvider: GeocodeProvider;
+}
