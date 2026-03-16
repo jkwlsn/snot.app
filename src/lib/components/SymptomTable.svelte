@@ -6,6 +6,7 @@
 
 	let { symptoms }: { symptoms: SymptomRecord[] } = $props();
 	let isRemovingSymptom = $state<boolean>(false);
+	let removingSymptomId = $state<number | null>(null);
 	let removeError = $state<string | null>(null);
 
 	const COLUMNS = [
@@ -20,7 +21,9 @@
 	async function handleRemove(e: MouseEvent, id: number) {
 		e.preventDefault();
 
-		logger.debug('Attempting to remove SymptomRecord', { id });
+		removingSymptomId = id;
+
+		logger.debug('Attempting to remove SymptomRecord', { removingSymptomId });
 
 		isRemovingSymptom = true;
 		removeError = null;
@@ -34,6 +37,7 @@
 			removeError = error.message;
 		} finally {
 			isRemovingSymptom = false;
+			removingSymptomId = null;
 		}
 	}
 </script>
@@ -52,7 +56,16 @@
 				{#each COLUMNS as col (col.header)}
 					<td>{col.accessor(record)}</td>
 				{/each}
-				<td><button onclick={(e) => handleRemove(e, record.id)}>Delete</button></td>
+				<td
+					><button onclick={(e) => handleRemove(e, record.id)}
+						>{isRemovingSymptom && removingSymptomId === record.id
+							? 'Removing...'
+							: 'Remove'}</button
+					>
+					{#if removeError}
+						<aside>{removeError}</aside>
+					{/if}
+				</td>
 			</tr>
 		{/each}
 	</tbody>
