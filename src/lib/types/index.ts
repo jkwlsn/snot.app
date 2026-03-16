@@ -2,20 +2,6 @@
 
 import type { SymptomName } from '$lib/config';
 
-// Used for location data
-export interface LatLong {
-	lat: number;
-	long: number;
-}
-
-// Describes where teh value came from, web location or manual
-export type LocationSource = 'gps' | 'manual';
-
-export interface ResolvedLocation extends LatLong {
-	label: string;
-	source: LocationSource;
-}
-
 // User-readable pollen levels
 export type PollenRisk = 'low' | 'moderate' | 'high' | 'extreme';
 
