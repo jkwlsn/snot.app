@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { SYMPTOMS } from '$lib/config';
+	import { locationState } from '$lib/location/state.svelte';
 	import { logger } from '$lib/logger';
 	import { symptomService as service } from '$lib/services';
 
@@ -32,7 +33,10 @@
 		submitError = null;
 
 		try {
-			const results = await service.submitSymptoms(symptomValues);
+			const results = await service.submitSymptoms(
+				symptomValues,
+				$state.snapshot(locationState?.currentLocation)
+			);
 			resetValues();
 			logger.debug('Symptoms submitted', { results });
 		} catch (err: unknown) {
