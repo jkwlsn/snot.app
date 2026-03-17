@@ -1,6 +1,6 @@
 // Interfaces and types for the app
-
 import type { SymptomName } from '$lib/config';
+import type { UserLocation } from '$lib/location/types';
 
 // User-readable pollen levels
 export type PollenRisk = 'low' | 'moderate' | 'high' | 'extreme';
@@ -23,7 +23,10 @@ export type SymptomSeverity = 0 | 1 | 2 | 3 | 4 | 5;
 
 // Describes a new entry for the database, it will be assigned an ID by the DB.
 // Records timestamp and a list of symptoms (defined by SymptomName, in turn generated from SYMPTOMS constant) and severities (numbers)
-export type NewSymptomRecord = { timestamp: Date } & Record<SymptomName, SymptomSeverity>;
+export type NewSymptomRecord = {
+	timestamp: Date;
+	location: UserLocation | null;
+} & Record<SymptomName, SymptomSeverity>;
 
 // The same as above, with the ID assigned by the database
 // Used for retrieving and manipulating records
