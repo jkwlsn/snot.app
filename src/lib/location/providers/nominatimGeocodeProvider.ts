@@ -1,48 +1,75 @@
-import type { GeocodeProvider, UserLocation } from '../types';
+import type { Logger } from '$lib/logging';
+import type { GeocodeProvider } from '../types';
 
-type NominatimForwardResult = {
+type NominatimForwardresponse = {
 	display_name: string;
-	latitude: string;
-	longitude: string;
+	lat: string;
+	lon: string;
 };
 
-export const nominatimGeocodeProvider = (): GeocodeProvider => ({
+const CONTEXT = { module: 'location', function: 'nominatimGeocodeProvider' };
+const BASE = 'https://nominatim.openstreetmap.org';
+const HEADERS = { 'Accept-Language': 'en', 'User-Agent': 'SnotApp/1.0' };
+
+export const nominatimGeocodeProvider = (logger: Logger): GeocodeProvider => ({
 	async forward(query) {
 		try {
-			const res = await fetch(
-				`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`
-			);
+			logger.debug('Attempting forward geocode', { ...CONTEXT });
+			const response = await fetch(`${BASE}/search?format=json&q=${encodeURIComponent(query)}`, {
+				headers: HEADERS
+			});
 
-			if (!res.ok) {
-				throw new Error(`Geocoding failed (${res.status})`);
+			if (!response.ok) {
+				const error = new Error('Forward geocode failed');
+				logger.error(error.message, { ...CONTEXT, status: response.status, error });
+				throw error;
 			}
 
-			const data = await res.json();
+			const data = await response.json();
 
-			return data.map((d: NominatimForwardResult) => ({
+			if (!data) {
+				const error = new Error('Parsing forward geocode failed');
+				logger.error(error.message, { ...CONTEXT, status: response.status, error });
+				throw error;
+			}
+
+			logger.debug('Successful forward geocode', { ...CONTEXT, data });
+
+			return data.map((d: NominatimForwardresponse) => ({
 				label: d.display_name,
 				coordinates: {
-					latitude: Number(d.latitude),
-					longitude: Number(d.longitude)
+					latitude: Number(d.lat),
+					longitude: Number(d.lon)
 				}
 			}));
 		} catch (err) {
 			const error = err instanceof Error ? err : new Error(String(err));
+			logger.error('Forward geocode failed', { ...CONTEXT, error });
 			throw error;
 		}
 	},
 
 	async reverse(coordinates) {
 		try {
-			const res = await fetch(
-				`https://nominatim.openstreetmap.org/reverse?format=json&lat=${coordinates.latitude}&lon=${coordinates.longitude}`
+			logger.debug('Attempting reverse geocode', { ...CONTEXT });
+			const response = await fetch(
+				`${BASE}/reverse?format=json&lat=${coordinates.latitude}&lon=${coordinates.longitude}`,
+				{ headers: HEADERS }
 			);
 
-			if (!res.ok) {
-				throw new Error(`Reverse geocoding failed (${res.status})`);
+			if (!response.ok) {
+				throw new Error(`Geocoding failed (${response.status})`);
 			}
 
-			const data = await res.json();
+			const data = await response.json();
+
+			if (!data) {
+				const error = new Error('Parsing reverse geocode failed');
+				logger.error(error.message, { ...CONTEXT, status: response.status, error });
+				throw error;
+			}
+
+			logger.debug('Successful reverse geocode', { ...CONTEXT, data });
 
 			return {
 				label: data.display_name,
@@ -50,6 +77,7 @@ export const nominatimGeocodeProvider = (): GeocodeProvider => ({
 			};
 		} catch (err) {
 			const error = err instanceof Error ? err : new Error(String(err));
+			logger.error('Reverse geocode failed', { ...CONTEXT, error });
 			throw error;
 		}
 	}
