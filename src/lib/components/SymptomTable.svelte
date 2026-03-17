@@ -15,7 +15,8 @@
 		...SYMPTOMS.map((s) => ({
 			header: s.name,
 			accessor: (r: SymptomRecord) => r[s.name]
-		}))
+		})),
+		{ header: 'Location', accessor: (r: SymptomRecord) => r.location?.label }
 	];
 
 	async function handleRemove(e: MouseEvent, id: number) {
