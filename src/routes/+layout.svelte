@@ -1,5 +1,5 @@
 <script lang="ts">
-	import '$lib/pwa.svelte';
+	import '$lib/pwa/pwa.svelte';
 	// Import location context and service
 	import { setLocationService } from '$lib/location/context';
 	import { createLocationService } from '$lib/location/service';
