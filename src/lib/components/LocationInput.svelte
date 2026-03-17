@@ -1,12 +1,17 @@
 <script lang="ts">
 	import { getLocationService } from '$lib/location/context';
 	import { locationState } from '$lib/location/state.svelte';
+	import type { UserLocation } from '$lib/location/types';
 	import { logger } from '$lib/logger';
 
 	const service = getLocationService();
 
 	let error = $state<Error | null>(null);
 	let loading = $state<boolean>(false);
+	let searching = $state<boolean>(false);
+	let searchFinished = $state<boolean>(false);
+	let query = $state<string>('');
+	let results = $state<UserLocation[]>([]);
 
 	async function handleGPS() {
 		const context = { module: 'location', function: 'handleGPS' };
@@ -27,6 +32,47 @@
 			loading = false;
 		}
 	}
+
+	async function handleSearch(query: string) {
+		const context = { module: 'location', function: 'handleSearch' };
+		const q = query.trim();
+
+		if (!q) {
+			results = [];
+			logger.warn('No search query supplied', { ...context, query: q });
+			return;
+		}
+
+		error = null;
+		searching = true;
+		searchFinished = false;
+
+		logger.debug('Attempting to search for location', { ...context, query: q });
+
+		try {
+			results = await service.forwardGeocode(q);
+
+			if (!results) {
+				logger.warn('No results for query', { ...context, query: q, results });
+			}
+
+			logger.info('Search results', { ...context, query: q, results });
+		} catch (err) {
+			error = err instanceof Error ? err : new Error(String(err));
+			logger.error(error.message, { ...context, error });
+			throw err;
+		} finally {
+			searching = false;
+			searchFinished = true;
+		}
+	}
+
+	function selectSearchResult(location: UserLocation) {
+		locationState.currentLocation = location;
+		results = [];
+		query = '';
+		searchFinished = false;
+	}
 </script>
 
 <section>
@@ -46,6 +92,37 @@
 		<button onclick={handleGPS} disabled={loading}>
 			{loading ? 'Locating…' : '📡 Use GPS'}
 		</button>
+	</div>
+
+	<!-- Text search and selector -->
+	<div>
+		<input
+			type="search"
+			placeholder="Search a location…"
+			bind:value={query}
+			disabled={searching}
+			oninput={() => {
+				searchFinished = false;
+				if (!query) results = [];
+			}}
+			onkeydown={(e) => e.key === 'Enter' && handleSearch(query)}
+		/>
+		<button onclick={() => handleSearch(query)} disabled={searching || query.length < 3}>
+			{searching ? 'Searching…' : 'Search'}
+		</button>
+		{#if query.length > 0 && results.length > 0}
+			<ul role="listbox">
+				{#each results as result, i (i)}
+					<li>
+						<button onclick={() => selectSearchResult(result)}>
+							{result.label}
+						</button>
+					</li>
+				{/each}
+			</ul>
+		{:else if searchFinished && !searching && query.length > 0}
+			<p>No results found for "{query}"</p>
+		{/if}
 	</div>
 
 	<!-- Error -->
