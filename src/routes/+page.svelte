@@ -2,9 +2,11 @@
 	import { symptoms, state } from '$lib/stores/symptoms.svelte'; // Dexie returns stores, not runes, reference these with `$`!
 	import SymptomForm from '$lib/components/SymptomForm.svelte';
 	import SymptomTable from '$lib/components/SymptomTable.svelte';
+	import LocationInput from '$lib/components/LocationInput.svelte';
 </script>
 
 <h1>Snot.app</h1>
+<LocationInput />
 <SymptomForm />
 {#if state.error}
 	<p>Failed to load symptoms: {state.error.message}</p>
