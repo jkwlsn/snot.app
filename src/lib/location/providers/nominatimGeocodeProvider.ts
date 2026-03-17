@@ -8,16 +8,13 @@ type NominatimForwardresponse = {
 };
 
 const CONTEXT = { module: 'location', function: 'nominatimGeocodeProvider' };
-const BASE = 'https://nominatim.openstreetmap.org';
-const HEADERS = { 'Accept-Language': 'en', 'User-Agent': 'SnotApp/1.0' };
+const BASE = '/nominatim';
 
 export const nominatimGeocodeProvider = (logger: Logger): GeocodeProvider => ({
 	async forward(query) {
 		try {
 			logger.debug('Attempting forward geocode', { ...CONTEXT });
-			const response = await fetch(`${BASE}/search?format=json&q=${encodeURIComponent(query)}`, {
-				headers: HEADERS
-			});
+			const response = await fetch(`${BASE}/search?format=json&q=${encodeURIComponent(query)}`);
 
 			if (!response.ok) {
 				const error = new Error('Forward geocode failed');
@@ -53,8 +50,7 @@ export const nominatimGeocodeProvider = (logger: Logger): GeocodeProvider => ({
 		try {
 			logger.debug('Attempting reverse geocode', { ...CONTEXT });
 			const response = await fetch(
-				`${BASE}/reverse?format=json&lat=${coordinates.latitude}&lon=${coordinates.longitude}`,
-				{ headers: HEADERS }
+				`${BASE}/reverse?format=json&lat=${coordinates.latitude}&lon=${coordinates.longitude}`
 			);
 
 			if (!response.ok) {
