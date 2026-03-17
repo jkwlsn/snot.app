@@ -1,5 +1,5 @@
+import { logger } from '$lib/logger';
 import { registerSW } from 'virtual:pwa-register';
-import { logger } from './logger';
 
 const intervalMS = 60 * 60 * 1000;
 
