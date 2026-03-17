@@ -107,5 +107,20 @@ export default defineConfig({
 				}
 			}
 		]
+	},
+	server: {
+		proxy: {
+			'/nominatim': {
+				target: 'https://nominatim.openstreetmap.org',
+				changeOrigin: true,
+				rewrite: (path) => path.replace(/^\/nominatim/, ''),
+				configure: (proxy) => {
+					proxy.on('proxyReq', (proxyReq) => {
+						proxyReq.setHeader('User-Agent', 'SnotApp/0.0.0 (hi@jkwlsn.dev)');
+						proxyReq.removeHeader('origin');
+					});
+				}
+			}
+		}
 	}
 });
