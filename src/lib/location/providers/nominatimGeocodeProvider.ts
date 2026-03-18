@@ -9,6 +9,7 @@ type NominatimForwardresponse = {
 
 const CONTEXT = { module: 'location', function: 'nominatimGeocodeProvider' };
 const BASE = import.meta.env.VITE_GEOCODE_API_BASE;
+console.log('Geocode API base:', BASE);
 
 export const nominatimGeocodeProvider = (logger: Logger): GeocodeProvider => ({
 	async forward(query) {
