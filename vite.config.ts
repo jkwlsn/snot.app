@@ -3,7 +3,7 @@ import { playwright } from '@vitest/browser-playwright';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { SvelteKitPWA } from '@vite-pwa/sveltekit';
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
 	plugins: [
 		sveltekit(),
 		SvelteKitPWA({
@@ -108,19 +108,22 @@ export default defineConfig({
 			}
 		]
 	},
-	server: {
-		proxy: {
-			'/nominatim': {
-				target: 'https://nominatim.openstreetmap.org',
-				changeOrigin: true,
-				rewrite: (path) => path.replace(/^\/nominatim/, ''),
-				configure: (proxy) => {
-					proxy.on('proxyReq', (proxyReq) => {
-						proxyReq.setHeader('User-Agent', 'SnotApp/0.0.0 (hi@jkwlsn.dev)');
-						proxyReq.removeHeader('origin');
-					});
+	server:
+		command === 'serve'
+			? {
+					proxy: {
+						'/nominatim': {
+							target: 'https://nominatim.openstreetmap.org',
+							changeOrigin: true,
+							rewrite: (path) => path.replace(/^\/nominatim/, ''),
+							configure: (proxy) => {
+								proxy.on('proxyReq', (proxyReq) => {
+									proxyReq.setHeader('User-Agent', 'SnotApp/0.0.0 (hi@jkwlsn.dev)');
+									proxyReq.removeHeader('origin');
+								});
+							}
+						}
+					}
 				}
-			}
-		}
-	}
-});
+			: undefined
+}));
