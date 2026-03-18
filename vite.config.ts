@@ -108,10 +108,10 @@ export default defineConfig(({ command }) => ({
 			}
 		]
 	},
-	server: {
-		proxy:
-			command === 'serve'
-				? {
+	server:
+		command === 'serve'
+			? {
+					proxy: {
 						'/nominatim': {
 							target: 'https://nominatim.openstreetmap.org',
 							changeOrigin: true,
@@ -124,6 +124,6 @@ export default defineConfig(({ command }) => ({
 							}
 						}
 					}
-				: undefined
-	}
+				}
+			: undefined
 }));
