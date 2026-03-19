@@ -3,6 +3,7 @@
 	import SymptomForm from '$lib/components/SymptomForm.svelte';
 	import SymptomTable from '$lib/components/SymptomTable.svelte';
 	import LocationInput from '$lib/components/LocationInput.svelte';
+	import SymptomCalendarGraph from '$lib/components/SymptomCalendarGraph.svelte';
 </script>
 
 <h1>Snot.app</h1>
@@ -16,4 +17,5 @@
 	<p>No data recorded.</p>
 {:else}
 	<SymptomTable symptoms={$symptoms} />
+	<SymptomCalendarGraph graphTitle="Symptoms per day" records={$symptoms} />
 {/if}
