@@ -1,3 +1,5 @@
+// Temporal graph interfaces
+import type { SymptomName } from '$lib/config';
 import type { SymptomRecord } from '$lib/types';
 
 export interface TemporalDataPoint {
@@ -7,4 +9,13 @@ export interface TemporalDataPoint {
 
 export interface TemporalGraph {
 	transform(records: SymptomRecord[]): TemporalDataPoint[];
+}
+
+// Stacked bar graph data
+export type StackedBarDataPoint = {
+	timestamp: Date;
+} & Record<SymptomName, number>;
+
+export interface StackedBarGraph {
+	transform(records: SymptomRecord[]): StackedBarDataPoint[];
 }
