@@ -1,5 +1,6 @@
 // Temporal graph interfaces
 import type { SymptomName } from '$lib/config';
+import type { LocationCoordinates } from '$lib/location/types';
 import type { SymptomRecord } from '$lib/types';
 
 export interface TemporalDataPoint {
@@ -18,4 +19,14 @@ export type StackedBarDataPoint = {
 
 export interface StackedBarGraph {
 	transform(records: SymptomRecord[]): StackedBarDataPoint[];
+}
+
+// Geo graph interfaces
+export type GeoDataPoint = LocationCoordinates & {
+	value: number;
+	count: number;
+};
+
+export interface GeoGraph {
+	transform(records: SymptomRecord[]): GeoDataPoint[];
 }
