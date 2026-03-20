@@ -4,7 +4,8 @@
 	import { symptomService as service } from '$lib/services';
 	import type { SymptomRecord } from '$lib/types';
 
-	let { symptoms }: { symptoms: SymptomRecord[] } = $props();
+	const { title, records }: { title: string; records: SymptomRecord[] } = $props();
+
 	let isRemovingSymptom = $state<boolean>(false);
 	let removingSymptomId = $state<number | null>(null);
 	let removeError = $state<string | null>(null);
@@ -43,31 +44,40 @@
 	}
 </script>
 
-<table>
-	<thead>
-		<tr>
-			{#each COLUMNS as col (col.header)}
-				<th>{col.header}</th>
-			{/each}
-		</tr>
-	</thead>
-	<tbody>
-		{#each symptoms as record (record.id)}
-			<tr>
-				{#each COLUMNS as col (col.header)}
-					<td>{col.accessor(record)}</td>
+<section>
+	<h2>{title}</h2>
+	{#if records?.length === 0}
+		<p>No data</p>
+	{:else if records === undefined}
+		<p>Loading...</p>
+	{:else}
+		<table>
+			<thead>
+				<tr>
+					{#each COLUMNS as col (col.header)}
+						<th>{col.header}</th>
+					{/each}
+				</tr>
+			</thead>
+			<tbody>
+				{#each records as record (record.id)}
+					<tr>
+						{#each COLUMNS as col (col.header)}
+							<td>{col.accessor(record)}</td>
+						{/each}
+						<td
+							><button onclick={(e) => handleRemove(e, record.id)}
+								>{isRemovingSymptom && removingSymptomId === record.id
+									? 'Removing...'
+									: 'Remove'}</button
+							>
+							{#if removeError}
+								<aside>{removeError}</aside>
+							{/if}
+						</td>
+					</tr>
 				{/each}
-				<td
-					><button onclick={(e) => handleRemove(e, record.id)}
-						>{isRemovingSymptom && removingSymptomId === record.id
-							? 'Removing...'
-							: 'Remove'}</button
-					>
-					{#if removeError}
-						<aside>{removeError}</aside>
-					{/if}
-				</td>
-			</tr>
-		{/each}
-	</tbody>
-</table>
+			</tbody>
+		</table>
+	{/if}
+</section>
