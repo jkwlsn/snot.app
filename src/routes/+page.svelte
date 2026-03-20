@@ -5,6 +5,7 @@
 	import LocationInput from '$lib/components/LocationInput.svelte';
 	import SymptomCalendarGraph from '$lib/components/SymptomCalendarGraph.svelte';
 	import SymptomStackedBarGraph from '$lib/components/SymptomStackedBarGraph.svelte';
+	import SymptomGeoGraph from '$lib/components/SymptomGeoGraph.svelte';
 </script>
 
 <h1>Snot.app</h1>
@@ -17,6 +18,7 @@
 {:else if $symptoms.length === 0}
 	<p>No data recorded.</p>
 {:else}
+	<SymptomGeoGraph title="Symptoms per location" records={$symptoms} />
 	<SymptomCalendarGraph graphTitle="Symptoms per day" records={$symptoms} />
 	<SymptomStackedBarGraph title="Symptom types per day" records={$symptoms} />
 	<SymptomTable symptoms={$symptoms} />
