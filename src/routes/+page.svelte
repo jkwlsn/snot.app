@@ -11,11 +11,7 @@
 <SymptomForm />
 {#if state.error}
 	<p>Failed to load symptoms: {state.error.message}</p>
-{:else if $symptoms === undefined}
-	<p>Loading...</p>
-{:else if $symptoms.length === 0}
-	<p>No data recorded.</p>
 {:else}
-	<SymptomCalendarGraph graphTitle="Symptoms per day" records={$symptoms} />
-	<SymptomTable symptoms={$symptoms} />
+	<SymptomCalendarGraph title="Symptom count per day" records={$symptoms} />
+	<SymptomTable title="Symptom Log" records={$symptoms} />
 {/if}
