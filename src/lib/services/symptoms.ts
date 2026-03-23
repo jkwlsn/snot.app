@@ -39,6 +39,18 @@ export function createSymptomService(repo: SymptomRepository, logger: Logger) {
 		}
 	}
 
+	async function getRangeSymptoms(from: Date, to: Date) {
+		try {
+			const result = await repo.getRange(from, to);
+			logger.debug('Got symptom within range', { from, to, result });
+			return result;
+		} catch (err: unknown) {
+			const error = err instanceof Error ? err : new Error(String(err));
+			logger.error('Failed to get range of symptoms', { from, to, error });
+			throw err;
+		}
+	}
+
 	async function removeSymptom(id: number) {
 		try {
 			const result = await repo.remove(id);
@@ -51,5 +63,5 @@ export function createSymptomService(repo: SymptomRepository, logger: Logger) {
 		}
 	}
 
-	return { submitSymptoms, getAllSymptoms, removeSymptom };
+	return { submitSymptoms, getAllSymptoms, getRangeSymptoms, removeSymptom };
 }
