@@ -5,7 +5,9 @@
 	import { createLocationService } from '$lib/location/service';
 	import { browserGeolocationProvider } from '$lib/location/providers/browserGeolocation';
 	import { nominatimGeocodeProvider } from '$lib/location/providers/nominatimGeocodeProvider';
-	import { logger } from '$lib/logger';
+	import { createLogger, consoleProvider } from '$lib/logging';
+
+	const logger = createLogger(consoleProvider);
 
 	setLocationService(
 		createLocationService({
