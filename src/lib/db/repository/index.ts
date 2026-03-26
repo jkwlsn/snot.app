@@ -1,4 +1,6 @@
 import { createSymptomRepository } from './symptoms';
-import { logger } from '$lib/logger';
+import { createLogger, consoleProvider } from '$lib/logging';
+
+const logger = createLogger(consoleProvider);
 
 export const symptomRepository = createSymptomRepository(logger);
