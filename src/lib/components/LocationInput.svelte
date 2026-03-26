@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { getLocationService } from '$lib/location/context';
 	import { locationState } from '$lib/location/state.svelte';
+	import { createLogger, consoleProvider } from '$lib/logging';
 	import type { UserLocation } from '$lib/location/types';
-	import { logger } from '$lib/logger';
 
+	const logger = createLogger(consoleProvider);
 	const service = getLocationService();
 
 	let error = $state<Error | null>(null);
