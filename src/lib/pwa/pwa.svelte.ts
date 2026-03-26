@@ -1,5 +1,7 @@
-import { logger } from '$lib/logger';
+import { createLogger, consoleProvider } from '$lib/logging';
 import { registerSW } from 'virtual:pwa-register';
+
+const logger = createLogger(consoleProvider);
 
 const intervalMS = 60 * 60 * 1000;
 

@@ -1,10 +1,12 @@
 <script lang="ts">
 	import { SYMPTOMS } from '$lib/config';
 	import { locationState } from '$lib/location/state.svelte';
-	import { logger } from '$lib/logger';
+	import { createLogger, consoleProvider } from '$lib/logging';
 	import { symptomService as service } from '$lib/services';
 
 	type SymptomName = (typeof SYMPTOMS)[number]['name'];
+
+	const logger = createLogger(consoleProvider);
 
 	const symptomValues = $state<Record<string, number>>(
 		Object.fromEntries(SYMPTOMS.map((symptom) => [symptom.name, 0])) as Record<SymptomName, number>
