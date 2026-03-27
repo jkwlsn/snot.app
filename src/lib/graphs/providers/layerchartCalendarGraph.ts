@@ -1,4 +1,4 @@
-import type { SymptomRecord } from '../../types/index';
+import type { SymptomRecord } from '$lib/types';
 import { format, parse, startOfDay } from 'date-fns';
 import type { TemporalDataPoint, TemporalGraph } from '../types';
 
