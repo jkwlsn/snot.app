@@ -2,7 +2,7 @@
 	import type { SymptomRecord } from '$lib/types';
 	import { LineChart } from 'layerchart';
 	import { curveLinearClosed } from 'd3-shape';
-	import { createLayerchartRadarGraph as provider } from '$lib/graphs/providers/layerchartRadarGraph';
+	import { createLayerchartRadarGraph as provider } from '$lib/graphs';
 
 	type Props = {
 		title: string;
