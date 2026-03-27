@@ -1,8 +1,8 @@
 import { SYMPTOMS } from '$lib/config';
-import type { SymptomRepository } from '$db/repository/types';
+import type { SymptomRepository } from '$lib/db/repository';
 import type { Logger } from '$lib/logging';
 import type { NewSymptomRecord, SymptomSeverity } from '$lib/types';
-import type { UserLocation } from '$lib/location/types';
+import type { UserLocation } from '$lib/location';
 
 export function createSymptomService(repo: SymptomRepository, logger: Logger) {
 	async function submitSymptoms(values: Record<string, number>, location: UserLocation | null) {
