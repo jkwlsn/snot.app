@@ -3,7 +3,7 @@
 	import { startOfYear, endOfDay } from 'date-fns';
 	import { Calendar, Chart, Layer, Rect, Tooltip } from 'layerchart';
 	import { format, PeriodType } from '@layerstack/utils';
-	import { createLayerchartCalendarGraph as provider } from '$lib/graphs/providers/layerchartCalendarGraph';
+	import { createLayerchartCalendarGraph as provider } from '$lib/graphs';
 	import type { SymptomRecord } from '$lib/types';
 
 	type Props = {
