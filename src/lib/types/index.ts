@@ -1,6 +1,6 @@
 // Interfaces and types for the app
 import type { SymptomName } from '$lib/config';
-import type { UserLocation } from '$lib/location/types';
+import type { UserLocation } from '$lib/location';
 
 // User-readable pollen levels
 export type PollenRisk = 'low' | 'moderate' | 'high' | 'extreme';
