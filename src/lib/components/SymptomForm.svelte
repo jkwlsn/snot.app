@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { SYMPTOMS } from '$lib/config';
-	import { locationState } from '$lib/location/state.svelte';
+	import { locationState } from '$lib/location';
 	import { createLogger, consoleProvider } from '$lib/logging';
 	import { symptomService as service } from '$lib/services';
 
