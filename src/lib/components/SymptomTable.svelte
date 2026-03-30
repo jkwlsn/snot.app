@@ -1,12 +1,13 @@
 <script lang="ts">
 	import { SYMPTOMS } from '$lib/config';
 	import { createLogger, consoleProvider } from '$lib/logging';
-	import { symptomService as service } from '$lib/services';
+	import { getSymptomService } from '$lib/services/context';
 	import type { SymptomRecord } from '$lib/types';
 
 	const { title, records }: { title: string; records: SymptomRecord[] } = $props();
 
 	const logger = createLogger(consoleProvider);
+	const service = getSymptomService();
 
 	let isRemovingSymptom = $state<boolean>(false);
 	let removingSymptomId = $state<number | null>(null);
