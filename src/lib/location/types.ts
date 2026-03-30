@@ -1,14 +1,4 @@
-// Used for location coordinates
-export interface LocationCoordinates {
-	latitude: number;
-	longitude: number;
-}
-
-// Describes a single location
-export interface UserLocation {
-	label: string;
-	coordinates: LocationCoordinates;
-}
+import type { LocationCoordinates, UserLocation } from '$lib/types';
 
 // Describe provider interfaces
 export interface GeolocationProvider {
