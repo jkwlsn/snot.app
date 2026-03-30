@@ -1,10 +1,6 @@
 import type { Logger } from '$lib/logging';
-import type {
-	GeocodeProvider,
-	GeolocationProvider,
-	LocationCoordinates,
-	LocationService
-} from './types';
+import type { LocationCoordinates } from '$lib/types';
+import type { GeocodeProvider, GeolocationProvider, LocationService } from './types';
 
 const CONTEXT = { module: 'location', function: 'createLocationService' };
 
