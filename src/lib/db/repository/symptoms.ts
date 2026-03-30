@@ -1,4 +1,4 @@
-import { db } from '$db/schema';
+import { db } from '$lib/db/schema';
 import type { Logger } from '$lib/logging';
 import type { SymptomRepository } from './types';
 
