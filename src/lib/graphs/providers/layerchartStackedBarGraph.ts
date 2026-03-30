@@ -1,5 +1,5 @@
-import { SYMPTOMS, type SymptomName } from '$lib/config';
 import { format, startOfDay } from 'date-fns';
+import { SYMPTOMS, type SymptomName } from '$lib/config';
 import type { SymptomRecord } from '$lib/types';
 import type { StackedBarDataPoint, StackedBarGraph } from '../types';
 

@@ -1,5 +1,5 @@
-import { createLogger, consoleProvider } from '$lib/logging';
 import { registerSW } from 'virtual:pwa-register';
+import { createLogger, consoleProvider } from '$lib/logging';
 
 const logger = createLogger(consoleProvider);
 
