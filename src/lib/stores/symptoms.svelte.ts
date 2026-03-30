@@ -1,6 +1,8 @@
 import { liveQuery } from 'dexie';
-import { symptomService as service } from '$lib/services';
 import { endOfDay, startOfDay } from 'date-fns';
+import { getSymptomService } from '$lib/services/context';
+
+const service = getSymptomService();
 
 export const appState = $state<{ error: Error | null }>({ error: null });
 
