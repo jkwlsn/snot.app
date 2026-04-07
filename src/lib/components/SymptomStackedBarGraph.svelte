@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { BarChart } from 'layerchart';
 	import { SYMPTOMS } from '$lib/config';
+	import { createLayerchartStackedBarGraph as provider } from '$lib/graphs';
 	import type { SymptomRecord } from '$lib/types';
-	import { createLayerchartStackedBarGraph as provider } from '$lib/graphs/providers/layerchartStackedBarGraph';
 
 	type Props = {
 		title: string;

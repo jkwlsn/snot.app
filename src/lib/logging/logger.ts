@@ -1,8 +1,8 @@
 import type { LogEntry, LogLevel, LogProvider } from './types';
 
-export type Logger = ReturnType<typeof createLogger>;
-
 const rank: Record<LogLevel, number> = { debug: 0, info: 1, warn: 2, error: 3 };
+
+export type Logger = ReturnType<typeof createLogger>;
 
 export function createLogger(provider: LogProvider, minLevel: LogLevel = 'info') {
 	function emit(level: LogLevel, message: string, context?: LogEntry['context'], error?: Error) {

@@ -1,4 +1,4 @@
-import type { UserLocation } from './types';
+import type { UserLocation } from '$lib/types';
 
 interface LocationState {
 	currentLocation: UserLocation | null;

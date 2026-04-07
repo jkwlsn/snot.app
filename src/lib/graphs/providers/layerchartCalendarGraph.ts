@@ -1,5 +1,5 @@
-import type { SymptomRecord } from '../../types/index';
 import { format, parse, startOfDay } from 'date-fns';
+import type { SymptomRecord } from '$lib/types';
 import type { TemporalDataPoint, TemporalGraph } from '../types';
 
 function aggregateSymptomsByDay(records: SymptomRecord[]): Map<string, number> {
