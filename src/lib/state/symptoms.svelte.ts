@@ -5,12 +5,11 @@ import type { SymptomService } from '$lib/services/types';
 
 export const appState = $state<{ error: Error | null }>({ error: null });
 
-export type SymptomsStore = ReturnType<typeof createSymptomsStore>;
+export type SymptomsState = ReturnType<typeof createSymptomsState>;
 
-export function createSymptomsStore(service: SymptomService) {
-	// null = not yet loaded; [] = loaded but empty
-	let symptoms = $state<SymptomRecord[] | null>(null);
-	let todaysSymptoms = $state<SymptomRecord[] | null>(null);
+export function createSymptomsState(service: SymptomService) {
+	let symptoms = $state<SymptomRecord[]>([]);
+	let todaysSymptoms = $state<SymptomRecord[]>([]);
 
 	$effect(() => {
 		const sub = liveQuery<SymptomRecord[]>(async () => {
@@ -30,6 +29,7 @@ export function createSymptomsStore(service: SymptomService) {
 	$effect(() => {
 		const sub = liveQuery<SymptomRecord[]>(async () => {
 			try {
+				// eslint-disable-next-line svelte/prefer-svelte-reactivity
 				return await service.getRangeSymptoms(startOfDay(new Date()), endOfDay(new Date()));
 			} catch (e) {
 				appState.error = e instanceof Error ? e : new Error(String(e));
