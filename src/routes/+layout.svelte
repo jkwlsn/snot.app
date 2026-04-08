@@ -19,9 +19,9 @@
 	// PWA
 	import '$lib/pwa/pwa.svelte';
 
-	// Store & Context
-	import { createSymptomsStore } from '$lib/stores/symptoms.svelte';
-	import { setSymptomsContext } from '$lib/stores/context';
+	// State & Context
+	import { createSymptomsState } from '$lib/state/symptoms.svelte';
+	import { setSymptomsContext } from '$lib/state/context';
 
 	// Init
 	const logger = createLogger(consoleProvider);
@@ -40,7 +40,7 @@
 	setLocationService(locationService);
 
 	// Symptoms Data
-	setSymptomsContext(createSymptomsStore(symptomService));
+	setSymptomsContext(createSymptomsState(symptomService));
 
 	let { children } = $props();
 </script>
