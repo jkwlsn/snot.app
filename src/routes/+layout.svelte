@@ -19,21 +19,28 @@
 	// PWA
 	import '$lib/pwa/pwa.svelte';
 
+	// State & Context
+	import { createSymptomsState } from '$lib/state/symptoms.svelte';
+	import { setSymptomsContext } from '$lib/state/context';
+
+	// Init
 	const logger = createLogger(consoleProvider);
 
 	const symptomRepository = createSymptomRepository(logger);
-
 	setSymptomRepository(symptomRepository);
 
-	setSymptomService(createSymptomService(symptomRepository, logger));
+	const symptomService = createSymptomService(symptomRepository, logger);
+	setSymptomService(symptomService);
 
-	setLocationService(
-		createLocationService({
-			geolocation: browserGeolocationProvider(logger),
-			geocode: nominatimGeocodeProvider(logger),
-			logger: logger
-		})
-	);
+	const locationService = createLocationService({
+		geolocation: browserGeolocationProvider(logger),
+		geocode: nominatimGeocodeProvider(logger),
+		logger: logger
+	});
+	setLocationService(locationService);
+
+	// Symptoms Data
+	setSymptomsContext(createSymptomsState(symptomService));
 
 	let { children } = $props();
 </script>
