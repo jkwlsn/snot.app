@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { appState } from '$lib/stores/symptoms.svelte';
-	import { getSymptomsContext } from '$lib/stores/context';
+	import { appState } from '$lib/state/symptoms.svelte';
+	import { getSymptomsContext } from '$lib/state/context';
 	import SymptomForm from '$lib/components/SymptomForm.svelte';
 	import SymptomTable from '$lib/components/SymptomTable.svelte';
 	import LocationInput from '$lib/components/LocationInput.svelte';
