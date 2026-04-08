@@ -19,6 +19,10 @@
 	// PWA
 	import '$lib/pwa/pwa.svelte';
 
+	// Store & Context
+	import { createSymptomsStore } from '$lib/stores/symptoms.svelte';
+	import { setSymptomsContext } from '$lib/stores/context';
+
 	const logger = createLogger(consoleProvider);
 
 	const symptomRepository = createSymptomRepository(logger);
@@ -34,6 +38,9 @@
 			logger: logger
 		})
 	);
+
+	// Symptoms Data
+	setSymptomsContext(createSymptomsStore(symptomService));
 
 	let { children } = $props();
 </script>
