@@ -23,21 +23,21 @@
 	import { createSymptomsStore } from '$lib/stores/symptoms.svelte';
 	import { setSymptomsContext } from '$lib/stores/context';
 
+	// Init
 	const logger = createLogger(consoleProvider);
 
 	const symptomRepository = createSymptomRepository(logger);
-
 	setSymptomRepository(symptomRepository);
 
-	setSymptomService(createSymptomService(symptomRepository, logger));
+	const symptomService = createSymptomService(symptomRepository, logger);
+	setSymptomService(symptomService);
 
-	setLocationService(
-		createLocationService({
-			geolocation: browserGeolocationProvider(logger),
-			geocode: nominatimGeocodeProvider(logger),
-			logger: logger
-		})
-	);
+	const locationService = createLocationService({
+		geolocation: browserGeolocationProvider(logger),
+		geocode: nominatimGeocodeProvider(logger),
+		logger: logger
+	});
+	setLocationService(locationService);
 
 	// Symptoms Data
 	setSymptomsContext(createSymptomsStore(symptomService));
