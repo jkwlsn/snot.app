@@ -1,7 +1,7 @@
 import { liveQuery } from 'dexie';
 import { endOfDay, startOfDay } from 'date-fns';
 import type { SymptomRecord } from '$lib/types';
-import type { SymptomService } from '$lib/services/types';
+import type { SymptomService } from '$lib/services';
 
 export const appState = $state<{ error: Error | null }>({ error: null });
 
