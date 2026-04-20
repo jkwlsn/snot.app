@@ -29,3 +29,13 @@ export interface RadarDataPoint {
 export interface RadarGraph {
 	transform(records: SymptomRecord[]): RadarDataPoint[];
 }
+
+// Bar graph data
+export interface LabelledDataPoint {
+	label: string;
+	value: number;
+}
+
+export interface BarGraph {
+	transform(records: SymptomRecord[]): LabelledDataPoint[];
+}
