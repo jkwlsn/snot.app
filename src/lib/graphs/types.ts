@@ -1,8 +1,7 @@
 // Temporal graph interfaces
-import type { SymptomRecord } from '$lib/types';
+import type { Timestamp, SymptomRecord } from '$lib/types';
 
-export interface TemporalDataPoint {
-	timestamp: Date;
+export interface TemporalDataPoint extends Timestamp {
 	value: number;
 }
 
