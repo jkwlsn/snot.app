@@ -1,7 +1,8 @@
+import type { Timestamp } from '$lib/types';
+
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
-export interface LogEntry {
-	timestamp: Date;
+export interface LogEntry extends Timestamp {
 	level: LogLevel;
 	message: string;
 	context?: Record<string, unknown>;

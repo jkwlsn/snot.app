@@ -1,6 +1,7 @@
+import type { Timestamp } from '$lib/types';
+
 // Temporal graph interfaces
-export interface TemporalDataPoint {
-	timestamp: Date;
+export interface TemporalDataPoint extends Timestamp {
 	value: number;
 }
 
