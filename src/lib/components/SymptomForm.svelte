@@ -2,7 +2,7 @@
 	import { SYMPTOMS } from '$lib/config';
 	import { locationState } from '$lib/location';
 	import { createLogger, consoleProvider } from '$lib/logging';
-	import { getSymptomService } from '$lib/services/context';
+	import { getSymptomService } from '$lib/services';
 
 	type SymptomName = (typeof SYMPTOMS)[number]['name'];
 
