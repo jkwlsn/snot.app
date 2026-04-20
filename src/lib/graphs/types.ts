@@ -6,16 +6,11 @@ export interface TemporalDataPoint {
 	value: number;
 }
 
-export interface TemporalGraph {
-	transform(records: SymptomRecord[]): TemporalDataPoint[];
-}
-
-// Bar graph data
 export interface LabelledDataPoint {
 	label: string;
 	value: number;
 }
 
-export interface BarGraph {
-	transform(records: SymptomRecord[]): LabelledDataPoint[];
+export interface GraphProvider<DataType> {
+	transform(records: SymptomRecord[]): DataType[];
 }

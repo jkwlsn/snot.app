@@ -1,6 +1,6 @@
 import { format, parse, startOfDay } from 'date-fns';
 import type { SymptomRecord } from '$lib/types';
-import type { TemporalDataPoint, TemporalGraph } from '../types';
+import type { TemporalDataPoint, GraphProvider } from '../types';
 
 function aggregateSymptomsByDay(records: SymptomRecord[]): Map<string, number> {
 	const totals = new Map<string, number>();
@@ -15,8 +15,8 @@ function aggregateSymptomsByDay(records: SymptomRecord[]): Map<string, number> {
 	return totals;
 }
 
-export const createLayerchartCalendarGraph: TemporalGraph = {
-	transform(records: SymptomRecord[]): TemporalDataPoint[] {
+export const createLayerchartCalendarGraph: GraphProvider<TemporalDataPoint> = {
+	transform(records) {
 		const totals = aggregateSymptomsByDay(records);
 		// Turn Map() into array of objects
 		return Array.from(totals.entries()).map(([key, value]) => ({
