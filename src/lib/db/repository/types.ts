@@ -1,11 +1,6 @@
 // Interfaces for DB repositories
-import type { NewSymptomRecord, SymptomRecord } from '$lib/types';
+import type { NewSymptomRecord, SymptomRecord, Repository } from '$lib/types';
 
-export interface SymptomRepository {
-	add(entry: NewSymptomRecord): Promise<number>;
-	update(id: number, patch: Partial<SymptomRecord>): Promise<void>;
-	remove(id: number): Promise<void>;
-	getById(id: number): Promise<SymptomRecord | undefined>;
-	getAll(): Promise<SymptomRecord[]>;
+export interface SymptomRepository extends Repository<SymptomRecord, NewSymptomRecord> {
 	getRange(from: Date, to: Date): Promise<SymptomRecord[]>;
 }
