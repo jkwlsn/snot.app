@@ -1,6 +1,14 @@
 // Interfaces and types for the app
 import type { SymptomName } from '$lib/config';
 
+// Timestamp interface
+// This provides a stable definition of time
+// It should be extended by other interfaces. .
+
+export interface Timestamp {
+	timestamp: Date;
+}
+
 // User-readable pollen levels
 export type PollenRisk = 'low' | 'moderate' | 'high' | 'extreme';
 
