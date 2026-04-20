@@ -13,8 +13,7 @@ export interface Timestamp {
 export type PollenRisk = 'low' | 'moderate' | 'high' | 'extreme';
 
 // Log the environment data for each symptom entry
-export interface EnvironmentAtLog {
-	timestamp: Date;
+export interface EnvironmentAtLog extends Timestamp {
 	source: string;
 	pollenGrass: number | null;
 	pollenTree: number | null;
@@ -30,8 +29,7 @@ export type SymptomSeverity = 0 | 1 | 2 | 3 | 4 | 5;
 
 // Describes a new entry for the database, it will be assigned an ID by the DB.
 // Records timestamp and a list of symptoms (defined by SymptomName, in turn generated from SYMPTOMS constant) and severities (numbers)
-export type NewSymptomRecord = {
-	timestamp: Date;
+export type NewSymptomRecord = Timestamp & {
 	location: UserLocation | null;
 } & Record<SymptomName, SymptomSeverity>;
 
