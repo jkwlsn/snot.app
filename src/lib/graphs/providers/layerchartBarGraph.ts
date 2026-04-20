@@ -1,6 +1,6 @@
 import { SYMPTOMS } from '$lib/config';
 import type { SymptomRecord } from '$lib/types';
-import type { BarGraph, LabelledDataPoint } from '../types';
+import type { GraphProvider, LabelledDataPoint } from '../types';
 
 const averageSeverityBySymptom = (records: SymptomRecord[]): LabelledDataPoint[] => {
 	return SYMPTOMS.map(({ name }) => {
@@ -15,8 +15,8 @@ const averageSeverityBySymptom = (records: SymptomRecord[]): LabelledDataPoint[]
 	});
 };
 
-export const createLayerchartBarGraph: BarGraph = {
-	transform(records: SymptomRecord[]) {
+export const createLayerchartBarGraph: GraphProvider<SymptomRecord, LabelledDataPoint> = {
+	transform(records) {
 		return averageSeverityBySymptom(records);
 	}
 };
