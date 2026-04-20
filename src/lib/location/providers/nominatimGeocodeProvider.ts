@@ -1,11 +1,11 @@
 import type { Logger } from '$lib/logging';
 import type { GeocodeProvider } from '../types';
 
-type NominatimForwardresponse = {
+interface NominatimForwardResponse {
 	display_name: string;
 	lat: string;
 	lon: string;
-};
+}
 
 const BASE = import.meta.env.VITE_GEOCODE_API_BASE;
 const CONTEXT = { module: 'location', function: 'nominatimGeocodeProvider', baseUrl: BASE };
@@ -32,7 +32,7 @@ export const nominatimGeocodeProvider = (logger: Logger): GeocodeProvider => ({
 
 			logger.debug('Successful forward geocode', { ...CONTEXT, data });
 
-			return data.map((d: NominatimForwardresponse) => ({
+			return data.map((d: NominatimForwardResponse) => ({
 				label: d.display_name,
 				coordinates: {
 					latitude: Number(d.lat),
