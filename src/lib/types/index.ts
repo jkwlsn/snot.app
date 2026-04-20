@@ -37,6 +37,15 @@ export type NewSymptomRecord = Timestamp & {
 // Used for retrieving and manipulating records
 export type SymptomRecord = NewSymptomRecord & { id: number };
 
+// Repository Interface
+export interface Repository<T, NewT> {
+	add(entry: NewT): Promise<number>;
+	update(id: number, patch: Partial<T>): Promise<void>;
+	remove(id: number): Promise<void>;
+	getById(id: number): Promise<T | undefined>;
+	getAll(): Promise<T[]>;
+}
+
 // Basic K:V interface for app settings
 export interface AppSettings {
 	id: number;
