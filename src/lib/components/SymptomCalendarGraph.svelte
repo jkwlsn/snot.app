@@ -6,10 +6,10 @@
 	import { createLayerchartCalendarGraph as provider } from '$lib/graphs';
 	import type { SymptomRecord } from '$lib/types';
 
-	type Props = {
+	interface Props {
 		title: string;
 		records: SymptomRecord[];
-	};
+	}
 
 	let { records, title }: Props = $props();
 
