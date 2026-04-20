@@ -5,7 +5,7 @@
 	import SymptomTable from '$lib/components/SymptomTable.svelte';
 	import LocationInput from '$lib/components/LocationInput.svelte';
 	import SymptomCalendarGraph from '$lib/components/SymptomCalendarGraph.svelte';
-	import SymptomRadarGraph from '$lib/components/SymptomRadarGraph.svelte';
+	import SymptomBarGraph from '$lib/components/SymptomBarGraph.svelte';
 
 	const records = getSymptomsContext();
 </script>
@@ -16,7 +16,7 @@
 {#if appState.error}
 	<p>Failed to load symptoms: {appState.error.message}</p>
 {:else}
-	<SymptomRadarGraph title="Average severity today" records={records.todaysSymptoms} />
+	<SymptomBarGraph title="Average severity today" records={records.todaysSymptoms} />
 	<SymptomCalendarGraph title="Symptom count per day" records={records.symptoms} />
 	<SymptomTable title="Symptom Log" records={records.symptoms} />
 {/if}
