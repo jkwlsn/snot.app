@@ -26,6 +26,7 @@ export default defineConfig(
 			'@typescript-eslint/no-import-type-side-effects': 'error',
 			'@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
 			'@typescript-eslint/consistent-type-imports': ['error', { prefer: 'type-imports' }],
+			'@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
 			'import/first': 'error',
 			'import/no-duplicates': 'error',
 			'import/no-relative-packages': 'error',
