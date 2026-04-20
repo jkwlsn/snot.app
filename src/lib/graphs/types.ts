@@ -20,16 +20,6 @@ export interface StackedBarGraph {
 	transform(records: SymptomRecord[]): StackedBarDataPoint[];
 }
 
-// Radar graph data
-export interface RadarDataPoint {
-	label: string;
-	value: number;
-}
-
-export interface RadarGraph {
-	transform(records: SymptomRecord[]): RadarDataPoint[];
-}
-
 // Bar graph data
 export interface LabelledDataPoint {
 	label: string;
