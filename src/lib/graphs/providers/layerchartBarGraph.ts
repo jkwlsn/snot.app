@@ -1,8 +1,8 @@
 import { SYMPTOMS } from '$lib/config';
 import type { SymptomRecord } from '$lib/types';
-import type { RadarDataPoint, RadarGraph } from '../types';
+import type { BarGraph, LabelledDataPoint } from '../types';
 
-const averageSeverityBySymptom = (records: SymptomRecord[]): RadarDataPoint[] => {
+const averageSeverityBySymptom = (records: SymptomRecord[]): LabelledDataPoint[] => {
 	return SYMPTOMS.map(({ name }) => {
 		const currentSymptom = records.filter((r) => r[name] > 0);
 		return {
@@ -15,7 +15,7 @@ const averageSeverityBySymptom = (records: SymptomRecord[]): RadarDataPoint[] =>
 	});
 };
 
-export const createLayerchartRadarGraph: RadarGraph = {
+export const createLayerchartBarGraph: BarGraph = {
 	transform(records: SymptomRecord[]) {
 		return averageSeverityBySymptom(records);
 	}
