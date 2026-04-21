@@ -7,7 +7,7 @@ export interface GeolocationProvider {
 
 export interface GeocodeProvider {
 	forward(query: string): Promise<UserLocation[]>;
-	reverse(coordinates: LocationCoordinates): Promise<UserLocation | null>;
+	reverse(coordinates: LocationCoordinates): Promise<UserLocation>;
 }
 
 export interface LocationService {
