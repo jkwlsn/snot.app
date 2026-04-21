@@ -2,7 +2,7 @@ import type { LocationCoordinates, UserLocation } from '$lib/types';
 
 // Describe provider interfaces
 export interface GeolocationProvider {
-	getCurrentPosition(): Promise<LocationCoordinates | null>;
+	getCurrentPosition(): Promise<LocationCoordinates>;
 }
 
 export interface GeocodeProvider {
