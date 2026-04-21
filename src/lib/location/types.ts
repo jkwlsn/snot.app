@@ -11,7 +11,7 @@ export interface GeocodeProvider {
 }
 
 export interface LocationService {
-	getBrowserLocation(): Promise<UserLocation | null>;
+	getBrowserLocation(): Promise<UserLocation>;
 	forwardGeocode(query: string): Promise<UserLocation[]>;
-	reverseGeocode(coordinates: LocationCoordinates): Promise<UserLocation | null>;
+	reverseGeocode(coordinates: LocationCoordinates): Promise<UserLocation>;
 }
