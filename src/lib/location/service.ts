@@ -73,21 +73,28 @@ export const createLocationService = ({
 			data: coordinates
 		});
 
-		const location = await geocode.reverse(coordinates);
-
-		if (!location) {
-			logger.debug('Reverse Geocode returned null', {
-				...CONTEXT,
-				function: 'reverseGeocode',
-				data: location
-			});
-			return null;
+		let location;
+		try {
+			location = await geocode.reverse(coordinates);
+		} catch (err) {
+			const error = err instanceof Error ? err : new Error(String(err));
+			logger.error('Failed to get GPS coordinates', { ...CONTEXT, error });
+			throw error;
 		}
 
-		logger.debug('Reverse geocode results', {
+		if (!location) {
+			logger.warn('Reverse Geocode returned null', {
+				...CONTEXT,
+				function: 'getBrowserLocation',
+				coordinates
+			});
+			throw new Error('Reverse Geocode returned null');
+		}
+
+		logger.info('Location resolved', {
 			...CONTEXT,
 			function: 'reverseGeocode',
-			data: location
+			location
 		});
 
 		return location;
