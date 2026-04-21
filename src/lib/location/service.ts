@@ -15,14 +15,22 @@ export const createLocationService = ({
 }): LocationService => {
 	const getBrowserLocation = async () => {
 		logger.debug('Requesting GPS coordinates', { ...CONTEXT, function: 'getBrowserLocation' });
-		const coordinates = await geolocation.getCurrentPosition();
+
+		let coordinates;
+		try {
+			coordinates = await geolocation.getCurrentPosition();
+		} catch (err) {
+			const error = err instanceof Error ? err : new Error(String(err));
+			logger.error('Failed to get GPS coordinates', { ...CONTEXT, error });
+			throw error;
+		}
 
 		if (!coordinates) {
 			logger.warn('GPS returned null', {
 				...CONTEXT,
 				function: 'getBrowserLocation'
 			});
-			return null;
+			throw new Error('Failed to get GPS coordinates');
 		}
 
 		logger.debug('Received coordinates', {
