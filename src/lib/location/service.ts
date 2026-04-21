@@ -31,24 +31,7 @@ export const createLocationService = ({
 			coordinates
 		});
 
-		const location = await geocode.reverse(coordinates);
-
-		if (!location) {
-			logger.warn('Reverse Geocode returned null', {
-				...CONTEXT,
-				function: 'getBrowserLocation',
-				coordinates
-			});
-			return null;
-		}
-
-		logger.info('Location resolved', {
-			...CONTEXT,
-			function: 'getBrowserLocation',
-			location
-		});
-
-		return location;
+		return reverseGeocode(coordinates);
 	};
 
 	const forwardGeocode = async (query: string) => {
