@@ -15,14 +15,22 @@ export const createLocationService = ({
 }): LocationService => {
 	const getBrowserLocation = async () => {
 		logger.debug('Requesting GPS coordinates', { ...CONTEXT, function: 'getBrowserLocation' });
-		const coordinates = await geolocation.getCurrentPosition();
+
+		let coordinates;
+		try {
+			coordinates = await geolocation.getCurrentPosition();
+		} catch (err) {
+			const error = err instanceof Error ? err : new Error(String(err));
+			logger.error('Failed to get GPS coordinates', { ...CONTEXT, error });
+			throw error;
+		}
 
 		if (!coordinates) {
 			logger.warn('GPS returned null', {
 				...CONTEXT,
 				function: 'getBrowserLocation'
 			});
-			return null;
+			throw new Error('Failed to get GPS coordinates');
 		}
 
 		logger.debug('Received coordinates', {
@@ -31,24 +39,7 @@ export const createLocationService = ({
 			coordinates
 		});
 
-		const location = await geocode.reverse(coordinates);
-
-		if (!location) {
-			logger.warn('Reverse Geocode returned null', {
-				...CONTEXT,
-				function: 'getBrowserLocation',
-				coordinates
-			});
-			return null;
-		}
-
-		logger.info('Location resolved', {
-			...CONTEXT,
-			function: 'getBrowserLocation',
-			location
-		});
-
-		return location;
+		return reverseGeocode(coordinates);
 	};
 
 	const forwardGeocode = async (query: string) => {
@@ -73,21 +64,28 @@ export const createLocationService = ({
 			data: coordinates
 		});
 
-		const location = await geocode.reverse(coordinates);
-
-		if (!location) {
-			logger.debug('Reverse Geocode returned null', {
-				...CONTEXT,
-				function: 'reverseGeocode',
-				data: location
-			});
-			return null;
+		let location;
+		try {
+			location = await geocode.reverse(coordinates);
+		} catch (err) {
+			const error = err instanceof Error ? err : new Error(String(err));
+			logger.error('Failed to get GPS coordinates', { ...CONTEXT, error });
+			throw error;
 		}
 
-		logger.debug('Reverse geocode results', {
+		if (!location) {
+			logger.warn('Reverse Geocode returned null', {
+				...CONTEXT,
+				function: 'getBrowserLocation',
+				coordinates
+			});
+			throw new Error('Reverse Geocode returned null');
+		}
+
+		logger.info('Location resolved', {
 			...CONTEXT,
 			function: 'reverseGeocode',
-			data: location
+			location
 		});
 
 		return location;
