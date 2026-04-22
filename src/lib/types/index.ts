@@ -36,6 +36,8 @@ export const SEVERITY_LEVELS = [0, 1, 2, 3, 4, 5] as const;
 export type SymptomSeverity = (typeof SEVERITY_LEVELS)[number];
 
 // Describes a new entry for the database, it will be assigned an ID by the DB.
+export interface Log extends Identity, Timestamp {}
+
 // Records timestamp and a list of symptoms (defined by SymptomName, in turn generated from SYMPTOMS constant) and severities (numbers)
 export type CreateSymptomRecord = Timestamp & {
 	location: UserLocation | null;
