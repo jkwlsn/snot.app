@@ -6,6 +6,12 @@ interface Identity {
 	id: number;
 }
 
+interface Location {
+	location: UserLocation | null;
+}
+
+type SymptomFields = Record<SymptomName, SymptomSeverity>;
+
 // Timestamp interface
 // This provides a stable definition of time
 // It should be extended by other interfaces.
@@ -37,12 +43,6 @@ export type SymptomSeverity = (typeof SEVERITY_LEVELS)[number];
 
 // Describes a new entry for the database, it will be assigned an ID by the DB.
 export interface Log extends Identity, Timestamp {}
-
-type SymptomFields = Record<SymptomName, SymptomSeverity>;
-
-interface Location {
-	location: UserLocation | null;
-}
 
 export interface SymptomLog extends Log, Location, SymptomFields {}
 
