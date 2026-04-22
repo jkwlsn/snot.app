@@ -13,7 +13,7 @@ export function createSymptomService(repo: SymptomRepository, logger: Logger): S
 		const entry: CreateSymptomRecord = {
 			timestamp: new Date(),
 			location: location,
-			...symptomValues
+			symptoms: symptomValues
 		};
 
 		try {
