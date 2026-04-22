@@ -43,11 +43,11 @@ export type NewSymptomRecord = Timestamp & {
 export type SymptomRecord = NewSymptomRecord & { id: number };
 
 // Repository Interface
-export interface Repository<T, NewT> {
-	add(entry: NewT): Promise<number>;
-	update(id: number, patch: Partial<T>): Promise<void>;
-	remove(id: number): Promise<void>;
-	getById(id: number): Promise<T | undefined>;
+export interface Repository<T extends Identity, NewT> {
+	add(entry: NewT): Promise<T['id']>;
+	update(id: T['id'], patch: Partial<T>): Promise<void>;
+	remove(id: T['id']): Promise<void>;
+	getById(id: T['id']): Promise<T | undefined>;
 	getAll(): Promise<T[]>;
 }
 
