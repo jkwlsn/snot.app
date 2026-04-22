@@ -15,7 +15,8 @@ export interface Timestamp {
 }
 
 // User-readable pollen levels
-export type PollenRisk = 'low' | 'moderate' | 'high' | 'extreme';
+export const POLLEN_RISK_LEVELS = ['low', 'moderate', 'high', 'extreme'] as const;
+export type PollenRisk = (typeof POLLEN_RISK_LEVELS)[number];
 
 // Log the environment data for each symptom entry
 export interface EnvironmentAtLog extends Timestamp {
