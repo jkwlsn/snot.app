@@ -1,6 +1,11 @@
 // Interfaces and types for the app
 import type { SymptomName } from '$lib/config';
 
+// Identity is used to create IDs / Primary Keys
+interface Identity {
+	id: number;
+}
+
 // Timestamp interface
 // This provides a stable definition of time
 // It should be extended by other interfaces. .
