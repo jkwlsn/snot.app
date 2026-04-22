@@ -2,9 +2,9 @@
 	import { SYMPTOMS } from '$lib/config';
 	import { createLogger, consoleProvider } from '$lib/logging';
 	import { getSymptomService } from '$lib/services/context';
-	import type { SymptomRecord } from '$lib/types';
+	import type { SymptomLog } from '$lib/types';
 
-	const { title, records }: { title: string; records: SymptomRecord[] } = $props();
+	const { title, records }: { title: string; records: SymptomLog[] } = $props();
 
 	const logger = createLogger(consoleProvider);
 	const service = getSymptomService();
@@ -14,13 +14,13 @@
 	let removeError = $state<string | null>(null);
 
 	const COLUMNS = [
-		{ header: 'ID', accessor: (r: SymptomRecord) => r.id },
-		{ header: 'Timestamp', accessor: (r: SymptomRecord) => r.timestamp },
+		{ header: 'ID', accessor: (r: SymptomLog) => r.id },
+		{ header: 'Timestamp', accessor: (r: SymptomLog) => r.timestamp },
 		...SYMPTOMS.map((s) => ({
 			header: s.name,
-			accessor: (r: SymptomRecord) => r[s.name]
+			accessor: (r: SymptomLog) => r.symptoms[s.name]
 		})),
-		{ header: 'Location', accessor: (r: SymptomRecord) => r.location?.label }
+		{ header: 'Location', accessor: (r: SymptomLog) => r.location?.label }
 	];
 
 	async function handleRemove(e: MouseEvent, id: number) {
@@ -28,7 +28,7 @@
 
 		removingSymptomId = id;
 
-		logger.debug('Attempting to remove SymptomRecord', { removingSymptomId });
+		logger.debug('Attempting to remove SymptomLog', { removingSymptomId });
 
 		isRemovingSymptom = true;
 		removeError = null;
