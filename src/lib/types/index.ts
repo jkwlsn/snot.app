@@ -44,14 +44,11 @@ interface Location {
 	location: UserLocation | null;
 }
 
-// Records timestamp and a list of symptoms (defined by SymptomName, in turn generated from SYMPTOMS constant) and severities (numbers)
-export type CreateSymptomRecord = Timestamp & {
-	location: UserLocation | null;
-} & Record<SymptomName, SymptomSeverity>;
+export interface SymptomLog extends Log, Location {
+	symptoms: SymptomFields;
+}
 
-// The same as above, with the ID assigned by the database
-// Used for retrieving and manipulating records
-export interface SymptomRecord extends Identity, CreateSymptomRecord {}
+export type CreateSymptomLog = Omit<SymptomLog, 'id'>;
 
 // Repository Interface
 export interface Repository<T extends Identity, CreateT> {
