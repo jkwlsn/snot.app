@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { BarChart } from 'layerchart';
 	import { createLayerchartBarGraph as provider } from '$lib/graphs';
-	import type { SymptomRecord } from '$lib/types';
+	import type { SymptomLog } from '$lib/types';
 
 	interface Props {
 		title: string;
-		records: SymptomRecord[];
+		records: SymptomLog[];
 	}
 
 	let { records, title }: Props = $props();
