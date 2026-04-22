@@ -40,6 +40,10 @@ export interface Log extends Identity, Timestamp {}
 
 type SymptomFields = Record<SymptomName, SymptomSeverity>;
 
+interface Location {
+	location: UserLocation | null;
+}
+
 // Records timestamp and a list of symptoms (defined by SymptomName, in turn generated from SYMPTOMS constant) and severities (numbers)
 export type CreateSymptomRecord = Timestamp & {
 	location: UserLocation | null;
