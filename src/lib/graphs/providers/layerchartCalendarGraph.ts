@@ -1,8 +1,8 @@
 import { format, parse, startOfDay } from 'date-fns';
-import type { SymptomRecord } from '$lib/types';
+import type { SymptomLog } from '$lib/types';
 import type { TemporalDataPoint, GraphProvider } from '../types';
 
-function aggregateSymptomsByDay(records: SymptomRecord[]): Map<string, number> {
+function aggregateSymptomsByDay(records: SymptomLog[]): Map<string, number> {
 	const totals = new Map<string, number>();
 
 	const toKey = (timestamp: Date) => format(startOfDay(timestamp), 'yyyy-MM-dd'); // formats timestamps as `yyyy-MM-dd` and sets time to 00:00 (startOfDay)
@@ -15,7 +15,7 @@ function aggregateSymptomsByDay(records: SymptomRecord[]): Map<string, number> {
 	return totals;
 }
 
-export const createLayerchartCalendarGraph: GraphProvider<SymptomRecord, TemporalDataPoint> = {
+export const createLayerchartCalendarGraph: GraphProvider<SymptomLog, TemporalDataPoint> = {
 	transform(records) {
 		const totals = aggregateSymptomsByDay(records);
 		// Turn Map() into array of objects
