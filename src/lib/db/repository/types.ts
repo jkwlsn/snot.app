@@ -1,6 +1,6 @@
 // Interfaces for DB repositories
-import type { NewSymptomRecord, SymptomRecord, Repository } from '$lib/types';
+import type { CreateSymptomRecord, SymptomRecord, Repository } from '$lib/types';
 
-export interface SymptomRepository extends Repository<SymptomRecord, NewSymptomRecord> {
+export interface SymptomRepository extends Repository<SymptomRecord, CreateSymptomRecord> {
 	getRange(from: Date, to: Date): Promise<SymptomRecord[]>;
 }
