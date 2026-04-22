@@ -4,11 +4,11 @@
 	import { Calendar, Chart, Layer, Rect, Tooltip } from 'layerchart';
 	import { format, PeriodType } from '@layerstack/utils';
 	import { createLayerchartCalendarGraph as provider } from '$lib/graphs';
-	import type { SymptomRecord } from '$lib/types';
+	import type { SymptomLog } from '$lib/types';
 
 	interface Props {
 		title: string;
-		records: SymptomRecord[];
+		records: SymptomLog[];
 	}
 
 	let { records, title }: Props = $props();

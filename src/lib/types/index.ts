@@ -6,6 +6,12 @@ interface Identity {
 	id: number;
 }
 
+interface Location {
+	location: UserLocation | null;
+}
+
+type SymptomFields = Record<SymptomName, SymptomSeverity>;
+
 // Timestamp interface
 // This provides a stable definition of time
 // It should be extended by other interfaces.
@@ -36,14 +42,13 @@ export const SEVERITY_LEVELS = [0, 1, 2, 3, 4, 5] as const;
 export type SymptomSeverity = (typeof SEVERITY_LEVELS)[number];
 
 // Describes a new entry for the database, it will be assigned an ID by the DB.
-// Records timestamp and a list of symptoms (defined by SymptomName, in turn generated from SYMPTOMS constant) and severities (numbers)
-export type CreateSymptomRecord = Timestamp & {
-	location: UserLocation | null;
-} & Record<SymptomName, SymptomSeverity>;
+export interface Log extends Identity, Timestamp {}
 
-// The same as above, with the ID assigned by the database
-// Used for retrieving and manipulating records
-export interface SymptomRecord extends Identity, CreateSymptomRecord {}
+export interface SymptomLog extends Log, Location {
+	symptoms: SymptomFields;
+}
+
+export type CreateSymptomLog = Omit<SymptomLog, 'id'>;
 
 // Repository Interface
 export interface Repository<T extends Identity, CreateT> {

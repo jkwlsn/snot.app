@@ -1,6 +1,6 @@
 import { liveQuery } from 'dexie';
 import { endOfDay, startOfDay } from 'date-fns';
-import type { SymptomRecord } from '$lib/types';
+import type { SymptomLog } from '$lib/types';
 import type { SymptomService } from '$lib/services';
 
 export const appState = $state<{ error: Error | null }>({ error: null });
@@ -8,11 +8,11 @@ export const appState = $state<{ error: Error | null }>({ error: null });
 export type SymptomsState = ReturnType<typeof createSymptomsState>;
 
 export function createSymptomsState(service: SymptomService) {
-	let symptoms = $state<SymptomRecord[]>([]);
-	let todaysSymptoms = $state<SymptomRecord[]>([]);
+	let symptoms = $state<SymptomLog[]>([]);
+	let todaysSymptoms = $state<SymptomLog[]>([]);
 
 	$effect(() => {
-		const sub = liveQuery<SymptomRecord[]>(async () => {
+		const sub = liveQuery<SymptomLog[]>(async () => {
 			try {
 				return await service.getAllSymptoms();
 			} catch (e) {
@@ -27,7 +27,7 @@ export function createSymptomsState(service: SymptomService) {
 	});
 
 	$effect(() => {
-		const sub = liveQuery<SymptomRecord[]>(async () => {
+		const sub = liveQuery<SymptomLog[]>(async () => {
 			try {
 				// eslint-disable-next-line svelte/prefer-svelte-reactivity
 				return await service.getRangeSymptoms(startOfDay(new Date()), endOfDay(new Date()));
