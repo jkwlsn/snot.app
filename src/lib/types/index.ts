@@ -1,9 +1,14 @@
 // Interfaces and types for the app
 import type { SymptomName } from '$lib/config';
 
+// Identity is used to create IDs / Primary Keys
+interface Identity {
+	id: number;
+}
+
 // Timestamp interface
 // This provides a stable definition of time
-// It should be extended by other interfaces. .
+// It should be extended by other interfaces.
 
 export interface Timestamp {
 	timestamp: Date;
@@ -35,20 +40,19 @@ export type NewSymptomRecord = Timestamp & {
 
 // The same as above, with the ID assigned by the database
 // Used for retrieving and manipulating records
-export type SymptomRecord = NewSymptomRecord & { id: number };
+export interface SymptomRecord extends Identity, NewSymptomRecord {}
 
 // Repository Interface
-export interface Repository<T, NewT> {
-	add(entry: NewT): Promise<number>;
-	update(id: number, patch: Partial<T>): Promise<void>;
-	remove(id: number): Promise<void>;
-	getById(id: number): Promise<T | undefined>;
+export interface Repository<T extends Identity, NewT> {
+	add(entry: NewT): Promise<T['id']>;
+	update(id: T['id'], patch: Partial<T>): Promise<void>;
+	remove(id: T['id']): Promise<void>;
+	getById(id: T['id']): Promise<T | undefined>;
 	getAll(): Promise<T[]>;
 }
 
 // Basic K:V interface for app settings
-export interface AppSettings {
-	id: number;
+export interface AppSettings extends Identity {
 	key: string;
 	value: unknown;
 }
