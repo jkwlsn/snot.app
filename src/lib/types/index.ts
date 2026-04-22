@@ -8,7 +8,7 @@ interface Identity {
 
 // Timestamp interface
 // This provides a stable definition of time
-// It should be extended by other interfaces. .
+// It should be extended by other interfaces.
 
 export interface Timestamp {
 	timestamp: Date;
@@ -40,7 +40,7 @@ export type NewSymptomRecord = Timestamp & {
 
 // The same as above, with the ID assigned by the database
 // Used for retrieving and manipulating records
-export type SymptomRecord = NewSymptomRecord & { id: number };
+export interface SymptomRecord extends Identity, NewSymptomRecord {}
 
 // Repository Interface
 export interface Repository<T extends Identity, NewT> {
@@ -52,8 +52,7 @@ export interface Repository<T extends Identity, NewT> {
 }
 
 // Basic K:V interface for app settings
-export interface AppSettings {
-	id: number;
+export interface AppSettings extends Identity {
 	key: string;
 	value: unknown;
 }
