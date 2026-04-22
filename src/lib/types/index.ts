@@ -30,7 +30,9 @@ export interface EnvironmentAtLog extends Timestamp {
 }
 
 // Symptoms can be rated between 0-5 in severity
-export type SymptomSeverity = 0 | 1 | 2 | 3 | 4 | 5;
+// Setting a const means I can use SEVERITY_LEVELS for validation at runtime.
+export const SEVERITY_LEVELS = [0, 1, 2, 3, 4, 5] as const;
+export type SymptomSeverity = (typeof SEVERITY_LEVELS)[number];
 
 // Describes a new entry for the database, it will be assigned an ID by the DB.
 // Records timestamp and a list of symptoms (defined by SymptomName, in turn generated from SYMPTOMS constant) and severities (numbers)
