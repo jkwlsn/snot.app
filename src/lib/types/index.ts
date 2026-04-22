@@ -37,17 +37,17 @@ export type SymptomSeverity = (typeof SEVERITY_LEVELS)[number];
 
 // Describes a new entry for the database, it will be assigned an ID by the DB.
 // Records timestamp and a list of symptoms (defined by SymptomName, in turn generated from SYMPTOMS constant) and severities (numbers)
-export type NewSymptomRecord = Timestamp & {
+export type CreateSymptomRecord = Timestamp & {
 	location: UserLocation | null;
 } & Record<SymptomName, SymptomSeverity>;
 
 // The same as above, with the ID assigned by the database
 // Used for retrieving and manipulating records
-export interface SymptomRecord extends Identity, NewSymptomRecord {}
+export interface SymptomRecord extends Identity, CreateSymptomRecord {}
 
 // Repository Interface
-export interface Repository<T extends Identity, NewT> {
-	add(entry: NewT): Promise<T['id']>;
+export interface Repository<T extends Identity, CreateT> {
+	add(entry: CreateT): Promise<T['id']>;
 	update(id: T['id'], patch: Partial<T>): Promise<void>;
 	remove(id: T['id']): Promise<void>;
 	getById(id: T['id']): Promise<T | undefined>;
