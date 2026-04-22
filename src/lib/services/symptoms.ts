@@ -1,7 +1,7 @@
 import { SYMPTOMS } from '$lib/config';
 import type { SymptomRepository } from '$lib/db/repository';
 import type { Logger } from '$lib/logging';
-import type { CreateSymptomRecord, SymptomSeverity, UserLocation } from '$lib/types';
+import type { CreateSymptomLog, SymptomSeverity, UserLocation } from '$lib/types';
 import type { SymptomService } from './types';
 
 export function createSymptomService(repo: SymptomRepository, logger: Logger): SymptomService {
@@ -10,7 +10,7 @@ export function createSymptomService(repo: SymptomRepository, logger: Logger): S
 			SYMPTOMS.map((s) => [s.name, values[s.name] as SymptomSeverity])
 		) as Record<(typeof SYMPTOMS)[number]['name'], SymptomSeverity>;
 
-		const entry: CreateSymptomRecord = {
+		const entry: CreateSymptomLog = {
 			timestamp: new Date(),
 			location: location,
 			symptoms: symptomValues
