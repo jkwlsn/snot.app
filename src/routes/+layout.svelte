@@ -8,7 +8,7 @@
 
 	// Symptom Service
 	import { setSymptomService } from '$lib/services/context';
-	import { createSymptomService } from '$lib/services/symptoms';
+	import { createSymptomService } from '$lib/services/symptoms.svelte';
 
 	// Import location context and service
 	import { setLocationService } from '$lib/location/context';
