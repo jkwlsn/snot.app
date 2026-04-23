@@ -56,12 +56,12 @@ export interface CreateSymptomLog extends CreatedAt, WithLocation {
 export type SymptomLog = Stored<CreateSymptomLog>;
 
 // Repository Interface
-export interface Repository<T extends WithId, CreateT> {
-	add(entry: CreateT): Promise<T['id']>;
-	update(id: T['id'], patch: Partial<T>): Promise<void>;
-	remove(id: T['id']): Promise<void>;
-	getById(id: T['id']): Promise<T | undefined>;
-	getAll(): Promise<T[]>;
+export interface Repository<TInput, TOutput extends WithId> {
+	add(entry: TInput): Promise<StoredId>;
+	update(id: StoredId, patch: Partial<TInput>): Promise<void>;
+	remove(id: StoredId): Promise<void>;
+	getById(id: StoredId): Promise<TOutput | undefined>;
+	getAll(): Promise<TOutput[]>;
 }
 
 // Basic K:V interface for app settings
