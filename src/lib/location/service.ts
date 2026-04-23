@@ -25,7 +25,7 @@ export const createLocationService = ({
 			coordinates = await geolocation.getCurrentPosition();
 		} catch (err) {
 			const error = err instanceof Error ? err : new Error(String(err));
-			logger.error('Failed to get GPS coordinates', { ...CONTEXT, error });
+			logger.error('Failed to get GPS coordinates', error, { ...CONTEXT });
 			throw error;
 		}
 
@@ -73,7 +73,7 @@ export const createLocationService = ({
 			location = await geocode.reverse(coordinates);
 		} catch (err) {
 			const error = err instanceof Error ? err : new Error(String(err));
-			logger.error('Failed to get GPS coordinates', { ...CONTEXT, error });
+			logger.error('Failed to get GPS coordinates', error, { ...CONTEXT });
 			throw error;
 		}
 
