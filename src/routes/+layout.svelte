@@ -29,7 +29,7 @@
 	const symptomRepository = createSymptomRepository(logger);
 	setSymptomRepository(symptomRepository);
 
-	const symptomService = createSymptomService(symptomRepository, logger);
+	const symptomService = createSymptomService(symptomRepository);
 	setSymptomService(symptomService);
 
 	const locationService = createLocationService({
