@@ -17,7 +17,7 @@ type SymptomFields = Record<SymptomName, SymptomSeverity>;
 // It should be extended by other interfaces.
 
 export interface CreatedAt {
-	timestamp: Date;
+	createdAt: Date;
 }
 
 // User-readable pollen levels
