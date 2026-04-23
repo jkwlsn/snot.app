@@ -3,14 +3,13 @@
 	import { locationState } from '$lib/location';
 	import { createLogger, consoleProvider } from '$lib/logging';
 	import { getSymptomService } from '$lib/services/context';
-
-	type SymptomName = (typeof SYMPTOMS)[number]['name'];
+	import type { SymptomFields } from '$lib/types';
 
 	const logger = createLogger(consoleProvider);
 	const service = getSymptomService();
 
-	const symptomValues = $state<Record<string, number>>(
-		Object.fromEntries(SYMPTOMS.map((symptom) => [symptom.name, 0])) as Record<SymptomName, number>
+	const symptomValues = $state<SymptomFields>(
+		Object.fromEntries(SYMPTOMS.map((symptom) => [symptom.name, 0])) as SymptomFields
 	);
 
 	let isSubmittingSymptoms = $state<boolean>(false);
