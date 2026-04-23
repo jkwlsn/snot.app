@@ -5,10 +5,10 @@ import type { TemporalDataPoint, GraphProvider } from '../types';
 function aggregateSymptomsByDay(records: SymptomLog[]): Map<string, number> {
 	const totals = new Map<string, number>();
 
-	const toKey = (timestamp: Date) => format(startOfDay(timestamp), 'yyyy-MM-dd'); // formats timestamps as `yyyy-MM-dd` and sets time to 00:00 (startOfDay)
+	const toKey = (createdAt: Date) => format(startOfDay(createdAt), 'yyyy-MM-dd'); // formats createdAts as `yyyy-MM-dd` and sets time to 00:00 (startOfDay)
 
 	for (const record of records) {
-		const key = toKey(record.timestamp);
+		const key = toKey(record.createdAt);
 		totals.set(key, (totals.get(key) ?? 0) + 1);
 	}
 
@@ -20,7 +20,7 @@ export const createLayerchartCalendarGraph: GraphProvider<SymptomLog, TemporalDa
 		const totals = aggregateSymptomsByDay(records);
 		// Turn Map() into array of objects
 		return Array.from(totals.entries()).map(([key, value]) => ({
-			timestamp: parse(key, 'yyyy-MM-dd', new Date()),
+			createdAt: parse(key, 'yyyy-MM-dd', new Date()),
 			value
 		}));
 	}
