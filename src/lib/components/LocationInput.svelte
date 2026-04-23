@@ -1,10 +1,8 @@
 <script lang="ts">
 	import { getLocationService } from '$lib/location/context';
 	import { locationState } from '$lib/location/state.svelte';
-	import { createLogger, consoleProvider } from '$lib/logging';
 	import type { UserLocation } from '$lib/types';
 
-	const logger = createLogger(consoleProvider);
 	const service = getLocationService();
 
 	let error = $state<Error | null>(null);
@@ -14,32 +12,23 @@
 	let query = $state<string>('');
 
 	async function handleGPS() {
-		const context = { module: 'location', function: 'handleGPS' };
-
 		loading = true;
 		error = null;
 
 		try {
 			locationState.currentLocation = await service.getBrowserLocation();
-			logger.debug('Set currentLocation', {
-				...context,
-				currentLocation: locationState.currentLocation
-			});
 		} catch (err) {
 			error = err instanceof Error ? err : new Error(String(err));
-			logger.error(error.message, { ...context, error });
 		} finally {
 			loading = false;
 		}
 	}
 
 	async function handleSearch(query: string) {
-		const context = { module: 'location', function: 'handleSearch' };
 		const q = query.trim();
 
 		if (!q) {
 			locationState.searchResults = [];
-			logger.warn('No search query supplied', { ...context, query: q });
 			return;
 		}
 
@@ -47,28 +36,11 @@
 		searching = true;
 		searchFinished = false;
 
-		logger.debug('Attempting to search for location', { ...context, query: q });
-
 		try {
 			locationState.searchResults = await service.forwardGeocode(q);
-
-			if (!locationState.searchResults) {
-				logger.warn('No results for query', {
-					...context,
-					query: q,
-					results: $state.snapshot(locationState.searchResults)
-				});
-			}
-
-			logger.info('Search results', {
-				...context,
-				query: q,
-				results: $state.snapshot(locationState.searchResults)
-			});
 		} catch (err) {
 			error = err instanceof Error ? err : new Error(String(err));
-			logger.error(error.message, { ...context, error });
-			throw err;
+			locationState.searchResults = [];
 		} finally {
 			searching = false;
 			searchFinished = true;
