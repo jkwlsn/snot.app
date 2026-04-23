@@ -1,6 +1,6 @@
 import { db } from '$lib/db/schema';
 import type { Logger } from '$lib/logging';
-import type { SymptomRepository } from './types';
+import type { SymptomRepository } from '$lib/types';
 
 export function createSymptomRepository(logger: Logger): SymptomRepository {
 	async function run<T>(
