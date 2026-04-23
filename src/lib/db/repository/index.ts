@@ -1,2 +1,2 @@
 // Types
-export type { SymptomRepository } from './types';
+export type { SymptomRepository } from '$lib/types';
