@@ -2,27 +2,22 @@
 	// Logger
 	import { createLogger, consoleProvider } from '$lib/logging';
 
-	// Symptom Repository
-	import { setSymptomRepository } from '$lib/db/repository/context';
-	import { createSymptomRepository } from '$lib/db/repository/symptoms';
-
-	// Symptom Service
-	import { setSymptomService } from '$lib/services/context';
-	import { createSymptomService } from '$lib/services/symptoms.svelte';
+	import {
+		setSymptomRepository,
+		createSymptomRepository,
+		setSymptomService,
+		createSymptomService,
+		setSymptomState,
+		createSymptomState
+	} from '$lib/symptoms';
 
 	// Import location context and service
-	import { setLocationService } from '$lib/location/context';
-	import { createLocationService } from '$lib/location/service';
+	import { createLocationService, setLocationService, locationState } from '$lib/location';
 	import { browserGeolocationProvider } from '$lib/location/providers/browserGeolocation';
 	import { nominatimGeocodeProvider } from '$lib/location/providers/nominatimGeocodeProvider';
 
 	// PWA
 	import '$lib/pwa/pwa.svelte';
-
-	// State & Context
-	import { locationState } from '$lib/location/state.svelte';
-	import { createSymptomsState } from '$lib/state/symptoms.svelte';
-	import { setSymptomsContext } from '$lib/state/context';
 
 	// Init
 	const logger = createLogger(consoleProvider);
@@ -41,7 +36,7 @@
 	setLocationService(locationService);
 
 	// Symptoms Data
-	setSymptomsContext(createSymptomsState(symptomService));
+	setSymptomState(createSymptomState(symptomService));
 
 	let { children } = $props();
 </script>
