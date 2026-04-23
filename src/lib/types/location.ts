@@ -11,3 +11,18 @@ export interface UserLocation {
 export interface WithLocation {
 	location: UserLocation | null;
 }
+
+export interface GeolocationProvider {
+	getCurrentPosition(): Promise<LocationCoordinates>;
+}
+
+export interface GeocodeProvider {
+	forward(query: string): Promise<UserLocation[]>;
+	reverse(coordinates: LocationCoordinates): Promise<UserLocation>;
+}
+
+export interface LocationService {
+	getBrowserLocation(): Promise<UserLocation>;
+	forwardGeocode(query: string): Promise<UserLocation[]>;
+	reverseGeocode(coordinates: LocationCoordinates): Promise<UserLocation>;
+}
