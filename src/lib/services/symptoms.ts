@@ -1,19 +1,15 @@
 import { SYMPTOMS } from '$lib/config';
 import type { SymptomRepository } from '$lib/db/repository';
 import type { Logger } from '$lib/logging';
-import type { CreateSymptomLog, SymptomSeverity, UserLocation } from '$lib/types';
+import type { CreateSymptomLog, SymptomFields, SymptomSeverity, UserLocation } from '$lib/types';
 import type { SymptomService } from './types';
 
 export function createSymptomService(repo: SymptomRepository, logger: Logger): SymptomService {
-	async function submitSymptoms(values: Record<string, number>, location: UserLocation | null) {
-		const symptomValues = Object.fromEntries(
-			SYMPTOMS.map((s) => [s.name, values[s.name] as SymptomSeverity])
-		) as Record<(typeof SYMPTOMS)[number]['name'], SymptomSeverity>;
-
+	async function submitSymptoms(values: SymptomFields, location: UserLocation | null) {
 		const entry: CreateSymptomLog = {
 			createdAt: new Date(),
 			location: location,
-			symptoms: symptomValues
+			symptoms: values
 		};
 
 		try {
