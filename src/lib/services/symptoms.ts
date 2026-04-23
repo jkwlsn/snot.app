@@ -11,7 +11,7 @@ export function createSymptomService(repo: SymptomRepository, logger: Logger): S
 		) as Record<(typeof SYMPTOMS)[number]['name'], SymptomSeverity>;
 
 		const entry: CreateSymptomLog = {
-			timestamp: new Date(),
+			createdAt: new Date(),
 			location: location,
 			symptoms: symptomValues
 		};
