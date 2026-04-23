@@ -20,6 +20,11 @@ export interface CreatedAt {
 	createdAt: Date;
 }
 
+// Stored adds `WithId` to any given type, necessary for any logs in the DB
+export type Stored<T> = T & WithId;
+
+export type StoredId = WithId['id'];
+
 // User-readable pollen levels
 export const POLLEN_RISK_LEVELS = ['low', 'moderate', 'high', 'extreme'] as const;
 export type PollenRisk = (typeof POLLEN_RISK_LEVELS)[number];
