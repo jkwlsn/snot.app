@@ -1,6 +1,17 @@
-import type { LocationCoordinates, UserLocation } from '$lib/types';
+export interface LocationCoordinates {
+	latitude: number;
+	longitude: number;
+}
 
-// Describe provider interfaces
+export interface UserLocation {
+	label: string;
+	coordinates: LocationCoordinates;
+}
+
+export interface WithLocation {
+	location: UserLocation | null;
+}
+
 export interface GeolocationProvider {
 	getCurrentPosition(): Promise<LocationCoordinates>;
 }

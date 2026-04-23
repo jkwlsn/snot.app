@@ -1,9 +1,4 @@
-import type { UserLocation } from '$lib/types';
-
-interface LocationState {
-	currentLocation: UserLocation | null;
-	searchResults: UserLocation[];
-}
+import type { LocationState } from '$lib/types';
 
 export const locationState = $state<LocationState>({
 	currentLocation: null,
