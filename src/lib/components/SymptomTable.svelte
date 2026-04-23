@@ -1,12 +1,10 @@
 <script lang="ts">
 	import { SYMPTOMS } from '$lib/config';
-	import { createLogger, consoleProvider } from '$lib/logging';
 	import { getSymptomService } from '$lib/services/context';
 	import type { SymptomLog } from '$lib/types';
 
 	const { title, records }: { title: string; records: SymptomLog[] } = $props();
 
-	const logger = createLogger(consoleProvider);
 	const service = getSymptomService();
 
 	let isRemovingSymptom = $state<boolean>(false);
@@ -28,17 +26,13 @@
 
 		removingSymptomId = id;
 
-		logger.debug('Attempting to remove SymptomLog', { removingSymptomId });
-
 		isRemovingSymptom = true;
 		removeError = null;
 
 		try {
-			const results = await service.removeSymptom(id);
-			logger.debug('Symptom deleted', { results });
+			await service.removeSymptom(id);
 		} catch (err: unknown) {
 			const error = err instanceof Error ? err : new Error(String(err));
-			logger.error(`Submitting symptom failed`, { error });
 			removeError = error.message;
 		} finally {
 			isRemovingSymptom = false;
