@@ -14,7 +14,7 @@ export function createSymptomRepository(logger: Logger): SymptomRepository {
 			return results;
 		} catch (err: unknown) {
 			const error = err instanceof Error ? err : new Error(String(err));
-			logger.error(`${operation} failed`, { ...context, error });
+			logger.error(`${operation} failed`, error, { ...context });
 			throw err;
 		}
 	}
