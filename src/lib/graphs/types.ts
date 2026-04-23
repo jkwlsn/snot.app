@@ -1,4 +1,4 @@
-import type { Timestamp } from '$lib/types';
+import type { CreatedAt } from '$lib/types';
 
 // DataPoint describes a single point of data
 interface DataPoint {
@@ -13,7 +13,7 @@ export interface LabelledDataPoint extends DataPoint {
 }
 
 // TemporalDataPoint adds a timestamp (for line graphs etc.)
-export interface TemporalDataPoint extends Timestamp, DataPoint {}
+export interface TemporalDataPoint extends CreatedAt, DataPoint {}
 
 // GraphProvider describes the interface for graphs
 export interface GraphProvider<TIn, TOut> {
