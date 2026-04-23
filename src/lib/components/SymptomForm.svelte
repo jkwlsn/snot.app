@@ -3,8 +3,7 @@
 	import { locationState } from '$lib/location';
 	import { createLogger, consoleProvider } from '$lib/logging';
 	import { getSymptomService } from '$lib/services/context';
-
-	type SymptomName = (typeof SYMPTOMS)[number]['name'];
+	import type { SymptomName, SymptomFields } from '$lib/types';
 
 	const logger = createLogger(consoleProvider);
 	const service = getSymptomService();
@@ -37,9 +36,10 @@
 
 		try {
 			const results = await service.submitSymptoms(
-				symptomValues,
+				symptomValues as SymptomFields,
 				$state.snapshot(locationState?.currentLocation)
 			);
+
 			resetValues();
 			logger.debug('Symptoms submitted', { results });
 		} catch (err: unknown) {
