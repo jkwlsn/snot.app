@@ -15,7 +15,7 @@
 
 	const COLUMNS = [
 		{ header: 'ID', accessor: (r: SymptomLog) => r.id },
-		{ header: 'CreatedAt', accessor: (r: SymptomLog) => r.timestamp },
+		{ header: 'CreatedAt', accessor: (r: SymptomLog) => r.createdAt },
 		...SYMPTOMS.map((s) => ({
 			header: s.name,
 			accessor: (r: SymptomLog) => r.symptoms[s.name]
