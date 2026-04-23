@@ -6,7 +6,7 @@ interface WithId {
 	id: number;
 }
 
-interface Location {
+interface WithLocation {
 	location: UserLocation | null;
 }
 
@@ -44,7 +44,7 @@ export type SymptomSeverity = (typeof SEVERITY_LEVELS)[number];
 // Describes a new entry for the database, it will be assigned an ID by the DB.
 export interface Log extends WithId, CreatedAt {}
 
-export interface SymptomLog extends Log, Location {
+export interface SymptomLog extends Log, WithLocation {
 	symptoms: SymptomFields;
 }
 
