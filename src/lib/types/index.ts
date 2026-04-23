@@ -12,11 +12,11 @@ interface Location {
 
 type SymptomFields = Record<SymptomName, SymptomSeverity>;
 
-// Timestamp interface
+// CreatedAt interface
 // This provides a stable definition of time
 // It should be extended by other interfaces.
 
-export interface Timestamp {
+export interface CreatedAt {
 	timestamp: Date;
 }
 
@@ -25,7 +25,7 @@ export const POLLEN_RISK_LEVELS = ['low', 'moderate', 'high', 'extreme'] as cons
 export type PollenRisk = (typeof POLLEN_RISK_LEVELS)[number];
 
 // Log the environment data for each symptom entry
-export interface EnvironmentAtLog extends Timestamp {
+export interface EnvironmentAtLog extends CreatedAt {
 	source: string;
 	pollenGrass: number | null;
 	pollenTree: number | null;
@@ -42,7 +42,7 @@ export const SEVERITY_LEVELS = [0, 1, 2, 3, 4, 5] as const;
 export type SymptomSeverity = (typeof SEVERITY_LEVELS)[number];
 
 // Describes a new entry for the database, it will be assigned an ID by the DB.
-export interface Log extends WithId, Timestamp {}
+export interface Log extends WithId, CreatedAt {}
 
 export interface SymptomLog extends Log, Location {
 	symptoms: SymptomFields;
