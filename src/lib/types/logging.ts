@@ -17,5 +17,5 @@ export interface Logger {
 	debug(message: string, context?: LogEntry['context']): void;
 	info(message: string, context?: LogEntry['context']): void;
 	warn(message: string, context?: LogEntry['context']): void;
-	error(message: string, context?: LogEntry['context'] & { error: Error }): void;
+	error(message: string, error?: Error, context?: LogEntry['context']): void;
 }
