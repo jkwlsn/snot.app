@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { SYMPTOMS } from '$lib/config';
-	import { locationState } from '$lib/location';
 	import { getSymptomService } from '$lib/services/context';
 	import type { SymptomName, SymptomFields } from '$lib/types';
 
@@ -31,10 +30,7 @@
 		submitError = null;
 
 		try {
-			await service.submitSymptoms(
-				$state.snapshot(symptomValues) as SymptomFields,
-				$state.snapshot(locationState?.currentLocation)
-			);
+			await service.submitSymptoms($state.snapshot(symptomValues) as SymptomFields);
 
 			resetValues();
 		} catch (err: unknown) {
