@@ -20,6 +20,11 @@ export interface CreatedAt {
 	createdAt: Date;
 }
 
+// Stored adds `WithId` to any given type, necessary for any logs in the DB
+export type Stored<T> = T & WithId;
+
+export type StoredId = WithId['id'];
+
 // User-readable pollen levels
 export const POLLEN_RISK_LEVELS = ['low', 'moderate', 'high', 'extreme'] as const;
 export type PollenRisk = (typeof POLLEN_RISK_LEVELS)[number];
@@ -41,22 +46,22 @@ export interface EnvironmentAtLog extends CreatedAt {
 export const SEVERITY_LEVELS = [0, 1, 2, 3, 4, 5] as const;
 export type SymptomSeverity = (typeof SEVERITY_LEVELS)[number];
 
-// Describes a new entry for the database, it will be assigned an ID by the DB.
-export interface Log extends WithId, CreatedAt {}
-
-export interface SymptomLog extends Log, WithLocation {
+// CreateSymptomLog is the type used for DB symptom data entry
+// It extends `CreatedAt` and `WithLocation`, meaning the type /must/ include `timestamp: Date` and `location: UserLocation | null`, it also adds `symptoms: SymptomFields`.
+export interface CreateSymptomLog extends CreatedAt, WithLocation {
 	symptoms: SymptomFields;
 }
 
-export type CreateSymptomLog = Omit<SymptomLog, 'id'>;
+// `SymptomLog` describes the shape of data retrieved from the DB.
+export type SymptomLog = Stored<CreateSymptomLog>;
 
 // Repository Interface
-export interface Repository<T extends WithId, CreateT> {
-	add(entry: CreateT): Promise<T['id']>;
-	update(id: T['id'], patch: Partial<T>): Promise<void>;
-	remove(id: T['id']): Promise<void>;
-	getById(id: T['id']): Promise<T | undefined>;
-	getAll(): Promise<T[]>;
+export interface Repository<TInput, TOutput extends WithId> {
+	add(entry: TInput): Promise<StoredId>;
+	update(id: StoredId, patch: Partial<TInput>): Promise<void>;
+	remove(id: StoredId): Promise<void>;
+	getById(id: StoredId): Promise<TOutput | undefined>;
+	getAll(): Promise<TOutput[]>;
 }
 
 // Basic K:V interface for app settings
