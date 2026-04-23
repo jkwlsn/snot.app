@@ -1,7 +1,3 @@
-export interface SymptomConfig {
-	name: string;
-}
-
 export const SYMPTOMS = [
 	{ name: 'nose', description: 'Nasal congestion or runny nose' },
 	{ name: 'eyes', description: 'Eye irritation or watering' },
