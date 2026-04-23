@@ -1,63 +1,13 @@
 import type { SymptomRepository } from '$lib/db/repository';
-import type { Logger } from '$lib/logging';
-import type { CreateSymptomLog, UserLocation, SymptomFields, SymptomService } from '$lib/types';
+import type { SymptomFields, SymptomService, UserLocation } from '$lib/types';
 
-export function createSymptomService(repo: SymptomRepository, logger: Logger): SymptomService {
-	async function submitSymptoms(values: SymptomFields, location: UserLocation | null) {
-		const symptomValues = values;
-
-		const entry: CreateSymptomLog = {
-			createdAt: new Date(),
-			location: location,
-			symptoms: symptomValues
-		};
-
-		try {
-			const result = await repo.add(entry);
-			logger.debug('Symptoms submitted', { entry });
-			return result;
-		} catch (err) {
-			const error = err instanceof Error ? err : new Error(String(err));
-			logger.error('Failed to submit symptoms', error, { entry });
-			throw err;
-		}
-	}
-
-	async function getAllSymptoms() {
-		try {
-			const result = await repo.getAll();
-			logger.debug('Got all symptoms', { result });
-			return result;
-		} catch (err: unknown) {
-			const error = err instanceof Error ? err : new Error(String(err));
-			logger.error('Failed to get all symptoms', error);
-			throw err;
-		}
-	}
-
-	async function getRangeSymptoms(from: Date, to: Date) {
-		try {
-			const result = await repo.getRange(from, to);
-			logger.debug('Got symptom within range', { from, to, result });
-			return result;
-		} catch (err: unknown) {
-			const error = err instanceof Error ? err : new Error(String(err));
-			logger.error('Failed to get range of symptoms', error, { from, to });
-			throw err;
-		}
-	}
-
-	async function removeSymptom(id: number) {
-		try {
-			const result = await repo.remove(id);
-			logger.debug('Deleted symptom', { result });
-			return result;
-		} catch (err: unknown) {
-			const error = err instanceof Error ? err : new Error(String(err));
-			logger.error('Failed to delete symptom', error);
-			throw err;
-		}
-	}
-
-	return { submitSymptoms, getAllSymptoms, getRangeSymptoms, removeSymptom };
+export function createSymptomService(repo: SymptomRepository): SymptomService {
+	return {
+		submitSymptoms: (values: SymptomFields, location: UserLocation | null) =>
+			repo.add({ createdAt: new Date(), location, symptoms: values }),
+		getAllSymptoms: () => repo.getAll(),
+		getRangeSymptoms: (from: Date, to: Date) => repo.getRange(from, to),
+		removeSymptom: (id: number) => repo.remove(id)
+	};
 }
+
