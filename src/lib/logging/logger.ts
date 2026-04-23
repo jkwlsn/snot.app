@@ -1,10 +1,8 @@
-import type { LogEntry, LogLevel, LogProvider } from './types';
+import type { LogEntry, LogLevel, LogProvider, Logger } from '$lib/types';
 
 const rank: Record<LogLevel, number> = { debug: 0, info: 1, warn: 2, error: 3 };
 
-export type Logger = ReturnType<typeof createLogger>;
-
-export function createLogger(provider: LogProvider, minLevel: LogLevel = 'info') {
+export function createLogger(provider: LogProvider, minLevel: LogLevel = 'info'): Logger {
 	function emit(level: LogLevel, message: string, context?: LogEntry['context'], error?: Error) {
 		if (rank[level] >= rank[minLevel]) {
 			provider.log({ level, message, context, error, createdAt: new Date() });

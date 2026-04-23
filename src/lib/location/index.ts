@@ -1,3 +1,3 @@
-export type { GeolocationProvider, GeocodeProvider, LocationService } from './types';
+export type { GeolocationProvider, GeocodeProvider, LocationService } from '$lib/types';
 
 export { locationState } from './state.svelte';
