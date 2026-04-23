@@ -12,7 +12,6 @@
 	let searching = $state<boolean>(false);
 	let searchFinished = $state<boolean>(false);
 	let query = $state<string>('');
-	let results = $state<UserLocation[]>([]);
 
 	async function handleGPS() {
 		const context = { module: 'location', function: 'handleGPS' };
@@ -39,7 +38,7 @@
 		const q = query.trim();
 
 		if (!q) {
-			results = [];
+			locationState.searchResults = [];
 			logger.warn('No search query supplied', { ...context, query: q });
 			return;
 		}
@@ -51,13 +50,21 @@
 		logger.debug('Attempting to search for location', { ...context, query: q });
 
 		try {
-			results = await service.forwardGeocode(q);
+			locationState.searchResults = await service.forwardGeocode(q);
 
-			if (!results) {
-				logger.warn('No results for query', { ...context, query: q, results });
+			if (!locationState.searchResults) {
+				logger.warn('No results for query', {
+					...context,
+					query: q,
+					results: $state.snapshot(locationState.searchResults)
+				});
 			}
 
-			logger.info('Search results', { ...context, query: q, results });
+			logger.info('Search results', {
+				...context,
+				query: q,
+				results: $state.snapshot(locationState.searchResults)
+			});
 		} catch (err) {
 			error = err instanceof Error ? err : new Error(String(err));
 			logger.error(error.message, { ...context, error });
@@ -70,7 +77,7 @@
 
 	function selectSearchResult(location: UserLocation) {
 		locationState.currentLocation = location;
-		results = [];
+		locationState.searchResults = [];
 		query = '';
 		searchFinished = false;
 	}
@@ -104,16 +111,16 @@
 			disabled={searching}
 			oninput={() => {
 				searchFinished = false;
-				if (!query) results = [];
+				if (!query) locationState.searchResults = [];
 			}}
 			onkeydown={(e) => e.key === 'Enter' && handleSearch(query)}
 		/>
 		<button onclick={() => handleSearch(query)} disabled={searching || query.length < 3}>
 			{searching ? 'Searching…' : 'Search'}
 		</button>
-		{#if query.length > 0 && results.length > 0}
+		{#if query.length > 0 && locationState.searchResults.length > 0}
 			<ul role="listbox">
-				{#each results as result, i (i)}
+				{#each locationState.searchResults as result, i (i)}
 					<li>
 						<button onclick={() => selectSearchResult(result)}>
 							{result.label}
