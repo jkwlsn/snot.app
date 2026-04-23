@@ -12,7 +12,7 @@ export interface LabelledDataPoint extends DataPoint {
 	label: string;
 }
 
-// TemporalDataPoint adds a timestamp (for line graphs etc.)
+// TemporalDataPoint adds a createdAt (for line graphs etc.)
 export interface TemporalDataPoint extends CreatedAt, DataPoint {}
 
 // GraphProvider describes the interface for graphs
