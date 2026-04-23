@@ -1,10 +1,10 @@
 import { liveQuery } from 'dexie';
 import { endOfDay, startOfDay } from 'date-fns';
-import type { SymptomLog, SymptomService, SymptomsState, AppState } from '$lib/types';
+import type { SymptomLog, SymptomService, SymptomState, AppState } from '$lib/types';
 
-export const appState = $state<AppState>({ error: null });
+export const symptomState = $state<AppState>({ error: null });
 
-export function createSymptomsState(service: SymptomService): SymptomsState {
+export function createSymptomState(service: SymptomService): SymptomState {
 	let symptoms = $state<SymptomLog[]>([]);
 	let todaysSymptoms = $state<SymptomLog[]>([]);
 
@@ -13,7 +13,7 @@ export function createSymptomsState(service: SymptomService): SymptomsState {
 			try {
 				return await service.getAllSymptoms();
 			} catch (e) {
-				appState.error = e instanceof Error ? e : new Error(String(e));
+				symptomState.error = e instanceof Error ? e : new Error(String(e));
 				return [];
 			}
 		}).subscribe((value) => {
@@ -29,7 +29,7 @@ export function createSymptomsState(service: SymptomService): SymptomsState {
 				// eslint-disable-next-line svelte/prefer-svelte-reactivity
 				return await service.getRangeSymptoms(startOfDay(new Date()), endOfDay(new Date()));
 			} catch (e) {
-				appState.error = e instanceof Error ? e : new Error(String(e));
+				symptomState.error = e instanceof Error ? e : new Error(String(e));
 				return [];
 			}
 		}).subscribe((value) => {
