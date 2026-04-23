@@ -8,7 +8,7 @@ export class SnotDB extends Dexie {
 	constructor() {
 		super('snot-app');
 		this.version(1).stores({
-			symptoms: '++id, timestamp'
+			symptoms: '++id, createdAt'
 		});
 	}
 }
