@@ -18,7 +18,7 @@ export function createSymptomService(repo: SymptomRepository, logger: Logger): S
 			return result;
 		} catch (err) {
 			const error = err instanceof Error ? err : new Error(String(err));
-			logger.error('Failed to submit symptoms', { entry, error });
+			logger.error('Failed to submit symptoms', error, { entry });
 			throw err;
 		}
 	}
@@ -30,7 +30,7 @@ export function createSymptomService(repo: SymptomRepository, logger: Logger): S
 			return result;
 		} catch (err: unknown) {
 			const error = err instanceof Error ? err : new Error(String(err));
-			logger.error('Failed to get all symptoms', { error });
+			logger.error('Failed to get all symptoms', error);
 			throw err;
 		}
 	}
@@ -42,7 +42,7 @@ export function createSymptomService(repo: SymptomRepository, logger: Logger): S
 			return result;
 		} catch (err: unknown) {
 			const error = err instanceof Error ? err : new Error(String(err));
-			logger.error('Failed to get range of symptoms', { from, to, error });
+			logger.error('Failed to get range of symptoms', error, { from, to });
 			throw err;
 		}
 	}
@@ -54,7 +54,7 @@ export function createSymptomService(repo: SymptomRepository, logger: Logger): S
 			return result;
 		} catch (err: unknown) {
 			const error = err instanceof Error ? err : new Error(String(err));
-			logger.error('Failed to delete symptom', { error });
+			logger.error('Failed to delete symptom', error);
 			throw err;
 		}
 	}
