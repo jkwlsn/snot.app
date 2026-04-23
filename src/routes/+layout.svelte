@@ -8,7 +8,7 @@
 
 	// Symptom Service
 	import { setSymptomService } from '$lib/services/context';
-	import { createSymptomService } from '$lib/services/symptoms';
+	import { createSymptomService } from '$lib/services/symptoms.svelte';
 
 	// Import location context and service
 	import { setLocationService } from '$lib/location/context';
@@ -20,6 +20,7 @@
 	import '$lib/pwa/pwa.svelte';
 
 	// State & Context
+	import { locationState } from '$lib/location/state.svelte';
 	import { createSymptomsState } from '$lib/state/symptoms.svelte';
 	import { setSymptomsContext } from '$lib/state/context';
 
@@ -29,7 +30,7 @@
 	const symptomRepository = createSymptomRepository(logger);
 	setSymptomRepository(symptomRepository);
 
-	const symptomService = createSymptomService(symptomRepository);
+	const symptomService = createSymptomService(symptomRepository, locationState);
 	setSymptomService(symptomService);
 
 	const locationService = createLocationService({
