@@ -7,7 +7,7 @@ export type Logger = ReturnType<typeof createLogger>;
 export function createLogger(provider: LogProvider, minLevel: LogLevel = 'info') {
 	function emit(level: LogLevel, message: string, context?: LogEntry['context'], error?: Error) {
 		if (rank[level] >= rank[minLevel]) {
-			provider.log({ level, message, context, error, timestamp: new Date() });
+			provider.log({ level, message, context, error, createdAt: new Date() });
 		}
 	}
 	return {

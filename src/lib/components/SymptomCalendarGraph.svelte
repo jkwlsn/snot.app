@@ -34,7 +34,7 @@
 	{:else}
 		<Chart
 			data={chart.data}
-			x="timestamp"
+			x="createdAt"
 			c="value"
 			cScale={scaleThreshold()}
 			cDomain={chart.cDomain}
@@ -71,7 +71,7 @@
 				<Tooltip.Root>
 					{#snippet children({ data })}
 						{#if data?.value != null}
-							<Tooltip.Header>{format(data.timestamp, PeriodType.Day)}</Tooltip.Header>
+							<Tooltip.Header>{format(data.createdAt, PeriodType.Day)}</Tooltip.Header>
 							<Tooltip.List>
 								<Tooltip.Item
 									label="Symptoms"
