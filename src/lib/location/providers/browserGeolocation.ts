@@ -1,5 +1,5 @@
 import type { Logger } from '$lib/logging';
-import type { GeolocationProvider } from '../types';
+import type { GeolocationProvider } from '$lib/types';
 
 const CONTEXT = { module: 'location', function: 'browserGeolocationProvider' };
 
