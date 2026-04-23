@@ -10,7 +10,7 @@ interface WithLocation {
 	location: UserLocation | null;
 }
 
-type SymptomFields = Record<SymptomName, SymptomSeverity>;
+export type SymptomFields = Record<SymptomName, SymptomSeverity>;
 
 // CreatedAt interface
 // This provides a stable definition of time
