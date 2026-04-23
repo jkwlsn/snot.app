@@ -1,11 +1,9 @@
 <script lang="ts">
 	import { SYMPTOMS } from '$lib/config';
 	import { locationState } from '$lib/location';
-	import { createLogger, consoleProvider } from '$lib/logging';
 	import { getSymptomService } from '$lib/services/context';
 	import type { SymptomName, SymptomFields } from '$lib/types';
 
-	const logger = createLogger(consoleProvider);
 	const service = getSymptomService();
 
 	const symptomValues = $state<Record<string, number>>(
@@ -27,24 +25,20 @@
 	async function handleSubmit(e: SubmitEvent) {
 		e.preventDefault();
 
-		logger.debug('Attempting to submit symptoms', { symptomValues });
-
 		if (isSubmittingSymptoms) return;
 
 		isSubmittingSymptoms = true;
 		submitError = null;
 
 		try {
-			const results = await service.submitSymptoms(
+			await service.submitSymptoms(
 				$state.snapshot(symptomValues) as SymptomFields,
 				$state.snapshot(locationState?.currentLocation)
 			);
 
 			resetValues();
-			logger.debug('Symptoms submitted', { results });
 		} catch (err: unknown) {
 			const error = err instanceof Error ? err : new Error(String(err));
-			logger.error(`Submitting symptom failed`, { error });
 			submitError = error.message;
 		} finally {
 			isSubmittingSymptoms = false;
