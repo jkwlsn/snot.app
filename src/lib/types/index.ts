@@ -1,23 +1,23 @@
 // Interfaces and types for the app
 import type { SymptomName } from '$lib/config';
 
-// Identity is used to create IDs / Primary Keys
-interface Identity {
+// WithId is used to create IDs / Primary Keys
+interface WithId {
 	id: number;
 }
 
-interface Location {
+interface WithLocation {
 	location: UserLocation | null;
 }
 
 type SymptomFields = Record<SymptomName, SymptomSeverity>;
 
-// Timestamp interface
+// CreatedAt interface
 // This provides a stable definition of time
 // It should be extended by other interfaces.
 
-export interface Timestamp {
-	timestamp: Date;
+export interface CreatedAt {
+	createdAt: Date;
 }
 
 // User-readable pollen levels
@@ -25,7 +25,7 @@ export const POLLEN_RISK_LEVELS = ['low', 'moderate', 'high', 'extreme'] as cons
 export type PollenRisk = (typeof POLLEN_RISK_LEVELS)[number];
 
 // Log the environment data for each symptom entry
-export interface EnvironmentAtLog extends Timestamp {
+export interface EnvironmentAtLog extends CreatedAt {
 	source: string;
 	pollenGrass: number | null;
 	pollenTree: number | null;
@@ -42,16 +42,16 @@ export const SEVERITY_LEVELS = [0, 1, 2, 3, 4, 5] as const;
 export type SymptomSeverity = (typeof SEVERITY_LEVELS)[number];
 
 // Describes a new entry for the database, it will be assigned an ID by the DB.
-export interface Log extends Identity, Timestamp {}
+export interface Log extends WithId, CreatedAt {}
 
-export interface SymptomLog extends Log, Location {
+export interface SymptomLog extends Log, WithLocation {
 	symptoms: SymptomFields;
 }
 
 export type CreateSymptomLog = Omit<SymptomLog, 'id'>;
 
 // Repository Interface
-export interface Repository<T extends Identity, CreateT> {
+export interface Repository<T extends WithId, CreateT> {
 	add(entry: CreateT): Promise<T['id']>;
 	update(id: T['id'], patch: Partial<T>): Promise<void>;
 	remove(id: T['id']): Promise<void>;
@@ -60,7 +60,7 @@ export interface Repository<T extends Identity, CreateT> {
 }
 
 // Basic K:V interface for app settings
-export interface AppSettings extends Identity {
+export interface AppSettings extends WithId {
 	key: string;
 	value: unknown;
 }
