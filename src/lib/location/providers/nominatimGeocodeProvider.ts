@@ -1,5 +1,5 @@
 import type { Logger } from '$lib/logging';
-import type { GeocodeProvider } from '../types';
+import type { GeocodeProvider } from '$lib/types';
 
 interface NominatimForwardResponse {
 	display_name: string;
