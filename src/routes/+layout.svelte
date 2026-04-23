@@ -33,8 +33,8 @@
 	setSymptomService(symptomService);
 
 	const locationService = createLocationService({
-		geolocation: browserGeolocationProvider(logger),
-		geocode: nominatimGeocodeProvider(logger),
+		geolocation: browserGeolocationProvider(),
+		geocode: nominatimGeocodeProvider(),
 		logger: logger
 	});
 	setLocationService(locationService);
