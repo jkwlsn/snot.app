@@ -1,6 +1,4 @@
-import type { SymptomRepository } from '$lib/db/repository';
-import type { SymptomFields, SymptomService } from '$lib/types';
-import type { LocationState } from '$lib/types/state';
+import type { LocationState, SymptomFields, SymptomService, SymptomRepository } from '$lib/types';
 
 export function createSymptomService(
 	repo: SymptomRepository,

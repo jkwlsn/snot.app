@@ -1,4 +1,3 @@
-export { createLogger } from './logger';
-export { nullProvider } from './providers/null';
-export { consoleProvider } from './providers/console';
-export type { LogLevel, LogEntry, LogProvider, Logger } from '$lib/types';
+export { createLogger } from './logger.ts';
+export { consoleProvider } from './providers/console.ts';
+export { nullProvider } from './providers/null.ts';
