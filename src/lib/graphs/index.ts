@@ -1,2 +1,2 @@
-export { createLayerchartCalendarGraph } from './providers/layerchartCalendarGraph';
-export { createLayerchartBarGraph } from './providers/layerchartBarGraph';
+export { createLayerchartBarGraph } from './providers/layerchartBarGraph.ts';
+export { createLayerchartCalendarGraph } from './providers/layerchartCalendarGraph.ts';

@@ -5,7 +5,7 @@ export interface LocationState {
 	searchResults: UserLocation[];
 }
 
-export interface SymptomsState {
+export interface SymptomState {
 	readonly symptoms: SymptomLog[];
 	readonly todaysSymptoms: SymptomLog[];
 }
