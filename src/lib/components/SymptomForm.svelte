@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { SYMPTOMS } from '$lib/config';
-	import { getSymptomService } from '$lib/services/context';
+	import { getSymptomService } from '$lib/symptoms';
 	import type { SymptomName, SymptomFields } from '$lib/types';
 
 	const service = getSymptomService();
