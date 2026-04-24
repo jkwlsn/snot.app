@@ -8,4 +8,4 @@ export * from './logging';
 export * from './graphs';
 export * from './services';
 export * from './state';
-export * from './errors';
+export * from '../errors/types';
