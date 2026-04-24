@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { SYMPTOMS } from '$lib/config';
-	import { getSymptomService } from '$lib/services/context';
+	import { getSymptomService } from '$lib/symptoms';
 	import type { SymptomLog } from '$lib/types';
 
 	const { title, records }: { title: string; records: SymptomLog[] } = $props();
