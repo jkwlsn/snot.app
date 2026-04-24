@@ -1,4 +1,4 @@
-import type { UserLocation, SymptomLog } from './index';
+import type { UserLocation, SymptomLog, AppError } from './index';
 
 export interface LocationState {
 	currentLocation: UserLocation | null;
@@ -10,6 +10,6 @@ export interface SymptomState {
 	readonly todaysSymptoms: SymptomLog[];
 }
 
-export interface AppState {
-	error: Error | null;
+export interface AppErrorState {
+	error: AppError | null;
 }
