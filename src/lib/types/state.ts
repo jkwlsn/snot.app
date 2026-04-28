@@ -9,7 +9,3 @@ export interface SymptomState {
 	readonly symptoms: SymptomLog[];
 	readonly todaysSymptoms: SymptomLog[];
 }
-
-export interface AppState {
-	error: Error | null;
-}
