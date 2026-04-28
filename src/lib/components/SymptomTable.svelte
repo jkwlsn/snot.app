@@ -1,15 +1,17 @@
 <script lang="ts">
 	import { SYMPTOMS } from '$lib/config';
 	import { getSymptomService } from '$lib/symptoms';
+	import { handleError } from '$lib/errors';
+	import { createLogger, consoleProvider } from '$lib/logging';
 	import type { SymptomLog } from '$lib/types';
 
 	const { title, records }: { title: string; records: SymptomLog[] } = $props();
 
 	const service = getSymptomService();
+	const logger = createLogger(consoleProvider);
 
 	let isRemovingSymptom = $state<boolean>(false);
 	let removingSymptomId = $state<number | null>(null);
-	let removeError = $state<string | null>(null);
 
 	const COLUMNS = [
 		{ header: 'ID', accessor: (r: SymptomLog) => r.id },
@@ -27,13 +29,16 @@
 		removingSymptomId = id;
 
 		isRemovingSymptom = true;
-		removeError = null;
 
 		try {
 			await service.removeSymptom(id);
 		} catch (err: unknown) {
-			const error = err instanceof Error ? err : new Error(String(err));
-			removeError = error.message;
+			handleError({
+				error: err,
+				operation: 'removeSymptom',
+				logger,
+				show: true
+			});
 		} finally {
 			isRemovingSymptom = false;
 			removingSymptomId = null;
@@ -68,9 +73,6 @@
 									? 'Removing...'
 									: 'Remove'}</button
 							>
-							{#if removeError}
-								<aside>{removeError}</aside>
-							{/if}
 						</td>
 					</tr>
 				{/each}
