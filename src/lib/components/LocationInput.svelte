@@ -1,10 +1,12 @@
 <script lang="ts">
 	import { getLocationService, locationState } from '$lib/location';
+	import { handleError } from '$lib/errors';
+	import { createLogger, consoleProvider } from '$lib/logging';
 	import type { UserLocation } from '$lib/types';
 
 	const service = getLocationService();
+	const logger = createLogger(consoleProvider);
 
-	let error = $state<Error | null>(null);
 	let loading = $state<boolean>(false);
 	let searching = $state<boolean>(false);
 	let searchFinished = $state<boolean>(false);
@@ -12,12 +14,16 @@
 
 	async function handleGPS() {
 		loading = true;
-		error = null;
 
 		try {
 			locationState.currentLocation = await service.getBrowserLocation();
 		} catch (err) {
-			error = err instanceof Error ? err : new Error(String(err));
+			handleError({
+				error: err,
+				operation: 'handleGPS',
+				logger,
+				show: true
+			});
 		} finally {
 			loading = false;
 		}
@@ -31,14 +37,18 @@
 			return;
 		}
 
-		error = null;
 		searching = true;
 		searchFinished = false;
 
 		try {
 			locationState.searchResults = await service.forwardGeocode(q);
 		} catch (err) {
-			error = err instanceof Error ? err : new Error(String(err));
+			handleError({
+				error: err,
+				operation: 'handleSearch',
+				logger,
+				show: true
+			});
 			locationState.searchResults = [];
 		} finally {
 			searching = false;
@@ -103,11 +113,4 @@
 			<p>No results found for "{query}"</p>
 		{/if}
 	</div>
-
-	<!-- Error -->
-	{#if error}
-		<p role="alert">
-			{error.message}
-		</p>
-	{/if}
 </section>
