@@ -1,3 +1,4 @@
+import { handleError } from '$lib/errors';
 import type {
 	LocationCoordinates,
 	GeocodeProvider,
@@ -5,8 +6,6 @@ import type {
 	LocationService,
 	Logger
 } from '$lib/types';
-
-const CONTEXT = { module: 'location', function: 'createLocationService' };
 
 export const createLocationService = ({
 	geocode,
@@ -18,81 +17,37 @@ export const createLocationService = ({
 	logger: Logger;
 }): LocationService => {
 	const getBrowserLocation = async () => {
-		logger.debug('Requesting GPS coordinates', { ...CONTEXT, function: 'getBrowserLocation' });
-
-		let coordinates;
 		try {
-			coordinates = await geolocation.getCurrentPosition();
+			const coordinates = await geolocation.getCurrentPosition();
+
+			if (!coordinates) {
+				throw new Error('GPS returned null');
+			}
+
+			return await reverseGeocode(coordinates);
 		} catch (err) {
-			const error = err instanceof Error ? err : new Error(String(err));
-			logger.error('Failed to get GPS coordinates', error, { ...CONTEXT });
-			throw error;
+			throw handleError(err, 'getBrowserLocation', { logger });
 		}
-
-		if (!coordinates) {
-			logger.warn('GPS returned null', {
-				...CONTEXT,
-				function: 'getBrowserLocation'
-			});
-			throw new Error('Failed to get GPS coordinates');
-		}
-
-		logger.debug('Received coordinates', {
-			...CONTEXT,
-			function: 'getBrowserLocation',
-			coordinates
-		});
-
-		return reverseGeocode(coordinates);
 	};
 
 	const forwardGeocode = async (query: string) => {
-		logger.debug('Attempting forward geocode', {
-			...CONTEXT,
-			function: 'forwardGeocode',
-			data: query
-		});
-		const results = await geocode.forward(query);
-		logger.debug('Forward geocode results', {
-			...CONTEXT,
-			function: 'forwardGeocode',
-			data: results
-		});
-		return results;
+		try {
+			return await geocode.forward(query);
+		} catch (err) {
+			throw handleError(err, 'forwardGeocode', { logger, context: { query } });
+		}
 	};
 
 	const reverseGeocode = async (coordinates: LocationCoordinates) => {
-		logger.debug('Attempting reverse geocode', {
-			...CONTEXT,
-			function: 'reverseGeocode',
-			data: coordinates
-		});
-
-		let location;
 		try {
-			location = await geocode.reverse(coordinates);
+			const location = await geocode.reverse(coordinates);
+			if (!location) {
+				throw new Error('Reverse Geocode returned null');
+			}
+			return location;
 		} catch (err) {
-			const error = err instanceof Error ? err : new Error(String(err));
-			logger.error('Failed to get GPS coordinates', error, { ...CONTEXT });
-			throw error;
+			throw handleError(err, 'reverseGeocode', { logger, context: { coordinates } });
 		}
-
-		if (!location) {
-			logger.warn('Reverse Geocode returned null', {
-				...CONTEXT,
-				function: 'getBrowserLocation',
-				coordinates
-			});
-			throw new Error('Reverse Geocode returned null');
-		}
-
-		logger.info('Location resolved', {
-			...CONTEXT,
-			function: 'reverseGeocode',
-			location
-		});
-
-		return location;
 	};
 
 	return { getBrowserLocation, forwardGeocode, reverseGeocode };
