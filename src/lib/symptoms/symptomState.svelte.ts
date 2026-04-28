@@ -1,10 +1,9 @@
 import { liveQuery } from 'dexie';
 import { endOfDay, startOfDay } from 'date-fns';
-import type { SymptomLog, SymptomService, SymptomState, AppState } from '$lib/types';
+import { handleError } from '$lib/errors';
+import type { SymptomLog, SymptomService, SymptomState, Logger } from '$lib/types';
 
-export const symptomState = $state<AppState>({ error: null });
-
-export function createSymptomState(service: SymptomService): SymptomState {
+export function createSymptomState(service: SymptomService, logger: Logger): SymptomState {
 	let symptoms = $state<SymptomLog[]>([]);
 	let todaysSymptoms = $state<SymptomLog[]>([]);
 
@@ -12,9 +11,14 @@ export function createSymptomState(service: SymptomService): SymptomState {
 		const sub = liveQuery<SymptomLog[]>(async () => {
 			try {
 				return await service.getAllSymptoms();
-			} catch (e) {
-				symptomState.error = e instanceof Error ? e : new Error(String(e));
-				return [];
+			} catch (err) {
+				handleError({
+					error: err,
+					operation: 'getAllSymptoms',
+					logger,
+					show: true
+				});
+				throw err;
 			}
 		}).subscribe((value) => {
 			symptoms = value;
@@ -28,9 +32,14 @@ export function createSymptomState(service: SymptomService): SymptomState {
 			try {
 				// eslint-disable-next-line svelte/prefer-svelte-reactivity
 				return await service.getRangeSymptoms(startOfDay(new Date()), endOfDay(new Date()));
-			} catch (e) {
-				symptomState.error = e instanceof Error ? e : new Error(String(e));
-				return [];
+			} catch (err) {
+				handleError({
+					error: err,
+					operation: 'getRangeSymptoms',
+					logger,
+					show: true
+				});
+				throw err;
 			}
 		}).subscribe((value) => {
 			todaysSymptoms = value;
