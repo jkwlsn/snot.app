@@ -36,7 +36,7 @@
 	setLocationService(locationService);
 
 	// Symptoms Data
-	setSymptomState(createSymptomState(symptomService));
+	setSymptomState(createSymptomState(symptomService, logger));
 
 	let { children } = $props();
 </script>
