@@ -1,12 +1,11 @@
 <script lang="ts">
 	import { getLocationService, locationState } from '$lib/location';
 	import { handleError } from '$lib/errors';
-	import { createLogger, consoleProvider } from '$lib/logging';
+	import { getLoggingService } from '$lib/logging';
 	import type { UserLocation } from '$lib/types';
 
 	const service = getLocationService();
-	const logger = createLogger(consoleProvider);
-
+	const logger = getLoggingService();
 	let loading = $state<boolean>(false);
 	let searching = $state<boolean>(false);
 	let searchFinished = $state<boolean>(false);
