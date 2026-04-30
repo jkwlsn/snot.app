@@ -1,8 +1,9 @@
 import { db } from '$lib/db/schema';
 import { handleError } from '$lib/errors';
-import type { SymptomRepository, Logger } from '$lib/types';
+import type { SymptomRepository } from '$lib/types';
+import type { LoggingService } from '$lib/logging';
 
-export function createSymptomRepository(logger: Logger): SymptomRepository {
+export function createSymptomRepository(logger: LoggingService): SymptomRepository {
 	async function run<T>(
 		operation: string,
 		fn: () => Promise<T>,
