@@ -3,8 +3,9 @@
 	import { startOfYear, endOfDay } from 'date-fns';
 	import { Calendar, Chart, Layer, Rect, Tooltip } from 'layerchart';
 	import { format, PeriodType } from '@layerstack/utils';
-	import { createLayerchartCalendarGraph as provider } from '$lib/graphs';
+	import { createLayerchartCalendarGraph as provider } from '$lib/symptoms';
 	import type { SymptomLog } from '$lib/symptoms';
+	import type { TemporalDataPoint } from '$lib/types';
 
 	interface Props {
 		title: string;
@@ -19,7 +20,7 @@
 
 	const chart = $derived.by(() => {
 		const data = provider.transform(records ?? []);
-		const max = data.length > 0 ? Math.max(...data.map((d) => d.value)) : 10;
+		const max = data.length > 0 ? Math.max(...data.map((d: TemporalDataPoint) => d.value)) : 10;
 		const cDomain = [Math.round(max * 0.25), Math.round(max * 0.5), Math.round(max * 0.75)];
 		return { data, cDomain };
 	});

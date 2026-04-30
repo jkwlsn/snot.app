@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { BarChart } from 'layerchart';
-	import { createLayerchartBarGraph as provider } from '$lib/graphs';
+	import { createLayerchartBarGraph as provider } from '../providers/layerchartBarGraph';
 	import type { SymptomLog } from '$lib/symptoms';
 
 	interface Props {
