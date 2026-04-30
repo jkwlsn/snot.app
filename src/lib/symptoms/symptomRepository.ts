@@ -3,7 +3,7 @@ import { handleError } from '$lib/errors';
 import type { SymptomRepository, CreateSymptomLog } from './types';
 import type { LoggingService } from '$lib/logging';
 
-export function createSymptomRepository(logger: LoggingService): SymptomRepository {
+export function createSymptomRepository({ logger }: { logger: LoggingService }): SymptomRepository {
 	async function run<T>(
 		operation: string,
 		fn: () => Promise<T>,
