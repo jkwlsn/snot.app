@@ -1,9 +1,8 @@
 <script lang="ts">
-	import { SYMPTOMS } from '$lib/config';
-	import { getSymptomService } from '$lib/symptoms';
+	import { SYMPTOMS, getSymptomService } from '$lib/symptoms';
 	import { handleError } from '$lib/errors';
 	import { getLoggingService } from '$lib/logging';
-	import type { SymptomName, SymptomFields } from '$lib/types';
+	import type { SymptomName, SymptomFields } from '$lib/symptoms';
 
 	const service = getSymptomService();
 	const logger = getLoggingService();
