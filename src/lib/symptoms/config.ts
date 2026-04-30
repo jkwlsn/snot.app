@@ -5,4 +5,4 @@ export const SYMPTOMS = [
 	{ name: 'breathing', description: 'Difficulty breathing' }
 ] as const;
 
-export type SymptomName = (typeof SYMPTOMS)[number]['name'];
+export const SEVERITY_LEVELS = [0, 1, 2, 3, 4, 5] as const;
