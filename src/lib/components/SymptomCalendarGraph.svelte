@@ -4,7 +4,7 @@
 	import { Calendar, Chart, Layer, Rect, Tooltip } from 'layerchart';
 	import { format, PeriodType } from '@layerstack/utils';
 	import { createLayerchartCalendarGraph as provider } from '$lib/graphs';
-	import type { SymptomLog } from '$lib/types';
+	import type { SymptomLog } from '$lib/symptoms';
 
 	interface Props {
 		title: string;
