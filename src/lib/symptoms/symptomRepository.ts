@@ -2,6 +2,7 @@ import { db } from '$lib/db/schema';
 import { handleError } from '$lib/errors';
 import type { SymptomRepository, CreateSymptomLog } from './types';
 import type { LoggingService } from '$lib/logging';
+import type { StoredId } from '$lib/types/base';
 
 export function createSymptomRepository({ logger }: { logger: LoggingService }): SymptomRepository {
 	async function run<T>(
@@ -25,13 +26,14 @@ export function createSymptomRepository({ logger }: { logger: LoggingService }):
 	}
 
 	return {
-		add: (entry) => run('add', () => db.symptoms.add(entry), { symptomEntry: entry }),
-		update: (id, patch) =>
+		add: (entry: CreateSymptomLog) =>
+			run('add', () => db.symptoms.add(entry), { symptomEntry: entry }),
+		update: (id: StoredId, patch: Partial<CreateSymptomLog>) =>
 			run('update', () => db.symptoms.update(id, patch).then(() => void 0), { id, patch }),
-		remove: (id) => run('remove', () => db.symptoms.delete(id), { id }),
-		getById: (id) => run('getById', () => db.symptoms.get(id), { id }),
+		remove: (id: StoredId) => run('remove', () => db.symptoms.delete(id), { id }),
+		getById: (id: StoredId) => run('getById', () => db.symptoms.get(id), { id }),
 		getAll: () => run('getAll', () => db.symptoms.orderBy('createdAt').reverse().toArray()),
-		getRange: (from, to) =>
+		getRange: (from: Date, to: Date) =>
 			run('getRange', () => db.symptoms.where('createdAt').between(from, to).toArray(), {
 				from: from.toISOString(),
 				to: to.toISOString()
