@@ -2,11 +2,11 @@
 	import { SYMPTOMS } from '$lib/config';
 	import { getSymptomService } from '$lib/symptoms';
 	import { handleError } from '$lib/errors';
-	import { createLogger, consoleProvider } from '$lib/logging';
+	import { getLoggingService } from '$lib/logging';
 	import type { SymptomName, SymptomFields } from '$lib/types';
 
 	const service = getSymptomService();
-	const logger = createLogger(consoleProvider);
+	const logger = getLoggingService();
 
 	const symptomValues = $state<Record<string, number>>(
 		Object.fromEntries(SYMPTOMS.map((symptom) => [symptom.name, 0])) as Record<SymptomName, number>
