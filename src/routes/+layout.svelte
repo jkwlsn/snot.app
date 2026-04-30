@@ -2,8 +2,6 @@
 	import { consoleProvider, createLoggingService, setLoggingService } from '$lib/logging';
 
 	import {
-		setSymptomRepository,
-		createSymptomRepository,
 		setSymptomService,
 		createSymptomService,
 		setSymptomState,
@@ -25,10 +23,10 @@
 	});
 	setLoggingService(logger);
 
-	const symptomRepository = createSymptomRepository(logger);
-	setSymptomRepository(symptomRepository);
-
-	const symptomService = createSymptomService(symptomRepository, locationState);
+	const symptomService = createSymptomService({
+		logger,
+		locationState: locationState
+	});
 	setSymptomService(symptomService);
 
 	const locationService = createLocationService({
@@ -39,7 +37,7 @@
 	setLocationService(locationService);
 
 	// Symptoms Data
-	setSymptomState(createSymptomState(symptomService, logger));
+	setSymptomState(createSymptomState({ service: symptomService, logger }));
 
 	let { children } = $props();
 </script>
