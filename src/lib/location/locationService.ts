@@ -4,7 +4,7 @@ import type {
 	GeocodeProvider,
 	GeolocationProvider,
 	LocationService,
-	Logger
+	LoggingService
 } from '$lib/types';
 
 export const createLocationService = ({
@@ -14,7 +14,7 @@ export const createLocationService = ({
 }: {
 	geocode: GeocodeProvider;
 	geolocation: GeolocationProvider;
-	logger: Logger;
+	logger: LoggingService;
 }): LocationService => {
 	const getBrowserLocation = async () => {
 		try {
