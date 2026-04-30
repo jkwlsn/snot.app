@@ -1,4 +1,4 @@
-import type { LogEntry, LogProvider } from '$lib/types';
+import type { LogEntry, LogProvider } from '../types';
 
 export const consoleProvider: LogProvider = {
 	log: ({ level, message, context, error }: LogEntry) => {
