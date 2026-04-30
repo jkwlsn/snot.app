@@ -1,6 +1,5 @@
 <script lang="ts">
-	// Logger
-	import { createLogger, consoleProvider } from '$lib/logging';
+	import { consoleProvider, createLoggingService, setLoggingService } from '$lib/logging';
 
 	import {
 		setSymptomRepository,
@@ -20,7 +19,11 @@
 	import '$lib/pwa/pwa.svelte';
 
 	// Init
-	const logger = createLogger(consoleProvider);
+	const logger = createLoggingService({
+		provider: consoleProvider,
+		minLevel: import.meta.env.PROD ? 'info' : 'debug'
+	});
+	setLoggingService(logger);
 
 	const symptomRepository = createSymptomRepository(logger);
 	setSymptomRepository(symptomRepository);
