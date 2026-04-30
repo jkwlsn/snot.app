@@ -2,8 +2,6 @@
 	import { consoleProvider, createLoggingService, setLoggingService } from '$lib/logging';
 
 	import {
-		setSymptomRepository,
-		createSymptomRepository,
 		setSymptomService,
 		createSymptomService,
 		setSymptomState,
@@ -25,11 +23,8 @@
 	});
 	setLoggingService(logger);
 
-	const symptomRepository = createSymptomRepository({ logger });
-	setSymptomRepository(symptomRepository);
-
 	const symptomService = createSymptomService({
-		repo: symptomRepository,
+		logger,
 		locationState: locationState
 	});
 	setSymptomService(symptomService);
