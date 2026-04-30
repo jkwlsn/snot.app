@@ -1,7 +1,5 @@
 import { createContext } from 'svelte';
-import type { SymptomRepository, SymptomService, SymptomState } from '$lib/types';
-
-export const [getSymptomRepository, setSymptomRepository] = createContext<SymptomRepository>();
+import type { SymptomService, SymptomState } from './types';
 
 export const [getSymptomService, setSymptomService] = createContext<SymptomService>();
 
