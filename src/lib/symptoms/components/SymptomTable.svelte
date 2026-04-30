@@ -1,9 +1,8 @@
 <script lang="ts">
-	import { SYMPTOMS } from '$lib/config';
-	import { getSymptomService } from '$lib/symptoms';
+	import { SYMPTOMS, getSymptomService } from '$lib/symptoms';
 	import { handleError } from '$lib/errors';
 	import { getLoggingService } from '$lib/logging';
-	import type { SymptomLog } from '$lib/types';
+	import type { SymptomLog } from '$lib/symptoms';
 
 	const { title, records }: { title: string; records: SymptomLog[] } = $props();
 
