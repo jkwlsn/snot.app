@@ -7,4 +7,3 @@ export * from './settings';
 export * from './graphs';
 export * from './services';
 export * from './state';
-export * from '../errors/types';
