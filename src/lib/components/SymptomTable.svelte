@@ -2,13 +2,13 @@
 	import { SYMPTOMS } from '$lib/config';
 	import { getSymptomService } from '$lib/symptoms';
 	import { handleError } from '$lib/errors';
-	import { createLogger, consoleProvider } from '$lib/logging';
+	import { getLoggingService } from '$lib/logging';
 	import type { SymptomLog } from '$lib/types';
 
 	const { title, records }: { title: string; records: SymptomLog[] } = $props();
 
 	const service = getSymptomService();
-	const logger = createLogger(consoleProvider);
+	const logger = getLoggingService();
 
 	let isRemovingSymptom = $state<boolean>(false);
 	let removingSymptomId = $state<number | null>(null);
