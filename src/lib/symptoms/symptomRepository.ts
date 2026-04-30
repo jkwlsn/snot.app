@@ -1,6 +1,6 @@
 import { db } from '$lib/db/schema';
 import { handleError } from '$lib/errors';
-import type { SymptomRepository } from '$lib/types';
+import type { SymptomRepository, CreateSymptomLog } from '$lib/symptoms';
 import type { LoggingService } from '$lib/logging';
 
 export function createSymptomRepository(logger: LoggingService): SymptomRepository {

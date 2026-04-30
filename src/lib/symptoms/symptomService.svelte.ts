@@ -1,4 +1,5 @@
-import type { LocationState, SymptomFields, SymptomService, SymptomRepository } from '$lib/types';
+import type { SymptomFields, SymptomService, SymptomRepository } from '$lib/symptoms';
+import type { LocationState } from '$lib/types/state';
 
 export function createSymptomService(
 	repo: SymptomRepository,

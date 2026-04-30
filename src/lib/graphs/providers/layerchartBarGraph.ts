@@ -1,5 +1,6 @@
-import { SYMPTOMS } from '$lib/config';
-import type { SymptomLog, GraphProvider, LabelledDataPoint } from '$lib/types';
+import { SYMPTOMS } from '$lib/symptoms';
+import type { SymptomLog } from '$lib/symptoms';
+import type { GraphProvider, LabelledDataPoint } from '$lib/types';
 
 const averageSeverityBySymptom = (records: SymptomLog[]): LabelledDataPoint[] => {
 	return SYMPTOMS.map(({ name }) => {

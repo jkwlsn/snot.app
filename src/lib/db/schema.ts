@@ -1,5 +1,6 @@
 import Dexie, { type Table } from 'dexie';
-import type { SymptomLog, AppSettings, CreateSymptomLog } from '$lib/types';
+import type { SymptomLog, CreateSymptomLog } from '$lib/symptoms';
+import type { AppSettings } from '$lib/types';
 
 export class SnotDB extends Dexie {
 	symptoms!: Table<SymptomLog, number, CreateSymptomLog>;

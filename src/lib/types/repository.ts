@@ -1,5 +1,4 @@
 import type { WithId, StoredId } from './base';
-import type { CreateSymptomLog, SymptomLog } from './symptoms';
 
 export interface Repository<TInput, TOutput extends WithId> {
 	add(entry: TInput): Promise<StoredId>;
