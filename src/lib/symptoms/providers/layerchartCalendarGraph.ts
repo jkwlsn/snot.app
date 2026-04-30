@@ -1,5 +1,5 @@
 import { format, parse, startOfDay } from 'date-fns';
-import type { SymptomLog } from '$lib/symptoms';
+import type { SymptomLog } from '../types';
 import type { TemporalDataPoint, GraphProvider } from '$lib/types';
 
 function aggregateSymptomsByDay(records: SymptomLog[]): Map<string, number> {
