@@ -4,7 +4,13 @@ import { handleError } from '$lib/errors';
 import type { SymptomLog, SymptomService, SymptomState } from '$lib/symptoms';
 import type { LoggingService } from '$lib/logging';
 
-export function createSymptomState(service: SymptomService, logger: LoggingService): SymptomState {
+export function createSymptomState({
+	service,
+	logger
+}: {
+	service: SymptomService;
+	logger: LoggingService;
+}): SymptomState {
 	let symptoms = $state<SymptomLog[]>([]);
 	let todaysSymptoms = $state<SymptomLog[]>([]);
 

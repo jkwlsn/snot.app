@@ -1,10 +1,13 @@
 import type { SymptomFields, SymptomService, SymptomRepository } from '$lib/symptoms';
 import type { LocationState } from '$lib/types/state';
 
-export function createSymptomService(
-	repo: SymptomRepository,
-	locationState: LocationState
-): SymptomService {
+export function createSymptomService({
+	repo,
+	locationState
+}: {
+	repo: SymptomRepository;
+	locationState: LocationState;
+}): SymptomService {
 	return {
 		submitSymptoms: (values: SymptomFields) =>
 			repo.add({
