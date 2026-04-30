@@ -1,3 +1,5 @@
-export { createLogger } from './logger.ts';
-export { consoleProvider } from './providers/console.ts';
-export { nullProvider } from './providers/null.ts';
+export { createLoggingService } from './loggingService';
+export { consoleProvider } from './providers/console';
+export { nullProvider } from './providers/null';
+export { getLoggingService, setLoggingService } from './loggingContext';
+export * from './types';
