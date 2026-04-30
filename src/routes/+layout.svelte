@@ -25,10 +25,13 @@
 	});
 	setLoggingService(logger);
 
-	const symptomRepository = createSymptomRepository(logger);
+	const symptomRepository = createSymptomRepository({ logger });
 	setSymptomRepository(symptomRepository);
 
-	const symptomService = createSymptomService(symptomRepository, locationState);
+	const symptomService = createSymptomService({
+		repo: symptomRepository,
+		locationState: locationState
+	});
 	setSymptomService(symptomService);
 
 	const locationService = createLocationService({
@@ -39,7 +42,7 @@
 	setLocationService(locationService);
 
 	// Symptoms Data
-	setSymptomState(createSymptomState(symptomService, logger));
+	setSymptomState(createSymptomState({ service: symptomService, logger }));
 
 	let { children } = $props();
 </script>
