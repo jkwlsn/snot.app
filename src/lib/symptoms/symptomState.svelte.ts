@@ -1,9 +1,10 @@
 import { liveQuery } from 'dexie';
 import { endOfDay, startOfDay } from 'date-fns';
 import { handleError } from '$lib/errors';
-import type { SymptomLog, SymptomService, SymptomState, Logger } from '$lib/types';
+import type { SymptomLog, SymptomService, SymptomState } from '$lib/types';
+import type { LoggingService } from '$lib/logging';
 
-export function createSymptomState(service: SymptomService, logger: Logger): SymptomState {
+export function createSymptomState(service: SymptomService, logger: LoggingService): SymptomState {
 	let symptoms = $state<SymptomLog[]>([]);
 	let todaysSymptoms = $state<SymptomLog[]>([]);
 
