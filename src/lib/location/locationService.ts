@@ -4,7 +4,7 @@ import type {
 	GeocodeProvider,
 	GeolocationProvider,
 	LocationService
-} from '$lib/types';
+} from './types';
 import type { LoggingService } from '$lib/logging';
 
 export const createLocationService = ({
