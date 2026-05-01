@@ -1,4 +1,5 @@
-import type { CreatedAt, Stored, WithLocation, Repository } from '$lib/types';
+import type { WithLocation } from '$lib/location';
+import type { CreatedAt, Stored, Repository } from '$lib/types';
 import type { SYMPTOMS, SEVERITY_LEVELS } from './config';
 
 export type SymptomName = (typeof SYMPTOMS)[number]['name'];
