@@ -1,6 +1,6 @@
 import { createSymptomRepository } from './symptomRepository';
 import type { SymptomFields, SymptomService } from '$lib/symptoms';
-import type { LocationState } from '$lib/types';
+import type { LocationState } from '$lib/location';
 import type { LoggingService } from '$lib/logging';
 
 export function createSymptomService({
