@@ -1,21 +1,13 @@
+import { browserGeolocationProvider } from './providers/browserGeolocation';
+import { nominatimGeocodeProvider } from './providers/nominatimGeocodeProvider';
 import { handleError } from '$lib/errors';
-import type {
-	LocationCoordinates,
-	GeocodeProvider,
-	GeolocationProvider,
-	LocationService
-} from './types';
+import type { LocationCoordinates, LocationService } from './types';
 import type { LoggingService } from '$lib/logging';
 
-export const createLocationService = ({
-	geocode,
-	geolocation,
-	logger
-}: {
-	geocode: GeocodeProvider;
-	geolocation: GeolocationProvider;
-	logger: LoggingService;
-}): LocationService => {
+export function createLocationService({ logger }: { logger: LoggingService }): LocationService {
+	const geolocation = browserGeolocationProvider();
+	const geocode = nominatimGeocodeProvider();
+
 	const getBrowserLocation = async () => {
 		try {
 			const coordinates = await geolocation.getCurrentPosition();
@@ -61,4 +53,4 @@ export const createLocationService = ({
 	};
 
 	return { getBrowserLocation, forwardGeocode, reverseGeocode };
-};
+}
