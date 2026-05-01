@@ -6,8 +6,8 @@
 		SymptomBarGraph,
 		SymptomCalendarGraph
 	} from '$lib/symptoms';
-	import LocationInput from '$lib/components/LocationInput.svelte';
 	import { ErrorDisplay } from '$lib/errors';
+	import { LocationInput } from '$lib/location';
 
 	const records = getSymptomState();
 </script>
