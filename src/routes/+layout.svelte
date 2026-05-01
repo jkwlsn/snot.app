@@ -10,8 +10,6 @@
 
 	// Import location context and service
 	import { createLocationService, setLocationService, locationState } from '$lib/location';
-	import { browserGeolocationProvider } from '$lib/location/providers/browserGeolocation';
-	import { nominatimGeocodeProvider } from '$lib/location/providers/nominatimGeocodeProvider';
 
 	// PWA
 	import '$lib/pwa/pwa.svelte';
@@ -29,11 +27,7 @@
 	});
 	setSymptomService(symptomService);
 
-	const locationService = createLocationService({
-		geolocation: browserGeolocationProvider(),
-		geocode: nominatimGeocodeProvider(),
-		logger: logger
-	});
+	const locationService = createLocationService({ logger: logger });
 	setLocationService(locationService);
 
 	// Symptoms Data
