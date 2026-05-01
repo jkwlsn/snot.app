@@ -1,4 +1,4 @@
-import type { GeolocationProvider } from '$lib/types';
+import type { GeolocationProvider } from '../types';
 
 export const browserGeolocationProvider = (): GeolocationProvider => ({
 	async getCurrentPosition() {
