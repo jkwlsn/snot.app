@@ -1,4 +1,4 @@
-import { db } from '$lib/db/schema';
+import { database as db } from '$lib/database';
 import { handleError } from '$lib/errors';
 import type { SymptomRepository, CreateSymptomLog } from './types';
 import type { LoggingService } from '$lib/logging';
