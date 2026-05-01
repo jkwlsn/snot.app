@@ -1,4 +1,4 @@
-import type { LocationState } from '$lib/types';
+import type { LocationState } from './types';
 
 export const locationState = $state<LocationState>({
 	currentLocation: null,

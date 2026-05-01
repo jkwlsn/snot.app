@@ -12,6 +12,11 @@ export interface WithLocation {
 	location: UserLocation | null;
 }
 
+export interface LocationState {
+	currentLocation: UserLocation | null;
+	searchResults: UserLocation[];
+}
+
 export interface GeolocationProvider {
 	getCurrentPosition(): Promise<LocationCoordinates>;
 }

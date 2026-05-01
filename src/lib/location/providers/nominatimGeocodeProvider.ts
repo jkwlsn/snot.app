@@ -1,4 +1,4 @@
-import type { GeocodeProvider } from '$lib/types';
+import type { GeocodeProvider } from '../types';
 
 interface NominatimForwardResponse {
 	display_name: string;
