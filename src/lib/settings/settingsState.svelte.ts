@@ -4,6 +4,11 @@ import type { AppSettings, SettingsService, SettingsState } from './types';
 export function createSettingsState({ service }: { service: SettingsService }): SettingsState {
 	let current = $state.raw<AppSettings>(service.getSettings());
 
+	$effect(() => {
+		const colorScheme = current.theme === 'system' ? 'light dark' : current.theme;
+		document.documentElement.style.colorScheme = colorScheme;
+	});
+
 	return {
 		get current() {
 			return current;
