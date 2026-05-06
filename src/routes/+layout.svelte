@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { consoleProvider, createLoggingService, setLoggingService } from '$lib/logging';
 
+	import { createSettingsService, createSettingsState, setSettingsContext } from '$lib/settings';
+
 	import {
 		setSymptomService,
 		createSymptomService,
@@ -20,6 +22,8 @@
 		minLevel: import.meta.env.PROD ? 'info' : 'debug'
 	});
 	setLoggingService(logger);
+
+	setSettingsContext(createSettingsState({ service: createSettingsService({ logger }) }));
 
 	const symptomService = createSymptomService({
 		logger,
