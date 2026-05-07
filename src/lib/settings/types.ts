@@ -19,6 +19,7 @@ export interface SettingsService {
 
 export interface SettingsState {
 	readonly current: AppSettings;
+	readonly locationPermission: PermissionState | 'unknown';
 	update<K extends keyof AppSettings>(key: K, value: AppSettings[K]): void;
 	reset(): void;
 }
