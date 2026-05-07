@@ -35,6 +35,9 @@
 			onchange={handleLocationChange}
 		/>
 		<label for="location-enabled">Enable Location Tracking</label>
+		{#if settings.current.locationEnabled && settings.locationPermission === 'denied'}
+			<p>Note: Location access is currently denied in your browser settings.</p>
+		{/if}
 	</fieldset>
 
 	<button type="reset">Reset to default</button>
