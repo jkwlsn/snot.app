@@ -1,5 +1,6 @@
 import { browserGeolocationProvider } from './providers/browserGeolocation';
 import { nominatimGeocodeProvider } from './providers/nominatimGeocodeProvider';
+import { isGeolocationPermissionError } from './utils';
 import { handleError } from '$lib/errors';
 import type { LocationCoordinates, LocationService } from './types';
 import type { LoggingService } from '$lib/logging';
@@ -17,8 +18,17 @@ export function createLocationService({ logger }: { logger: LoggingService }): L
 			}
 
 			return await reverseGeocode(coordinates);
-		} catch (err) {
-			throw handleError({ error: err, operation: 'getBrowserLocation', logger });
+		} catch (err: unknown) {
+			if (isGeolocationPermissionError(err)) {
+				logger.info('User denied geolocation prompt');
+				throw err;
+			}
+
+			throw handleError({
+				error: err,
+				operation: 'getBrowserLocation',
+				logger
+			});
 		}
 	};
 
