@@ -23,11 +23,13 @@
 	});
 	setLoggingService(logger);
 
-	setSettingsContext(createSettingsState({ service: createSettingsService({ logger }) }));
+	const settingsService = createSettingsService({ logger });
+	setSettingsContext(createSettingsState({ service: settingsService }));
 
 	const symptomService = createSymptomService({
 		logger,
-		locationState: locationState
+		locationState: locationState,
+		settingsService
 	});
 	setSymptomService(symptomService);
 

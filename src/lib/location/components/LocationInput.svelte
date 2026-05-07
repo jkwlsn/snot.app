@@ -1,29 +1,37 @@
 <script lang="ts">
 	import { getLocationService } from '../locationContext';
 	import { locationState } from '../locationState.svelte';
+	import { isGeolocationPermissionError } from '../utils';
+	import { getSettingsContext } from '$lib/settings';
 	import { handleError } from '$lib/errors';
 	import { getLoggingService } from '$lib/logging';
 	import type { UserLocation } from '../types';
 
 	const service = getLocationService();
+	const settings = getSettingsContext();
 	const logger = getLoggingService();
 	let loading = $state<boolean>(false);
 	let searching = $state<boolean>(false);
 	let searchFinished = $state<boolean>(false);
 	let query = $state<string>('');
 
+	const locationEnabled = $derived(settings.current.locationEnabled);
+	const locationPermission = $derived(settings.locationPermission);
+
 	async function handleGPS() {
 		loading = true;
 
 		try {
 			locationState.currentLocation = await service.getBrowserLocation();
-		} catch (err) {
-			handleError({
-				error: err,
-				operation: 'handleGPS',
-				logger,
-				show: true
-			});
+		} catch (err: unknown) {
+			if (!isGeolocationPermissionError(err)) {
+				handleError({
+					error: err,
+					operation: 'handleGPS',
+					logger,
+					show: true
+				});
+			}
 		} finally {
 			loading = false;
 		}
@@ -65,52 +73,64 @@
 </script>
 
 <section>
-	{#if locationState.currentLocation}
-		<div>
-			<span>
-				📍 {locationState.currentLocation.label}
-			</span>
-			<button onclick={() => (locationState.currentLocation = null)}> ✕ </button>
-		</div>
+	{#if !locationEnabled}
+		<p class="warning">
+			Location tracking is disabled. Enable it in settings to use these features.
+		</p>
 	{:else}
-		<p>No location set</p>
-	{/if}
-
-	<!-- GPS -->
-	<div>
-		<button onclick={handleGPS} disabled={loading}>
-			{loading ? 'Locating…' : '📡 Use GPS'}
-		</button>
-	</div>
-
-	<!-- Text search and selector -->
-	<div>
-		<input
-			type="search"
-			placeholder="Search a location…"
-			bind:value={query}
-			disabled={searching}
-			oninput={() => {
-				searchFinished = false;
-				if (!query) locationState.searchResults = [];
-			}}
-			onkeydown={(e) => e.key === 'Enter' && handleSearch(query)}
-		/>
-		<button onclick={() => handleSearch(query)} disabled={searching || query.length < 3}>
-			{searching ? 'Searching…' : 'Search'}
-		</button>
-		{#if query.length > 0 && locationState.searchResults.length > 0}
-			<ul role="listbox">
-				{#each locationState.searchResults as result, i (i)}
-					<li>
-						<button onclick={() => selectSearchResult(result)}>
-							{result.label}
-						</button>
-					</li>
-				{/each}
-			</ul>
-		{:else if searchFinished && !searching && query.length > 0}
-			<p>No results found for "{query}"</p>
+		{#if locationPermission === 'denied'}
+			<p class="error">
+				Browser location access is denied. Please enable it in your browser settings to use GPS.
+			</p>
 		{/if}
-	</div>
+
+		{#if locationState.currentLocation}
+			<div>
+				<span>
+					📍 {locationState.currentLocation.label}
+				</span>
+				<button onclick={() => (locationState.currentLocation = null)}> ✕ </button>
+			</div>
+		{:else}
+			<p>No location set</p>
+		{/if}
+
+		<!-- GPS -->
+		<div>
+			<button onclick={handleGPS} disabled={loading}>
+				{loading ? 'Locating…' : '📡 Use GPS'}
+			</button>
+		</div>
+
+		<!-- Text search and selector -->
+		<div>
+			<input
+				type="search"
+				placeholder="Search a location…"
+				bind:value={query}
+				disabled={searching}
+				oninput={() => {
+					searchFinished = false;
+					if (!query) locationState.searchResults = [];
+				}}
+				onkeydown={(e) => e.key === 'Enter' && handleSearch(query)}
+			/>
+			<button onclick={() => handleSearch(query)} disabled={searching || query.length < 3}>
+				{searching ? 'Searching…' : 'Search'}
+			</button>
+			{#if query.length > 0 && locationState.searchResults.length > 0}
+				<ul role="listbox">
+					{#each locationState.searchResults as result, i (i)}
+						<li>
+							<button onclick={() => selectSearchResult(result)}>
+								{result.label}
+							</button>
+						</li>
+					{/each}
+				</ul>
+			{:else if searchFinished && !searching && query.length > 0}
+				<p>No results found for "{query}"</p>
+			{/if}
+		</div>
+	{/if}
 </section>
