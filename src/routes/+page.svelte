@@ -8,11 +8,13 @@
 	} from '$lib/symptoms';
 	import { ErrorDisplay } from '$lib/errors';
 	import { LocationInput } from '$lib/location';
+	import { SettingsForm } from '$lib/settings';
 
 	const records = getSymptomState();
 </script>
 
 <h1>Snot.app</h1>
+<SettingsForm />
 <LocationInput />
 <SymptomForm />
 <ErrorDisplay />
