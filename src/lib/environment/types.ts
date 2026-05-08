@@ -46,3 +46,14 @@ export interface EnvironmentTransformer<EnvironmentProviderResponse> {
 	toInstant(data: EnvironmentProviderResponse, location: UserLocation): PollenSeries;
 	toSeries(data: EnvironmentProviderResponse, location: UserLocation): PollenSeries;
 }
+
+export interface EnvironmentRepository {
+	getSupportedPollenTypes(): PollenType[];
+	getCurrent(pollenTypes: PollenType[], location: UserLocation): Promise<PollenSeries>;
+	getForecast(
+		pollenTypes: PollenType[],
+		location: UserLocation,
+		from: Date,
+		to: Date
+	): Promise<PollenSeries>;
+}
