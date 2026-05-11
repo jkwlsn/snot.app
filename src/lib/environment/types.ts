@@ -57,3 +57,14 @@ export interface EnvironmentRepository {
 		to: Date
 	): Promise<PollenSeries>;
 }
+
+export interface EnvironmentService {
+	getSupportedPollenTypes(): PollenType[];
+	getCurrentPollen(pollenTypes: PollenType[], location: UserLocation): Promise<PollenSeries>;
+	getForecastPollen(
+		pollenTypes: PollenType[],
+		location: UserLocation,
+		from: Date,
+		to: Date
+	): Promise<PollenSeries>;
+}
