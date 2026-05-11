@@ -68,3 +68,26 @@ export interface EnvironmentService {
 		to: Date
 	): Promise<PollenSeries>;
 }
+
+export interface CurrentPollenState extends WithLocation {
+	error: Error | null;
+	isLoading: boolean;
+	data: PollenSeries | undefined;
+	lastUpdated: Date | null;
+}
+
+export interface ForecastPollenState extends WithLocation {
+	error: Error | null;
+	isLoading: boolean;
+	from: Date;
+	to: Date;
+	data: PollenSeries | undefined;
+	lastUpdated: Date | null;
+}
+
+export interface EnvironmentState {
+	readonly supportedPollenTypes: PollenType[];
+	selectedPollenTypes: PollenType[];
+	forecast: ForecastPollenState;
+	current: CurrentPollenState;
+}
