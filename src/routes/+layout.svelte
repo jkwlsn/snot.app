@@ -13,6 +13,16 @@
 	// Import location context and service
 	import { createLocationService, setLocationService, locationState } from '$lib/location';
 
+	// Import environment context and service
+	import {
+		createEnvironmentService,
+		setEnvironmentService,
+		createEnvironmentState,
+		setEnvironmentState
+	} from '$lib/environment';
+	import { createOpenmeteoProvider } from '$lib/environment/providers/openmeteoProvider';
+	import { createOpenmeteoTransformer } from '$lib/environment/providers/openmeteoTransformer';
+
 	// PWA
 	import '$lib/pwa/pwa.svelte';
 
@@ -35,6 +45,19 @@
 
 	const locationService = createLocationService({ logger: logger });
 	setLocationService(locationService);
+
+	const environmentService = createEnvironmentService({
+		logger,
+		provider: createOpenmeteoProvider(),
+		transformer: createOpenmeteoTransformer()
+	});
+	setEnvironmentService(environmentService);
+
+	const environmentState = createEnvironmentState({
+		service: environmentService,
+		locationState: locationState
+	});
+	setEnvironmentState(environmentState);
 
 	// Symptoms Data
 	setSymptomState(createSymptomState({ service: symptomService, logger }));
