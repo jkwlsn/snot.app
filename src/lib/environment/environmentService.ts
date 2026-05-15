@@ -1,4 +1,5 @@
 import { createEnvironmentRepository } from './environmentRepository';
+import { clampForecastDateRange } from './utils/date';
 import type { UserLocation } from '$lib/location';
 import type { LoggingService } from '$lib/logging';
 import type {
@@ -37,7 +38,8 @@ export function createEnvironmentService<TResponse>({
 		from: Date,
 		to: Date
 	): Promise<PollenSeries> {
-		return await repository.getForecast(pollenTypes, location, from, to);
+		const { from: clampedFrom, to: clampedTo } = clampForecastDateRange(from, to);
+		return await repository.getForecast(pollenTypes, location, clampedFrom, clampedTo);
 	}
 
 	return { getSupportedPollenTypes, getCurrentPollen, getForecastPollen };
