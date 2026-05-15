@@ -7,3 +7,4 @@ export {
 } from './environmentContext';
 export { createEnvironmentState } from './environmentState.svelte.ts';
 export { default as PollenSelector } from './components/PollenSelector.svelte';
+export { default as ForecastDateSelector } from './components/ForecastDateSelector.svelte';
