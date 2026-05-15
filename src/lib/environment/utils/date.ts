@@ -1,5 +1,9 @@
-import { addHours } from 'date-fns';
+import { addHours, format } from 'date-fns';
 import { OPENMETEO_CONFIG } from '../providers/config';
+
+export function toDateTimeInput(date: Date) {
+	return format(date, "yyyy-MM-dd'T'HH:mm");
+}
 
 export function clampForecastDateRange(from: Date, to: Date) {
 	const now = new Date();
