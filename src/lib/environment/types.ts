@@ -41,3 +41,8 @@ export interface EnvironmentProvider<EnvironmentProviderResponse> {
 		to: Date
 	): Promise<EnvironmentProviderResponse>;
 }
+
+export interface EnvironmentTransformer<EnvironmentProviderResponse> {
+	toInstant(data: EnvironmentProviderResponse, location: UserLocation): PollenSeries;
+	toSeries(data: EnvironmentProviderResponse, location: UserLocation): PollenSeries;
+}
