@@ -26,6 +26,7 @@ export interface PollenInstant extends CreatedAt {
 export interface PollenSeries extends CreatedAt, WithLocation {
 	pollenTypes: PollenType[];
 	instants: PollenInstant[];
+	timezone: string;
 }
 
 export interface EnvironmentProvider<EnvironmentProviderResponse> {
