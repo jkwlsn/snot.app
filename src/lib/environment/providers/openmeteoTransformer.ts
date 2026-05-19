@@ -39,8 +39,8 @@ export function createOpenmeteoTransformer(): EnvironmentTransformer<OpenMeteoPr
 
 			const { raw, pollenTypes } = data;
 			const current = raw.current()!;
-			const utcOffset = raw.utcOffsetSeconds();
-			const createdAt = addSeconds(fromUnixTime(Number(current.time())), utcOffset);
+			const createdAt = fromUnixTime(Number(current.time()));
+			const timezone = raw.timezone() ?? 'UTC';
 
 			const metrics = pollenTypes
 				.map((type: PollenType, index: number) => {
@@ -53,7 +53,8 @@ export function createOpenmeteoTransformer(): EnvironmentTransformer<OpenMeteoPr
 				createdAt,
 				location,
 				pollenTypes: metrics.map((m: PollenMetric) => m.type),
-				instants: [{ createdAt, metrics }]
+				instants: [{ createdAt, metrics }],
+				timezone
 			};
 		},
 
@@ -62,9 +63,9 @@ export function createOpenmeteoTransformer(): EnvironmentTransformer<OpenMeteoPr
 
 			const { raw, pollenTypes } = data;
 			const hourly = raw.hourly()!;
-			const utcOffset = raw.utcOffsetSeconds();
-			const startTime = addSeconds(fromUnixTime(Number(hourly.time())), utcOffset);
+			const startTime = fromUnixTime(Number(hourly.time()));
 			const interval = hourly.interval();
+			const timezone = raw.timezone() ?? 'UTC';
 
 			const variables = pollenTypes
 				.map((type: PollenType, index: number) => {
@@ -101,7 +102,8 @@ export function createOpenmeteoTransformer(): EnvironmentTransformer<OpenMeteoPr
 				createdAt: instants[0]?.createdAt ?? new Date(),
 				location,
 				pollenTypes: variables.map((v) => v.type),
-				instants
+				instants,
+				timezone
 			};
 		}
 	};
