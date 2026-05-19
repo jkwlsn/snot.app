@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { LineChart, AnnotationRange, defaultChartPadding } from 'layerchart';
-	import { scaleTime } from 'd3-scale';
-	import { startOfHour } from 'date-fns';
-	import { timeHour } from 'd3-time';
+	import { scaleUtc } from 'd3-scale';
+	import { SvelteDate } from 'svelte/reactivity';
 	import { OPENMETEO_CONFIG } from '../providers/config';
 	import { calculateMissingDataRanges } from '../utils/chart';
 	import { getEnvironmentState } from '$lib/environment';
@@ -15,10 +14,26 @@
 	const seriesData = $derived(data ?? env.forecast.data);
 
 	const xDomain = $derived.by(() => {
-		const start = startOfHour(new Date());
-		const end = timeHour.offset(start, 24 * OPENMETEO_CONFIG.maxForecastDays);
+		const base = seriesData?.createdAt ?? new SvelteDate();
+		const start = new SvelteDate(base);
+		start.setUTCMinutes(0, 0, 0);
+
+		const end = new SvelteDate(
+			start.getTime() + OPENMETEO_CONFIG.maxForecastDays * 24 * 60 * 60 * 1000
+		);
 		return [start, end];
 	});
+
+	const xFormat = (date: Date | number) => {
+		const d = new Date(date);
+		const timezone = seriesData?.timezone ?? 'UTC';
+
+		return new Intl.DateTimeFormat(undefined, {
+			weekday: 'short',
+			hour: 'numeric',
+			timeZone: timezone
+		}).format(d);
+	};
 
 	const colors = [
 		'#e41a1c',
@@ -57,15 +72,20 @@
 		data={chartData}
 		x="createdAt"
 		y={series.map((s) => s.key)}
-		xScale={scaleTime().domain(xDomain)}
+		xScale={scaleUtc()}
+		{xDomain}
+		xNice={false}
+		props={{
+			xAxis: { format: xFormat }
+		}}
 		{series}
 		padding={defaultChartPadding()}
 		height={300}
 	>
 		{#snippet belowMarks()}
-			{#each missingDataRanges as range (range[0].toISOString())}
+			{#each missingDataRanges as range (range[0].getTime())}
 				<AnnotationRange
-					x={range}
+					x={[range[0].getTime(), range[1].getTime()]}
 					pattern={{
 						size: 8,
 						lines: {
