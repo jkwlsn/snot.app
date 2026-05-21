@@ -1,20 +1,17 @@
-import { addHours, format } from 'date-fns';
+import { isAfter, isBefore } from 'date-fns';
 import { OPENMETEO_CONFIG } from '../providers/config';
+import { addHoursUTC, getUTCNow, type UTCDate } from '$lib/date';
 
-export function toDateTimeInput(date: Date) {
-	return format(date, "yyyy-MM-dd'T'HH:mm");
-}
-
-export function clampForecastDateRange(from: Date, to: Date) {
-	const now = new Date();
-	const maxDate = addHours(now, OPENMETEO_CONFIG.maxForecastDays * 24);
+export function clampForecastDateRange(from: UTCDate, to: UTCDate) {
+	const now = getUTCNow();
+	const maxDate = addHoursUTC(now, OPENMETEO_CONFIG.maxForecastDays * 24);
 
 	// Enforce NOW < FROM < TO < MAX
-	let clampedFrom = from < now ? addHours(now, 1) : from;
-	if (clampedFrom >= maxDate) clampedFrom = addHours(maxDate, -1);
+	let clampedFrom = isBefore(from, now) ? addHoursUTC(now, 1) : from;
+	if (!isBefore(clampedFrom, maxDate)) clampedFrom = addHoursUTC(maxDate, -1);
 
-	let clampedTo = to > maxDate ? maxDate : to;
-	if (clampedTo <= clampedFrom) clampedTo = addHours(clampedFrom, 1);
+	let clampedTo = isAfter(to, maxDate) ? maxDate : to;
+	if (!isAfter(clampedTo, clampedFrom)) clampedTo = addHoursUTC(clampedFrom, 1);
 
 	return { from: clampedFrom, to: clampedTo };
 }

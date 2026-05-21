@@ -1,3 +1,4 @@
+import type { UTCDate } from '$lib/date';
 import type { LoggingService, LogContext } from '$lib/logging';
 
 export interface AppErrorState {
@@ -6,7 +7,7 @@ export interface AppErrorState {
 
 export interface AppError<T = unknown> extends Error {
 	code: string;
-	timestamp: Date;
+	timestamp: UTCDate;
 	details?: T;
 }
 

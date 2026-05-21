@@ -50,6 +50,8 @@
 		"workbox-window": "^7.4.1"
 	},
 	"dependencies": {
+		"@date-fns/tz": "^1.4.1",
+		"@date-fns/utc": "^2.1.1",
 		"@layerstack/utils": "2.0.0-next.18",
 		"@openmeteo/sdk": "^1.26.0",
 		"d3-scale": "^4.0.2",
