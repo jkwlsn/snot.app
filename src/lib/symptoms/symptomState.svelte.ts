@@ -1,5 +1,5 @@
 import { liveQuery } from 'dexie';
-import { endOfDay, startOfDay } from 'date-fns';
+import { getUTCNow, startOfDayUTC, endOfDayUTC } from '$lib/date';
 import { handleError } from '$lib/errors';
 import type { SymptomLog, SymptomService, SymptomState } from './types';
 import type { LoggingService } from '$lib/logging';
@@ -37,8 +37,8 @@ export function createSymptomState({
 	$effect(() => {
 		const sub = liveQuery<SymptomLog[]>(async () => {
 			try {
-				// eslint-disable-next-line svelte/prefer-svelte-reactivity
-				return await service.getRangeSymptoms(startOfDay(new Date()), endOfDay(new Date()));
+				const now = getUTCNow();
+				return await service.getRangeSymptoms(startOfDayUTC(now), endOfDayUTC(now));
 			} catch (err) {
 				handleError({
 					error: err,
