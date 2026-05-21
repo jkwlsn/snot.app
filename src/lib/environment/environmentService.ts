@@ -9,6 +9,7 @@ import type {
 	EnvironmentProvider,
 	EnvironmentTransformer
 } from './types';
+import type { UTCDate } from '@date-fns/utc';
 
 export function createEnvironmentService<TResponse>({
 	logger,
@@ -35,8 +36,8 @@ export function createEnvironmentService<TResponse>({
 	async function getForecastPollen(
 		pollenTypes: PollenType[],
 		location: UserLocation,
-		from: Date,
-		to: Date
+		from: UTCDate,
+		to: UTCDate
 	): Promise<PollenSeries> {
 		const { from: clampedFrom, to: clampedTo } = clampForecastDateRange(from, to);
 		return await repository.getForecast(pollenTypes, location, clampedFrom, clampedTo);
