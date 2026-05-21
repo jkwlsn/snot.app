@@ -1,3 +1,4 @@
+import { getUTCNow } from '$lib/date';
 import type { LogLevel, LoggingService, LoggingServiceOptions, LogContext } from './types';
 
 const rank: Record<LogLevel, number> = { debug: 0, info: 1, warn: 2, error: 3 };
@@ -8,7 +9,14 @@ export function createLoggingService({
 }: LoggingServiceOptions): LoggingService {
 	function emit(level: LogLevel, message: string, context?: LogContext, error?: Error) {
 		if (rank[level] >= rank[minLevel]) {
-			provider.log({ level, message, context, error, createdAt: new Date() });
+			provider.log({
+				level,
+				message,
+				context,
+				error,
+				createdAt: getUTCNow(),
+				timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+			});
 		}
 	}
 	return {
