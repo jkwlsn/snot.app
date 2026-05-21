@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { formatDisplayDate } from '$lib/date';
 	import { SYMPTOMS, getSymptomService } from '$lib/symptoms';
 	import { handleError } from '$lib/errors';
 	import { getLoggingService } from '$lib/logging';
@@ -14,7 +15,10 @@
 
 	const COLUMNS = [
 		{ header: 'ID', accessor: (r: SymptomLog) => r.id },
-		{ header: 'CreatedAt', accessor: (r: SymptomLog) => r.createdAt },
+		{
+			header: 'CreatedAt',
+			accessor: (r: SymptomLog) => formatDisplayDate(r.createdAt, undefined, r.timezone)
+		},
 		...SYMPTOMS.map((s) => ({
 			header: s.name,
 			accessor: (r: SymptomLog) => r.symptoms[s.name]

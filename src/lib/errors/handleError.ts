@@ -1,4 +1,5 @@
 import { setAppError } from './errorState.svelte';
+import { getUTCNow } from '$lib/date';
 import type { AppError, HandleErrorOptions } from './types';
 
 function isAppError(err: unknown): err is AppError {
@@ -38,7 +39,7 @@ export function handleError({
 			name: 'AppError',
 			message: errorMessage || `${operation} failed`,
 			code: errorCode,
-			timestamp: new Date(),
+			timestamp: getUTCNow(),
 			stack: errorStack,
 			details: {
 				operation,

@@ -1,6 +1,7 @@
 import type { WithLocation } from '$lib/location';
 import type { CreatedAt, Stored, Repository } from '$lib/types';
 import type { SYMPTOMS, SEVERITY_LEVELS } from './config';
+import type { UTCDate } from '$lib/date';
 
 export type SymptomName = (typeof SYMPTOMS)[number]['name'];
 
@@ -20,13 +21,13 @@ export interface CreateSymptomLog extends CreatedAt, WithLocation {
 export type SymptomLog = Stored<CreateSymptomLog>;
 
 export interface SymptomRepository extends Repository<CreateSymptomLog, SymptomLog> {
-	getRange(from: Date, to: Date): Promise<SymptomLog[]>;
+	getRange(from: UTCDate, to: UTCDate): Promise<SymptomLog[]>;
 }
 
 export interface SymptomService {
 	submitSymptoms(values: SymptomFields): Promise<number>;
 	getAllSymptoms(): Promise<SymptomLog[]>;
-	getRangeSymptoms(from: Date, to: Date): Promise<SymptomLog[]>;
+	getRangeSymptoms(from: UTCDate, to: UTCDate): Promise<SymptomLog[]>;
 	removeSymptom(id: number): Promise<void>;
 }
 

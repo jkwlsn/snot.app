@@ -1,6 +1,7 @@
 import { handleError } from '$lib/errors';
 import type { UserLocation } from '$lib/location';
 import type { LoggingService } from '$lib/logging';
+import type { UTCDate } from '$lib/date';
 import type {
 	PollenType,
 	EnvironmentRepository,
@@ -44,8 +45,8 @@ export function createEnvironmentRepository<TResponse>({
 	async function getForecast(
 		pollenTypes: PollenType[],
 		location: UserLocation,
-		from: Date,
-		to: Date
+		from: UTCDate,
+		to: UTCDate
 	): Promise<PollenSeries> {
 		try {
 			const data = await provider.getForecast(pollenTypes, location, from, to);
@@ -53,8 +54,8 @@ export function createEnvironmentRepository<TResponse>({
 			logger.info('Successfully fetched pollen forecast data', {
 				pollenTypes,
 				location,
-				from,
-				to,
+				from: from.toISOString(),
+				to: to.toISOString(),
 				instantsCount: series.instants.length
 			});
 			return series;

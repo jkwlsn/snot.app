@@ -1,6 +1,6 @@
-import { addHours } from 'date-fns';
-import { SvelteDate } from 'svelte/reactivity';
 import { OPENMETEO_CONFIG } from './providers/config';
+import { addHoursUTC, getUTCNow } from '$lib/date';
+import { getLoggingService } from '$lib/logging';
 import type { LocationState } from '$lib/location';
 import type { PollenType, EnvironmentService, EnvironmentState } from './types';
 
@@ -13,7 +13,14 @@ export function createEnvironmentState({
 	locationState: LocationState;
 	pollenTypes?: PollenType[];
 }): EnvironmentState {
+	const logger = getLoggingService();
 	const supportedPollenTypes = service.getSupportedPollenTypes();
+	const now = getUTCNow();
+	console.log('DEBUG: Time Comparison:', {
+		systemNow: getUTCNow().toISOString(),
+		utcNow: now.toISOString(),
+		diffMs: getUTCNow().getTime() - now.getTime()
+	});
 
 	const state = $state<EnvironmentState>({
 		supportedPollenTypes,
@@ -29,11 +36,17 @@ export function createEnvironmentState({
 			location: null,
 			isLoading: false,
 			error: null,
-			from: new SvelteDate(),
-			to: new SvelteDate(addHours(new SvelteDate(), OPENMETEO_CONFIG.maxForecastDays * 24)),
+			from: now,
+			to: addHoursUTC(now, OPENMETEO_CONFIG.maxForecastDays * 24),
 			data: undefined,
-			lastUpdated: null
+			lastUpdated: null,
+			timezone: 'UTC'
 		}
+	});
+
+	logger.debug('EnvironmentState initialized', {
+		from: state.forecast.from.toISOString(),
+		to: state.forecast.to.toISOString()
 	});
 
 	$effect(() => {
@@ -55,7 +68,8 @@ export function createEnvironmentState({
 			.getCurrentPollen(pollen, location)
 			.then((data) => {
 				state.current.data = data;
-				state.current.lastUpdated = new SvelteDate();
+				state.current.lastUpdated = getUTCNow();
+				state.forecast.timezone = data.timezone;
 			})
 			.catch((err) => {
 				state.current.error = err instanceof Error ? err : new Error(String(err));
@@ -84,7 +98,12 @@ export function createEnvironmentState({
 			.getForecastPollen(pollen, location, state.forecast.from, state.forecast.to)
 			.then((data) => {
 				state.forecast.data = data;
-				state.forecast.lastUpdated = new SvelteDate();
+				state.forecast.lastUpdated = getUTCNow();
+				state.forecast.timezone = data.timezone;
+				logger.debug('DEBUG: Fetched data from date:', {
+					fromISO: data.createdAt.toISOString(),
+					timezone: data.timezone
+				});
 			})
 			.catch((err) => {
 				state.forecast.error = err instanceof Error ? err : new Error(String(err));
