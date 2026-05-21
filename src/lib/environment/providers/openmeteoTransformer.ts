@@ -1,6 +1,7 @@
-import { addSeconds, fromUnixTime } from 'date-fns';
+import { millisecondsInSecond } from 'date-fns/constants';
 import { calculateSeverity } from '../utils';
 import { OPENMETEO_CONFIG } from './config';
+import { toUTCDate, addSecondsUTC, getUTCNow } from '$lib/date';
 import type {
 	EnvironmentTransformer,
 	PollenInstant,
@@ -39,7 +40,7 @@ export function createOpenmeteoTransformer(): EnvironmentTransformer<OpenMeteoPr
 
 			const { raw, pollenTypes } = data;
 			const current = raw.current()!;
-			const createdAt = fromUnixTime(Number(current.time()));
+			const createdAt = toUTCDate(Number(current.time()) * millisecondsInSecond);
 			const timezone = raw.timezone() ?? 'UTC';
 
 			const metrics = pollenTypes
@@ -53,7 +54,7 @@ export function createOpenmeteoTransformer(): EnvironmentTransformer<OpenMeteoPr
 				createdAt,
 				location,
 				pollenTypes: metrics.map((m: PollenMetric) => m.type),
-				instants: [{ createdAt, metrics }],
+				instants: [{ createdAt, timezone, metrics }],
 				timezone
 			};
 		},
@@ -63,7 +64,7 @@ export function createOpenmeteoTransformer(): EnvironmentTransformer<OpenMeteoPr
 
 			const { raw, pollenTypes } = data;
 			const hourly = raw.hourly()!;
-			const startTime = fromUnixTime(Number(hourly.time()));
+			const startTime = toUTCDate(Number(hourly.time()) * millisecondsInSecond);
 			const interval = hourly.interval();
 			const timezone = raw.timezone() ?? 'UTC';
 
@@ -85,7 +86,7 @@ export function createOpenmeteoTransformer(): EnvironmentTransformer<OpenMeteoPr
 			const instants: PollenInstant[] = new Array(length);
 
 			for (let i = 0; i < length; i++) {
-				const createdAt = addSeconds(startTime, i * interval);
+				const createdAt = addSecondsUTC(startTime, i * interval);
 				const metrics: PollenMetric[] = [];
 
 				for (const v of variables) {
@@ -95,11 +96,11 @@ export function createOpenmeteoTransformer(): EnvironmentTransformer<OpenMeteoPr
 					}
 				}
 
-				instants[i] = { createdAt, metrics };
+				instants[i] = { createdAt, timezone, metrics };
 			}
 
 			return {
-				createdAt: instants[0]?.createdAt ?? new Date(),
+				createdAt: instants[0]?.createdAt ?? getUTCNow(),
 				location,
 				pollenTypes: variables.map((v) => v.type),
 				instants,

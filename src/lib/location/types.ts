@@ -6,6 +6,7 @@ export interface LocationCoordinates {
 export interface UserLocation {
 	label: string;
 	coordinates: LocationCoordinates;
+	timezone?: string;
 }
 
 export interface WithLocation {

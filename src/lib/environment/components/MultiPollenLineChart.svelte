@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { LineChart, AnnotationRange, defaultChartPadding } from 'layerchart';
 	import { scaleUtc } from 'd3-scale';
-	import { SvelteDate } from 'svelte/reactivity';
-	import { OPENMETEO_CONFIG } from '../providers/config';
 	import { calculateMissingDataRanges } from '../utils/chart';
+	import { formatDisplayDate, type UTCDate } from '$lib/date';
 	import { getEnvironmentState } from '$lib/environment';
+
 	import { toMultiPollenLineChartData } from '$lib/environment/adapters/multiPollenLineChartAdapter';
 	import type { PollenSeries } from '../types';
 
@@ -13,26 +13,22 @@
 	const env = getEnvironmentState();
 	const seriesData = $derived(data ?? env.forecast.data);
 
-	const xDomain = $derived.by(() => {
-		const base = seriesData?.createdAt ?? new SvelteDate();
-		const start = new SvelteDate(base);
-		start.setUTCMinutes(0, 0, 0);
-
-		const end = new SvelteDate(
-			start.getTime() + OPENMETEO_CONFIG.maxForecastDays * 24 * 60 * 60 * 1000
-		);
-		return [start, end];
+	const xDomain = $derived.by((): [UTCDate, UTCDate] => {
+		// Use user-selected forecast range for axis domain
+		return [env.forecast.from, env.forecast.to];
 	});
 
-	const xFormat = (date: Date | number) => {
-		const d = new Date(date);
+	const xFormat = (date: UTCDate | number) => {
 		const timezone = seriesData?.timezone ?? 'UTC';
 
-		return new Intl.DateTimeFormat(undefined, {
+		return formatDisplayDate(date, {
 			weekday: 'short',
+			day: 'numeric',
 			hour: 'numeric',
+			minute: 'numeric',
+			hour12: false,
 			timeZone: timezone
-		}).format(d);
+		});
 	};
 
 	const colors = [
@@ -74,9 +70,8 @@
 		y={series.map((s) => s.key)}
 		xScale={scaleUtc()}
 		{xDomain}
-		xNice={false}
 		props={{
-			xAxis: { format: xFormat }
+			xAxis: { format: xFormat, tickSpacing: 100 }
 		}}
 		{series}
 		padding={defaultChartPadding()}
@@ -85,7 +80,7 @@
 		{#snippet belowMarks()}
 			{#each missingDataRanges as range (range[0].getTime())}
 				<AnnotationRange
-					x={[range[0].getTime(), range[1].getTime()]}
+					x={[range[0], range[1]]}
 					pattern={{
 						size: 8,
 						lines: {
