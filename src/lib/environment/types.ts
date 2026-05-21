@@ -1,6 +1,7 @@
 import type { CreatedAt } from '$lib/types';
 import type { UserLocation, WithLocation } from '$lib/location';
 import type { POLLEN_UNITS, POLLENS, POLLEN_SEVERITY } from './config';
+import type { UTCDate } from '$lib/date';
 
 export type PollenType = (typeof POLLENS)[number]['id'];
 
@@ -38,8 +39,8 @@ export interface EnvironmentProvider<EnvironmentProviderResponse> {
 	getForecast(
 		pollenTypes: PollenType[],
 		location: UserLocation,
-		from: Date,
-		to: Date
+		from: UTCDate,
+		to: UTCDate
 	): Promise<EnvironmentProviderResponse>;
 }
 
@@ -54,8 +55,8 @@ export interface EnvironmentRepository {
 	getForecast(
 		pollenTypes: PollenType[],
 		location: UserLocation,
-		from: Date,
-		to: Date
+		from: UTCDate,
+		to: UTCDate
 	): Promise<PollenSeries>;
 }
 
@@ -65,8 +66,8 @@ export interface EnvironmentService {
 	getForecastPollen(
 		pollenTypes: PollenType[],
 		location: UserLocation,
-		from: Date,
-		to: Date
+		from: UTCDate,
+		to: UTCDate
 	): Promise<PollenSeries>;
 }
 
@@ -74,16 +75,17 @@ export interface CurrentPollenState extends WithLocation {
 	error: Error | null;
 	isLoading: boolean;
 	data: PollenSeries | undefined;
-	lastUpdated: Date | null;
+	lastUpdated: UTCDate | null;
 }
 
 export interface ForecastPollenState extends WithLocation {
 	error: Error | null;
 	isLoading: boolean;
-	from: Date;
-	to: Date;
+	from: UTCDate;
+	to: UTCDate;
 	data: PollenSeries | undefined;
-	lastUpdated: Date | null;
+	lastUpdated: UTCDate | null;
+	timezone: string;
 }
 
 export interface EnvironmentState {
