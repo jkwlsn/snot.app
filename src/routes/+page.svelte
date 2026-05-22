@@ -6,7 +6,6 @@
 		SymptomBarGraph,
 		SymptomCalendarGraph
 	} from '$lib/symptoms';
-	import { ErrorDisplay } from '$lib/errors';
 	import { LocationInput } from '$lib/location';
 	import { SettingsForm } from '$lib/settings';
 	import {
@@ -21,8 +20,7 @@
 	const env = getEnvironmentState();
 </script>
 
-<h1>Snot.app</h1>
-<ErrorDisplay />
+<h2>Overview</h2>
 <SettingsForm />
 <LocationInput />
 <SymptomForm />
