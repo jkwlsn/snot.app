@@ -21,9 +21,9 @@ export const POLLEN_UNITS = [
 ] as const;
 
 export const POLLEN_SEVERITY = [
-	{ min: 150, name: 'Very High', description: '' },
-	{ min: 60, name: 'High', description: '' },
-	{ min: 30, name: 'Moderate', description: '' },
-	{ min: 1, name: 'Low', description: '' },
-	{ min: 0, name: 'None', description: '' }
+	{ id: 1, min: 150, name: 'Very High', symbol: '🔴 ', description: '' },
+	{ id: 2, min: 60, name: 'High', symbol: '🟠', description: '' },
+	{ id: 3, min: 30, name: 'Moderate', symbol: '🟡', description: '' },
+	{ id: 4, min: 1, name: 'Low', symbol: '🟢', description: '' },
+	{ id: 5, min: 0, name: 'None', symbol: '⚪', description: '' }
 ] as const;

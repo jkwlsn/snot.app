@@ -14,7 +14,7 @@ export function createOpenmeteoProvider(): EnvironmentProvider<OpenMeteoProvider
 				latitude: location.coordinates.latitude,
 				longitude: location.coordinates.longitude,
 				current: pollenTypes,
-				timezone: 'auto'
+				timezone: 'UTC'
 			});
 
 			const response = responses[0];
