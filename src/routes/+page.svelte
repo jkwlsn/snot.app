@@ -2,7 +2,6 @@
 	import {
 		getSymptomState,
 		SymptomForm,
-		SymptomTable,
 		SymptomBarGraph,
 		SymptomCalendarGraph
 	} from '$lib/symptoms';
@@ -26,4 +25,3 @@
 <PollenSelector />
 <SymptomBarGraph title="Average severity today" records={records.todaysSymptoms} />
 <SymptomCalendarGraph title="Symptom count per day" records={records.symptoms} />
-<SymptomTable title="Symptom Log" records={records.symptoms} />
