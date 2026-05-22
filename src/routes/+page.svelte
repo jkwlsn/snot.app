@@ -6,8 +6,6 @@
 		SymptomBarGraph,
 		SymptomCalendarGraph
 	} from '$lib/symptoms';
-	import { LocationInput } from '$lib/location';
-	import { SettingsForm } from '$lib/settings';
 	import {
 		PollenSelector,
 		ForecastDateSelector,
@@ -21,8 +19,6 @@
 </script>
 
 <h2>Overview</h2>
-<SettingsForm />
-<LocationInput />
 <SymptomForm />
 <SeverityIndicator data={env.current.data} />
 <MultiPollenLineChart data={env.forecast.data} />
