@@ -25,6 +25,7 @@
 
 	// PWA
 	import '$lib/pwa/pwa.svelte';
+	import { ErrorDisplay } from '$lib/errors';
 
 	// Init
 	const logger = createLoggingService({
@@ -66,8 +67,21 @@
 </script>
 
 <svelte:head>
-	<title>My Awesome App</title>
+	<title>snot.app</title>
 	<meta name="description" content="My Awesome App description" />
 </svelte:head>
+
+<h1>snot.app</h1>
+
+<nav>
+	<menu>
+		<li><a href="/">Overview</a></li>
+		<li><a href="/forecast">Forecast</a></li>
+		<li><a href="/history">History</a></li>
+		<li><a href="/settings">Settings</a></li>
+	</menu>
+</nav>
+
+<ErrorDisplay />
 
 {@render children()}
