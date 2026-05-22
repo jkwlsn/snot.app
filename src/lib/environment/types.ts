@@ -7,13 +7,15 @@ export type PollenType = (typeof POLLENS)[number]['id'];
 
 export type PollenUnit = (typeof POLLEN_UNITS)[number]['id'];
 
-export type PollenSeverity = (typeof POLLEN_SEVERITY)[number]['name'];
+export type PollenSeverityNumber = (typeof POLLEN_SEVERITY)[number];
+
+export type PollenSeverityName = PollenSeverityNumber['name'];
 
 export interface PollenMetric {
 	type: PollenType;
 	value: number;
 	unit: PollenUnit;
-	severity: PollenSeverity;
+	severity: PollenSeverityNumber;
 }
 
 export interface PollenMeasurement extends CreatedAt {
@@ -28,6 +30,19 @@ export interface PollenSeries extends CreatedAt, WithLocation {
 	pollenTypes: PollenType[];
 	instants: PollenInstant[];
 	timezone: string;
+}
+
+export interface SeverityData {
+	name: string;
+	severityName: string;
+	symbol: string;
+	value: number;
+	unit: string;
+	description: string;
+}
+
+export interface SeverityInstant {
+	severityInstant: SeverityData[];
 }
 
 export interface EnvironmentProvider<EnvironmentProviderResponse> {
