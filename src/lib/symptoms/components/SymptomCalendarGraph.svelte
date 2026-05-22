@@ -3,7 +3,6 @@
 	import { startOfYear, endOfDay } from 'date-fns';
 	import { Calendar, Chart, Layer, Rect, Tooltip } from 'layerchart';
 	import { format, PeriodType } from '@layerstack/utils';
-	import { getUTCNow } from '$lib/date';
 	import { createLayerchartCalendarGraph as provider } from '$lib/symptoms';
 	import type { SymptomLog } from '$lib/symptoms';
 	import type { TemporalDataPoint } from '$lib/types';
@@ -15,9 +14,13 @@
 
 	let { records, title }: Props = $props();
 
-	const now = getUTCNow();
-	const start = startOfYear(now);
-	const end = endOfDay(now);
+	const boundaries = $derived.by(() => {
+		const now = new Date();
+		return {
+			start: startOfYear(now),
+			end: endOfDay(now)
+		};
+	});
 
 	const chart = $derived.by(() => {
 		const data = provider.transform(records ?? []);
@@ -51,7 +54,7 @@
 		>
 			{#snippet children({ context })}
 				<Layer>
-					<Calendar {start} {end}>
+					<Calendar start={boundaries.start} end={boundaries.end}>
 						{#snippet children({ cells, cellSize })}
 							{#each cells as cell, i (i)}
 								{@const padding = 1}
