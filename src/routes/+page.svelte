@@ -15,6 +15,7 @@
 		MultiPollenLineChart,
 		getEnvironmentState
 	} from '$lib/environment';
+	import SeverityIndicator from '$lib/environment/components/SeverityIndicator.svelte';
 
 	const records = getSymptomState();
 	const env = getEnvironmentState();
@@ -25,6 +26,7 @@
 <SettingsForm />
 <LocationInput />
 <SymptomForm />
+<SeverityIndicator data={env.current.data} />
 <MultiPollenLineChart data={env.forecast.data} />
 <ForecastDateSelector />
 <PollenSelector />
