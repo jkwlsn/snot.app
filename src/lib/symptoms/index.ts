@@ -5,7 +5,6 @@ export { getSymptomService, setSymptomService } from './symptomContext';
 export { getSymptomState, setSymptomState } from './symptomContext';
 export { default as SymptomForm } from './components/SymptomForm.svelte';
 export { default as SymptomTable } from './components/SymptomTable.svelte';
-export { default as SymptomCalendarGraph } from './components/SymptomCalendarGraph.svelte';
 export { averageSeverityBySymptom } from './adapters/averageSeverityBySymptom';
-export { createLayerchartCalendarGraph } from './providers/layerchartCalendarGraph';
+export { aggregateSymptomsByDay } from './adapters/aggregateSymptomsByDay';
 export * from './types';
