@@ -5,7 +5,7 @@
 	import { format, PeriodType } from '@layerstack/utils';
 	import { createLayerchartCalendarGraph as provider } from '$lib/symptoms';
 	import type { SymptomLog } from '$lib/symptoms';
-	import type { TemporalDataPoint } from '$lib/types';
+	import type { TemporalDataPoint } from '$lib/graphs';
 
 	interface Props {
 		title: string;

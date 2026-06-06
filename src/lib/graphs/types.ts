@@ -1,4 +1,4 @@
-import type { CreatedAt } from './base';
+import type { CreatedAt } from '$lib/types';
 
 interface DataPoint {
 	value: number;

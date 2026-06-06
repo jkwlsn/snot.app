@@ -1,7 +1,7 @@
 import { parse } from 'date-fns/parse';
 import { toDayKey, type UTCDate } from '$lib/date';
 import type { SymptomLog } from '../types';
-import type { TemporalDataPoint, GraphProvider } from '$lib/types';
+import type { TemporalDataPoint, GraphProvider } from '$lib/graphs';
 
 function aggregateSymptomsByDay(records: SymptomLog[]): Map<string, number> {
 	const totals = new Map<string, number>();
