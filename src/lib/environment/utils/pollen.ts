@@ -9,6 +9,10 @@ export function getPollenName(id: PollenType): string {
 	return POLLEN_LOOKUP.get(id)?.name ?? id;
 }
 
+export function getPollenColor(id: PollenType): string {
+	return POLLEN_LOOKUP.get(id)?.color ?? '#000000';
+}
+
 const DEFAULT_SEVERITY = POLLEN_SEVERITY[POLLEN_SEVERITY.length - 1];
 
 export function calculateSeverity(value: number): PollenSeverityNumber {

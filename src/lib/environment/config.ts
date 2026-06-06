@@ -1,19 +1,19 @@
 export const POLLENS = [
-	{ id: 'alder_pollen', name: 'Alder', description: 'Pollen from birch trees' },
-	{ id: 'ash_pollen', name: 'Ash', description: '' },
-	{ id: 'birch_pollen', name: 'Birch', description: '' },
-	{ id: 'cedar_pollen', name: 'Cedar', description: '' },
-	{ id: 'elm_pollen', name: 'Elm', description: '' },
-	{ id: 'hazel_pollen', name: 'Hazel', description: '' },
-	{ id: 'oak_pollen', name: 'Oak', description: '' },
-	{ id: 'olive_pollen', name: 'Olive', description: '' },
-	{ id: 'pine_pollen', name: 'Pine', description: '' },
-	{ id: 'plane_pollen', name: 'Plane', description: '' },
-	{ id: 'poplar_pollen', name: 'Poplar', description: '' },
-	{ id: 'grass_pollen', name: 'Grass', description: '' },
-	{ id: 'ragweed_pollen', name: 'Ragweed', description: '' },
-	{ id: 'mugwort_pollen', name: 'Mugwort', description: '' },
-	{ id: 'nettle_pollen', name: 'Nettle', description: '' }
+	{ id: 'alder_pollen', name: 'Alder', description: 'Pollen from birch trees', color: '#e41a1c' },
+	{ id: 'ash_pollen', name: 'Ash', description: '', color: '' },
+	{ id: 'birch_pollen', name: 'Birch', description: '', color: '#377eb8' },
+	{ id: 'cedar_pollen', name: 'Cedar', description: '', color: '' },
+	{ id: 'elm_pollen', name: 'Elm', description: '', color: '' },
+	{ id: 'hazel_pollen', name: 'Hazel', description: '', color: '' },
+	{ id: 'oak_pollen', name: 'Oak', description: '', color: '' },
+	{ id: 'olive_pollen', name: 'Olive', description: '', color: '#ff7f00' },
+	{ id: 'pine_pollen', name: 'Pine', description: '', color: '' },
+	{ id: 'plane_pollen', name: 'Plane', description: '', color: '' },
+	{ id: 'poplar_pollen', name: 'Poplar', description: '', color: '' },
+	{ id: 'grass_pollen', name: 'Grass', description: '', color: '#4daf4a' },
+	{ id: 'ragweed_pollen', name: 'Ragweed', description: '', color: '#a65628' },
+	{ id: 'mugwort_pollen', name: 'Mugwort', description: '', color: '#984ea3' },
+	{ id: 'nettle_pollen', name: 'Nettle', description: '', color: '' }
 ] as const;
 
 export const POLLEN_UNITS = [

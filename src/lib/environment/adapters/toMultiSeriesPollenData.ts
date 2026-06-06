@@ -1,11 +1,14 @@
 import type { PollenSeries, PollenType } from '../types';
-import type { UTCDate } from '$lib/date';
+import type { MultiSeriesDataPoint } from '$lib/graphs';
 
-export function toMultiPollenLineChartData(series: PollenSeries, selectedTypes: PollenType[]) {
+export function toMultiSeriesPollenData(
+	series: PollenSeries,
+	selectedTypes: PollenType[]
+): MultiSeriesDataPoint[] {
 	if (!series.instants) return [];
 
 	return series.instants.map((instant) => {
-		const dataPoint: Record<string, number | UTCDate> = {
+		const dataPoint: MultiSeriesDataPoint = {
 			createdAt: instant.createdAt
 		};
 
