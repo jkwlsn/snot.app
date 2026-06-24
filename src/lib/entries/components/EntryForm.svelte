@@ -1,17 +1,18 @@
 <script lang="ts">
-	import { SYMPTOMS, getSymptomService } from '$lib/symptoms';
-	import { handleError } from '$lib/errors';
+	import { SYMPTOMS } from '$lib/symptoms';
 	import { getLoggingService } from '$lib/logging';
+	import { handleError } from '$lib/errors';
+	import { getEntryService } from '$lib/entries';
 	import type { SymptomName, SymptomFields } from '$lib/symptoms';
 
-	const service = getSymptomService();
+	const service = getEntryService();
 	const logger = getLoggingService();
 
 	const symptomValues = $state<Record<string, number>>(
 		Object.fromEntries(SYMPTOMS.map((symptom) => [symptom.name, 0])) as Record<SymptomName, number>
 	);
 
-	let isSubmittingSymptoms = $state<boolean>(false);
+	let isSubmitting = $state<boolean>(false);
 
 	function resetValues() {
 		SYMPTOMS.forEach((symptom) => (symptomValues[symptom.name] = 0));
@@ -25,28 +26,28 @@
 	async function handleSubmit(e: SubmitEvent) {
 		e.preventDefault();
 
-		if (isSubmittingSymptoms) return;
+		if (isSubmitting) return;
 
-		isSubmittingSymptoms = true;
+		isSubmitting = true;
 
 		try {
-			await service.submitSymptoms($state.snapshot(symptomValues) as SymptomFields);
+			await service.submitEntry($state.snapshot(symptomValues) as SymptomFields);
 
 			resetValues();
 		} catch (err: unknown) {
 			handleError({
 				error: err,
-				operation: 'submitSymptoms',
+				operation: 'submitEntry',
 				logger,
 				show: true
 			});
 		} finally {
-			isSubmittingSymptoms = false;
+			isSubmitting = false;
 		}
 	}
 </script>
 
-<form id="symptom-input" onreset={handleReset} onsubmit={handleSubmit}>
+<form id="entry-input" onreset={handleReset} onsubmit={handleSubmit}>
 	{#each SYMPTOMS as symptom (symptom.name)}
 		{@const valueId = `${symptom.name}-value`}
 		<div>
@@ -64,7 +65,7 @@
 		</div>
 	{/each}
 	<button type="reset">Reset</button>
-	<button type="submit" disabled={isSubmittingSymptoms}>
-		{isSubmittingSymptoms ? 'Submitting...' : 'Submit'}
+	<button type="submit" disabled={isSubmitting}>
+		{isSubmitting ? 'Submitting...' : 'Submit'}
 	</button>
 </form>

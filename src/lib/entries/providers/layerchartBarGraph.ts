@@ -1,8 +1,8 @@
-import { SYMPTOMS } from '../config';
-import type { SymptomLog } from '../types';
+import { SYMPTOMS } from '$lib/symptoms';
 import type { GraphProvider, LabelledDataPoint } from '$lib/types';
+import type { Entry } from '$lib/entries';
 
-const averageSeverityBySymptom = (records: SymptomLog[]): LabelledDataPoint[] => {
+const averageSeverityBySymptom = (records: Entry[]): LabelledDataPoint[] => {
 	return SYMPTOMS.map(({ name }) => {
 		const currentSymptom = records.filter((r) => r.symptoms[name] > 0);
 		return {
@@ -15,7 +15,7 @@ const averageSeverityBySymptom = (records: SymptomLog[]): LabelledDataPoint[] =>
 	});
 };
 
-export const createLayerchartBarGraph: GraphProvider<SymptomLog, LabelledDataPoint> = {
+export const createLayerchartBarGraph: GraphProvider<Entry, LabelledDataPoint> = {
 	transform(records) {
 		return averageSeverityBySymptom(records);
 	}
