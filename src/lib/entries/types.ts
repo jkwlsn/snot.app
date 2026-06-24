@@ -1,3 +1,4 @@
+import type { PollenInstant } from '$lib/environment/types';
 import type { WithLocation } from '$lib/location';
 import type { SymptomFields } from '$lib/symptoms';
 import type { CreatedAt, Repository, Stored } from '$lib/types';
@@ -5,6 +6,7 @@ import type { UTCDate } from '@date-fns/utc';
 
 export interface CreateEntry extends CreatedAt, WithLocation {
 	symptoms: SymptomFields;
+	environment?: PollenInstant;
 }
 
 export type Entry = Stored<CreateEntry>;
