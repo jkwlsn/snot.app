@@ -6,7 +6,7 @@ import type { UTCDate } from '@date-fns/utc';
 
 export interface CreateEntry extends CreatedAt, WithLocation {
 	symptoms: SymptomFields;
-	environment?: PollenInstant;
+	environment: PollenInstant;
 }
 
 export type Entry = Stored<CreateEntry>;
