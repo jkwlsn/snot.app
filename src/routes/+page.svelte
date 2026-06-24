@@ -1,19 +1,14 @@
 <script lang="ts">
-	import {
-		getSymptomState,
-		SymptomForm,
-		SymptomBarGraph,
-		SymptomCalendarGraph
-	} from '$lib/symptoms';
+	import { EntryBarGraph, EntryCalendarGraph, EntryForm, getEntryState } from '$lib/entries';
 	import { getEnvironmentState } from '$lib/environment';
 	import SeverityIndicator from '$lib/environment/components/SeverityIndicator.svelte';
 
-	const records = getSymptomState();
+	const entries = getEntryState();
 	const env = getEnvironmentState();
 </script>
 
 <h2>Overview</h2>
-<SymptomForm />
+<EntryForm />
 <SeverityIndicator data={env.current.data} />
-<SymptomBarGraph title="Average severity today" records={records.todaysSymptoms} />
-<SymptomCalendarGraph title="Symptom count per day" records={records.symptoms} />
+<EntryBarGraph title="Average severity today" records={entries.entries} />
+<EntryCalendarGraph title="Symptom count per day" records={entries.entries} />
