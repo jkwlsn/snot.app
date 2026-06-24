@@ -3,13 +3,6 @@
 
 	import { createSettingsService, createSettingsState, setSettingsContext } from '$lib/settings';
 
-	import {
-		setSymptomService,
-		createSymptomService,
-		setSymptomState,
-		createSymptomState
-	} from '$lib/symptoms';
-
 	// Import location context and service
 	import { createLocationService, setLocationService, locationState } from '$lib/location';
 
@@ -26,6 +19,12 @@
 	// PWA
 	import '$lib/pwa/pwa.svelte';
 	import { ErrorDisplay } from '$lib/errors';
+	import {
+		createEntryService,
+		createEntryState,
+		setEntryService,
+		setEntryState
+	} from '$lib/entries';
 
 	// Init
 	const logger = createLoggingService({
@@ -37,12 +36,8 @@
 	const settingsService = createSettingsService({ logger });
 	setSettingsContext(createSettingsState({ service: settingsService }));
 
-	const symptomService = createSymptomService({
-		logger,
-		locationState: locationState,
-		settingsService
-	});
-	setSymptomService(symptomService);
+	const entryService = createEntryService({ logger, locationState, settingsService });
+	setEntryService(entryService);
 
 	const locationService = createLocationService({ logger: logger });
 	setLocationService(locationService);
@@ -60,8 +55,8 @@
 	});
 	setEnvironmentState(environmentState);
 
-	// Symptoms Data
-	setSymptomState(createSymptomState({ service: symptomService, logger }));
+	// Entry data
+	setEntryState(createEntryState({ service: entryService, logger }));
 
 	let { children } = $props();
 </script>

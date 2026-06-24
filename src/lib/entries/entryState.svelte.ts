@@ -1,66 +1,66 @@
 import { liveQuery } from 'dexie';
 import { getUTCNow, startOfDayUTC, endOfDayUTC } from '$lib/date';
 import { handleError } from '$lib/errors';
-import type { SymptomLog, SymptomService, SymptomState } from './types';
+import type { Entry, EntryService, EntryState } from './types';
 import type { LoggingService } from '$lib/logging';
 
-export function createSymptomState({
+export function createEntryState({
 	service,
 	logger
 }: {
-	service: SymptomService;
+	service: EntryService;
 	logger: LoggingService;
-}): SymptomState {
-	let symptoms = $state<SymptomLog[]>([]);
-	let todaysSymptoms = $state<SymptomLog[]>([]);
+}): EntryState {
+	let entries = $state<Entry[]>([]);
+	let todaysEntries = $state<Entry[]>([]);
 
 	$effect(() => {
-		const sub = liveQuery<SymptomLog[]>(async () => {
+		const sub = liveQuery<Entry[]>(async () => {
 			try {
-				return await service.getAllSymptoms();
+				return await service.getAllEntries();
 			} catch (err) {
 				handleError({
 					error: err,
-					operation: 'getAllSymptoms',
+					operation: 'getAllEntries',
 					logger,
 					show: true
 				});
 				throw err;
 			}
 		}).subscribe((value) => {
-			symptoms = value;
+			entries = value;
 		});
 
 		return () => sub.unsubscribe();
 	});
 
 	$effect(() => {
-		const sub = liveQuery<SymptomLog[]>(async () => {
+		const sub = liveQuery<Entry[]>(async () => {
 			try {
 				const now = getUTCNow();
-				return await service.getRangeSymptoms(startOfDayUTC(now), endOfDayUTC(now));
+				return await service.getRangeEntries(startOfDayUTC(now), endOfDayUTC(now));
 			} catch (err) {
 				handleError({
 					error: err,
-					operation: 'getRangeSymptoms',
+					operation: 'getRangeEntries',
 					logger,
 					show: true
 				});
 				throw err;
 			}
 		}).subscribe((value) => {
-			todaysSymptoms = value;
+			todaysEntries = value;
 		});
 
 		return () => sub.unsubscribe();
 	});
 
 	return {
-		get symptoms() {
-			return symptoms;
+		get entries() {
+			return entries;
 		},
-		get todaysSymptoms() {
-			return todaysSymptoms;
+		get todaysEntries() {
+			return todaysEntries;
 		}
 	};
 }

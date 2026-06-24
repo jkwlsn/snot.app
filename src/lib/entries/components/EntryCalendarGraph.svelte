@@ -3,13 +3,13 @@
 	import { startOfYear, endOfDay } from 'date-fns';
 	import { Calendar, Chart, Layer, Rect, Tooltip } from 'layerchart';
 	import { format, PeriodType } from '@layerstack/utils';
-	import { createLayerchartCalendarGraph as provider } from '$lib/symptoms';
-	import type { SymptomLog } from '$lib/symptoms';
+	import { createLayerchartCalendarGraph as provider } from '$lib/entries';
 	import type { TemporalDataPoint } from '$lib/types';
+	import type { Entry } from '$lib/entries';
 
 	interface Props {
 		title: string;
-		records: SymptomLog[];
+		records: Entry[];
 	}
 
 	let { records, title }: Props = $props();

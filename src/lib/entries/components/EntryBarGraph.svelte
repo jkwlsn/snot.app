@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { BarChart } from 'layerchart';
 	import { createLayerchartBarGraph as provider } from '../providers/layerchartBarGraph';
-	import type { SymptomLog } from '$lib/symptoms';
+	import type { Entry } from '../types';
 
 	interface Props {
 		title: string;
-		records: SymptomLog[];
+		records: Entry[];
 	}
 
-	let { records, title }: Props = $props();
+	let { title, records }: Props = $props();
 
 	const data = $derived(provider.transform(records ?? []));
 </script>

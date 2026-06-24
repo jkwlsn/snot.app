@@ -1,50 +1,50 @@
 <script lang="ts">
 	import { formatDisplayDate } from '$lib/date';
-	import { SYMPTOMS, getSymptomService } from '$lib/symptoms';
+	import { SYMPTOMS } from '$lib/symptoms';
 	import { handleError } from '$lib/errors';
 	import { getLoggingService } from '$lib/logging';
-	import type { SymptomLog } from '$lib/symptoms';
+	import { getEntryService, type Entry } from '$lib/entries';
 
-	const { title, records }: { title: string; records: SymptomLog[] } = $props();
+	const { title, records }: { title: string; records: Entry[] } = $props();
 
-	const service = getSymptomService();
+	const service = getEntryService();
 	const logger = getLoggingService();
 
-	let isRemovingSymptom = $state<boolean>(false);
-	let removingSymptomId = $state<number | null>(null);
+	let isRemoving = $state<boolean>(false);
+	let removingEntryId = $state<number | null>(null);
 
 	const COLUMNS = [
-		{ header: 'ID', accessor: (r: SymptomLog) => r.id },
+		{ header: 'ID', accessor: (r: Entry) => r.id },
 		{
 			header: 'CreatedAt',
-			accessor: (r: SymptomLog) => formatDisplayDate(r.createdAt, undefined, r.timezone)
+			accessor: (r: Entry) => formatDisplayDate(r.createdAt, undefined, r.timezone)
 		},
 		...SYMPTOMS.map((s) => ({
 			header: s.name,
-			accessor: (r: SymptomLog) => r.symptoms[s.name]
+			accessor: (r: Entry) => r.symptoms[s.name]
 		})),
-		{ header: 'Location', accessor: (r: SymptomLog) => r.location?.label }
+		{ header: 'Location', accessor: (r: Entry) => r.location?.label }
 	];
 
 	async function handleRemove(e: MouseEvent, id: number) {
 		e.preventDefault();
 
-		removingSymptomId = id;
+		removingEntryId = id;
 
-		isRemovingSymptom = true;
+		isRemoving = true;
 
 		try {
-			await service.removeSymptom(id);
+			await service.removeEntry(id);
 		} catch (err: unknown) {
 			handleError({
 				error: err,
-				operation: 'removeSymptom',
+				operation: 'removeEntry',
 				logger,
 				show: true
 			});
 		} finally {
-			isRemovingSymptom = false;
-			removingSymptomId = null;
+			isRemoving = false;
+			removingEntryId = null;
 		}
 	}
 </script>
@@ -72,9 +72,7 @@
 						{/each}
 						<td
 							><button onclick={(e) => handleRemove(e, record.id)}
-								>{isRemovingSymptom && removingSymptomId === record.id
-									? 'Removing...'
-									: 'Remove'}</button
+								>{isRemoving && removingEntryId === record.id ? 'Removing...' : 'Remove'}</button
 							>
 						</td>
 					</tr>

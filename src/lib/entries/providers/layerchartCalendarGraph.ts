@@ -1,9 +1,9 @@
 import { parse } from 'date-fns/parse';
 import { toDayKey, type UTCDate } from '$lib/date';
-import type { SymptomLog } from '../types';
 import type { TemporalDataPoint, GraphProvider } from '$lib/types';
+import type { Entry } from '$lib/entries';
 
-function aggregateSymptomsByDay(records: SymptomLog[]): Map<string, number> {
+function aggregateSymptomsByDay(records: Entry[]): Map<string, number> {
 	const totals = new Map<string, number>();
 
 	for (const record of records) {
@@ -14,7 +14,7 @@ function aggregateSymptomsByDay(records: SymptomLog[]): Map<string, number> {
 	return totals;
 }
 
-export const createLayerchartCalendarGraph: GraphProvider<SymptomLog, TemporalDataPoint> = {
+export const createLayerchartCalendarGraph: GraphProvider<Entry, TemporalDataPoint> = {
 	transform(records) {
 		const totals = aggregateSymptomsByDay(records);
 		// Use the viewer's local timezone since we are creating local Date objects

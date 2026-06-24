@@ -1,8 +1,8 @@
 <script>
-	import { getSymptomState, SymptomTable } from '$lib/symptoms';
+	import { getEntryState, EntryTable } from '$lib/entries';
 
-	const symptomData = getSymptomState();
+	const entryData = getEntryState();
 </script>
 
 <h2>History</h2>
-<SymptomTable title="Symptom Log" records={symptomData.symptoms} />
+<EntryTable title="Symptom Log" records={entryData.entries} />

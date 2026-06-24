@@ -1,12 +1,13 @@
-import { createSymptomRepository } from './symptomRepository';
+import { createEntryRepository } from './entryRepository';
 import { getUTCNow } from '$lib/date';
-import type { SymptomFields, SymptomService } from '$lib/symptoms';
+import type { EntryService } from '$lib/entries';
 import type { UTCDate } from '$lib/date';
 import type { LocationState } from '$lib/location';
 import type { LoggingService } from '$lib/logging';
 import type { SettingsService } from '$lib/settings';
+import type { SymptomFields } from '$lib/symptoms';
 
-export function createSymptomService({
+export function createEntryService({
 	logger,
 	locationState,
 	settingsService
@@ -14,21 +15,21 @@ export function createSymptomService({
 	logger: LoggingService;
 	locationState: LocationState;
 	settingsService: SettingsService;
-}): SymptomService {
-	const repo = createSymptomRepository({ logger });
+}): EntryService {
+	const repo = createEntryRepository({ logger });
 
 	return {
-		submitSymptoms: (values: SymptomFields) => {
+		submitEntry: (symptoms: SymptomFields) => {
 			const settings = settingsService.getSettings();
 			return repo.add({
 				createdAt: getUTCNow(),
 				timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
 				location: settings.locationEnabled ? $state.snapshot(locationState.currentLocation) : null,
-				symptoms: values
+				symptoms: symptoms
 			});
 		},
-		getAllSymptoms: () => repo.getAll(),
-		getRangeSymptoms: (from: UTCDate, to: UTCDate) => repo.getRange(from, to),
-		removeSymptom: (id: number) => repo.remove(id)
+		getAllEntries: () => repo.getAll(),
+		getRangeEntries: (from: UTCDate, to: UTCDate) => repo.getRange(from, to),
+		removeEntry: (id: number) => repo.remove(id)
 	};
 }
