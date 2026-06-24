@@ -30,8 +30,17 @@ export function createEntryService({
 				location: settings.locationEnabled ? $state.snapshot(locationState.currentLocation) : null,
 				symptoms: symptoms,
 				environment: settings.locationEnabled
-					? $state.snapshot(environmentState.current?.data?.instants[0])
-					: null
+					? {
+							metrics: $state.snapshot(environmentState.current?.data?.instants[0]?.metrics ?? []),
+							createdAt: getUTCNow(),
+							timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+						}
+					: {
+							metrics: [],
+							createdAt: getUTCNow(),
+
+							timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+						}
 			});
 		},
 		getAllEntries: () => repo.getAll(),
