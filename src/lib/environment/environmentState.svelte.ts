@@ -34,8 +34,7 @@ export function createEnvironmentState({
 			from: now,
 			to: addHoursUTC(now, OPENMETEO_CONFIG.maxForecastDays * 24),
 			data: undefined,
-			lastUpdated: null,
-			timezone: 'UTC'
+			lastUpdated: null
 		}
 	});
 
@@ -59,7 +58,6 @@ export function createEnvironmentState({
 			.then((data) => {
 				state.current.data = data;
 				state.current.lastUpdated = getUTCNow();
-				state.forecast.timezone = data.timezone;
 			})
 			.catch((err) => {
 				state.current.error = err instanceof Error ? err : new Error(String(err));
@@ -89,7 +87,6 @@ export function createEnvironmentState({
 			.then((data) => {
 				state.forecast.data = data;
 				state.forecast.lastUpdated = getUTCNow();
-				state.forecast.timezone = data.timezone;
 				logger.debug('DEBUG: Fetched data from date:', {
 					fromISO: data.createdAt.toISOString(),
 					timezone: data.timezone

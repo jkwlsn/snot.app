@@ -26,6 +26,7 @@ function transformMetric(
 	if (value == null) return null;
 
 	return {
+		recordedAt: getUTCNow(),
 		type: id,
 		value,
 		unit: mapUnit(unitCode),
@@ -92,7 +93,13 @@ export function createOpenmeteoTransformer(): EnvironmentTransformer<OpenMeteoPr
 				for (const v of variables) {
 					const value = v.values[i];
 					if (value != null && !isNaN(value)) {
-						metrics.push({ type: v.type, value, unit: v.unit, severity: calculateSeverity(value) });
+						metrics.push({
+							recordedAt: getUTCNow(),
+							type: v.type,
+							value,
+							unit: v.unit,
+							severity: calculateSeverity(value)
+						});
 					}
 				}
 
