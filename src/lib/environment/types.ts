@@ -12,14 +12,11 @@ export type PollenSeverityNumber = (typeof POLLEN_SEVERITY)[number];
 export type PollenSeverityName = PollenSeverityNumber['name'];
 
 export interface PollenMetric {
+	recordedAt: UTCDate;
 	type: PollenType;
 	value: number;
 	unit: PollenUnit;
 	severity: PollenSeverityNumber;
-}
-
-export interface PollenMeasurement extends CreatedAt {
-	metric: PollenMetric;
 }
 
 export interface PollenInstant extends CreatedAt {
@@ -29,7 +26,6 @@ export interface PollenInstant extends CreatedAt {
 export interface PollenSeries extends CreatedAt, WithLocation {
 	pollenTypes: PollenType[];
 	instants: PollenInstant[];
-	timezone: string;
 }
 
 export interface SeverityData {
@@ -100,7 +96,6 @@ export interface ForecastPollenState extends WithLocation {
 	to: UTCDate;
 	data: PollenSeries | undefined;
 	lastUpdated: UTCDate | null;
-	timezone: string;
 }
 
 export interface EnvironmentState {
