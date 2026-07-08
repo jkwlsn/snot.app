@@ -10,6 +10,9 @@ export function getPollenName(id: PollenType): string {
 	return POLLEN_LOOKUP.get(id)?.name ?? id;
 }
 
+export function getPollenUnit(id: PollenUnit): string {
+	return UNIT_LOOKUP.get(id)?.name ?? id;
+}
 
 export function filterPollenByMetricValue(series: PollenSeries, threshold: number): PollenSeries {
 	if (!series?.instants) {
