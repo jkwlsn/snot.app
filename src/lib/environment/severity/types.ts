@@ -1,6 +1,6 @@
 import type { UTCDate } from '@date-fns/utc';
-import type { PollenInstant, PollenMetric, PollenSeries, PollenType, PollenUnit } from '../types';
-import type { UserLocation } from '$lib/location';
+import type { EnvironmentObservation, PollenMeasurement, PollenType, PollenUnit } from '../types';
+import type { LocationCoordinates } from '$lib/location';
 
 export interface PollenSeverityLevel {
 	id: number;
@@ -10,21 +10,17 @@ export interface PollenSeverityLevel {
 	description: string;
 }
 
-export interface PollenMetricWithSeverity extends PollenMetric {
+export interface PollenMeasurementWithSeverity extends PollenMeasurement {
 	severity: PollenSeverityLevel;
 }
 
-export interface PollenInstantWithSeverity extends PollenInstant {
-	metrics: PollenMetricWithSeverity[];
-}
-
-export interface PollenSeriesWithSeverity extends PollenSeries {
-	instants: PollenInstantWithSeverity[];
+export interface EnvironmentObservationWithSeverity extends EnvironmentObservation {
+	pollen: PollenMeasurementWithSeverity[];
 }
 
 export interface PollenSeverityNotification {
 	timestamp: UTCDate;
-	location: UserLocation | null;
+	location: LocationCoordinates | null;
 	pollen: PollenType;
 	value: number;
 	unit: PollenUnit;
