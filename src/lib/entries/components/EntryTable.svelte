@@ -4,11 +4,14 @@
 	import { handleError } from '$lib/errors';
 	import { getLoggingService } from '$lib/logging';
 	import { getEntryService, type Entry } from '$lib/entries';
+	import { getEnvironmentState } from '$lib/environment';
+	import { getPollenName } from '$lib/environment/utils';
 
 	const { title, records }: { title: string; records: Entry[] } = $props();
 
 	const service = getEntryService();
 	const logger = getLoggingService();
+	const environment = getEnvironmentState();
 
 	let isRemoving = $state<boolean>(false);
 	let removingEntryId = $state<number | null>(null);
@@ -23,7 +26,14 @@
 			header: s.name,
 			accessor: (r: Entry) => r.symptoms[s.name]
 		})),
-		{ header: 'Location', accessor: (r: Entry) => r.location?.label }
+		{ header: 'Location', accessor: (r: Entry) => r.location?.label },
+		...environment.supportedPollenTypes.map((p) => ({
+			header: getPollenName(p),
+			accessor: (r: Entry) => {
+				const pollenData = r.pollen?.find((m) => m.type === p);
+				return `${pollenData?.value} ${pollenData?.unit} `;
+			}
+		}))
 	];
 
 	async function handleRemove(e: MouseEvent, id: number) {
