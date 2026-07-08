@@ -5,9 +5,9 @@ import type { LoggingService } from '$lib/logging';
 import type {
 	PollenType,
 	EnvironmentService,
-	PollenSeries,
 	EnvironmentProvider,
-	EnvironmentTransformer
+	EnvironmentTransformer,
+	EnvironmentObservation
 } from './types';
 import type { UTCDate } from '@date-fns/utc';
 
@@ -29,7 +29,7 @@ export function createEnvironmentService<TResponse>({
 	async function getCurrentPollen(
 		pollenTypes: PollenType[],
 		location: UserLocation
-	): Promise<PollenSeries> {
+	): Promise<EnvironmentObservation> {
 		return await repository.getCurrent(pollenTypes, location);
 	}
 
@@ -38,7 +38,7 @@ export function createEnvironmentService<TResponse>({
 		location: UserLocation,
 		from: UTCDate,
 		to: UTCDate
-	): Promise<PollenSeries> {
+	): Promise<EnvironmentObservation[]> {
 		const { from: clampedFrom, to: clampedTo } = clampForecastDateRange(from, to);
 		return await repository.getForecast(pollenTypes, location, clampedFrom, clampedTo);
 	}

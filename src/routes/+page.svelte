@@ -2,7 +2,7 @@
 	import { EntryBarGraph, EntryCalendarGraph, EntryForm, getEntryState } from '$lib/entries';
 	import { getEnvironmentState, SeverityIndicator } from '$lib/environment';
 	import {
-		addSeverityToSeries,
+		addSeverityToObservation,
 		createPollenSeverityNotifications
 	} from '$lib/environment/severity';
 
@@ -11,7 +11,7 @@
 
 	const notifications = $derived(
 		env.current.data
-			? createPollenSeverityNotifications(addSeverityToSeries(env.current.data), 4)
+			? createPollenSeverityNotifications(addSeverityToObservation(env.current.data), 3)
 			: []
 	);
 </script>

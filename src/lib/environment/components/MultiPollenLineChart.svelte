@@ -6,9 +6,9 @@
 	import { getEnvironmentState } from '$lib/environment';
 
 	import { toMultiPollenLineChartData } from '$lib/environment/adapters/multiPollenLineChartAdapter';
-	import type { PollenSeries } from '../types';
+	import type { EnvironmentObservation } from '../types';
 
-	let { data }: { data?: PollenSeries } = $props();
+	let { data }: { data?: EnvironmentObservation[] } = $props();
 
 	const env = getEnvironmentState();
 	const seriesData = $derived(data ?? env.forecast.data);
@@ -19,7 +19,7 @@
 	});
 
 	const xFormat = (date: UTCDate | number) => {
-		const timezone = seriesData?.timezone ?? 'UTC';
+		const timezone = env.forecast.timezone ?? 'UTC';
 
 		return formatDisplayDate(date, {
 			weekday: 'short',
