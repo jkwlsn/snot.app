@@ -1,21 +1,16 @@
 import type { CreatedAt } from '$lib/types';
 import type { UserLocation, WithLocation } from '$lib/location';
-import type { POLLEN_UNITS, POLLENS, POLLEN_SEVERITY } from './config';
+import type { POLLEN_UNITS, POLLENS } from './config';
 import type { UTCDate } from '$lib/date';
 
 export type PollenType = (typeof POLLENS)[number]['id'];
 
 export type PollenUnit = (typeof POLLEN_UNITS)[number]['id'];
 
-export type PollenSeverityNumber = (typeof POLLEN_SEVERITY)[number];
-
-export type PollenSeverityName = PollenSeverityNumber['name'];
-
 export interface PollenMetric {
 	type: PollenType;
 	value: number;
 	unit: PollenUnit;
-	severity: PollenSeverityNumber;
 }
 
 export interface PollenMeasurement extends CreatedAt {
@@ -30,19 +25,6 @@ export interface PollenSeries extends CreatedAt, WithLocation {
 	pollenTypes: PollenType[];
 	instants: PollenInstant[];
 	timezone: string;
-}
-
-export interface SeverityData {
-	name: string;
-	severityName: string;
-	symbol: string;
-	value: number;
-	unit: string;
-	description: string;
-}
-
-export interface SeverityInstant {
-	severityInstant: SeverityData[];
 }
 
 export interface EnvironmentProvider<EnvironmentProviderResponse> {
