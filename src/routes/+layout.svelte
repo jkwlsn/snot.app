@@ -36,12 +36,6 @@
 	const settingsService = createSettingsService({ logger });
 	setSettingsContext(createSettingsState({ service: settingsService }));
 
-	const entryService = createEntryService({ logger, locationState, settingsService });
-	setEntryService(entryService);
-
-	const locationService = createLocationService({ logger: logger });
-	setLocationService(locationService);
-
 	const environmentService = createEnvironmentService({
 		logger,
 		provider: createOpenmeteoProvider(),
@@ -54,6 +48,17 @@
 		locationState: locationState
 	});
 	setEnvironmentState(environmentState);
+
+	const entryService = createEntryService({
+		logger,
+		locationState,
+		environmentState,
+		settingsService
+	});
+	setEntryService(entryService);
+
+	const locationService = createLocationService({ logger: logger });
+	setLocationService(locationService);
 
 	// Entry data
 	setEntryState(createEntryState({ service: entryService, logger }));
