@@ -19,11 +19,3 @@ export const POLLENS = [
 export const POLLEN_UNITS = [
 	{ id: 'grains_m3', name: 'Grains/m³', description: 'Pollen grains per cubic metre' }
 ] as const;
-
-export const POLLEN_SEVERITY = [
-	{ id: 1, min: 150, name: 'Very High', symbol: '🔴 ', description: '' },
-	{ id: 2, min: 60, name: 'High', symbol: '🟠', description: '' },
-	{ id: 3, min: 30, name: 'Moderate', symbol: '🟡', description: '' },
-	{ id: 4, min: 1, name: 'Low', symbol: '🟢', description: '' },
-	{ id: 5, min: 0, name: 'None', symbol: '⚪', description: '' }
-] as const;
