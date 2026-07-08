@@ -6,14 +6,17 @@ import type { LocationState } from '$lib/location';
 import type { LoggingService } from '$lib/logging';
 import type { SettingsService } from '$lib/settings';
 import type { SymptomFields } from '$lib/symptoms';
+import type { EnvironmentState } from '$lib/environment/types';
 
 export function createEntryService({
 	logger,
 	locationState,
+	environmentState,
 	settingsService
 }: {
 	logger: LoggingService;
 	locationState: LocationState;
+	environmentState: EnvironmentState;
 	settingsService: SettingsService;
 }): EntryService {
 	const repo = createEntryRepository({ logger });
@@ -25,7 +28,10 @@ export function createEntryService({
 				createdAt: getUTCNow(),
 				timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
 				location: settings.locationEnabled ? $state.snapshot(locationState.currentLocation) : null,
-				symptoms: symptoms
+				symptoms: symptoms,
+				pollen: settings.locationEnabled
+					? $state.snapshot(environmentState.current.data?.pollen)
+					: undefined
 			});
 		},
 		getAllEntries: () => repo.getAll(),
