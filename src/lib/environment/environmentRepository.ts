@@ -5,7 +5,7 @@ import type { UTCDate } from '$lib/date';
 import type {
 	PollenType,
 	EnvironmentRepository,
-	PollenSeries,
+	EnvironmentObservation,
 	EnvironmentProvider,
 	EnvironmentTransformer
 } from './types';
@@ -26,10 +26,10 @@ export function createEnvironmentRepository<TResponse>({
 	async function getCurrent(
 		pollenTypes: PollenType[],
 		location: UserLocation
-	): Promise<PollenSeries> {
+	): Promise<EnvironmentObservation> {
 		try {
 			const data = await provider.getCurrent(pollenTypes, location);
-			const series = transformer.toInstant(data, location);
+			const series = transformer.toObservation(data);
 			logger.info('Successfully fetched current pollen data', { pollenTypes, location, series });
 			return series;
 		} catch (err) {
@@ -47,16 +47,16 @@ export function createEnvironmentRepository<TResponse>({
 		location: UserLocation,
 		from: UTCDate,
 		to: UTCDate
-	): Promise<PollenSeries> {
+	): Promise<EnvironmentObservation[]> {
 		try {
 			const data = await provider.getForecast(pollenTypes, location, from, to);
-			const series = transformer.toSeries(data, location);
+			const series = transformer.toObservationSeries(data);
 			logger.info('Successfully fetched pollen forecast data', {
 				pollenTypes,
 				location,
 				from: from.toISOString(),
 				to: to.toISOString(),
-				instantsCount: series.instants.length
+				observationsCount: series.length
 			});
 			return series;
 		} catch (err) {

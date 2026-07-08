@@ -25,7 +25,8 @@ export function createEnvironmentState({
 			isLoading: false,
 			error: null,
 			data: undefined,
-			lastUpdated: null
+			lastUpdated: null,
+			timezone: undefined
 		},
 		forecast: {
 			location: null,
@@ -35,7 +36,7 @@ export function createEnvironmentState({
 			to: addHoursUTC(now, OPENMETEO_CONFIG.maxForecastDays * 24),
 			data: undefined,
 			lastUpdated: null,
-			timezone: 'UTC'
+			timezone: undefined
 		}
 	});
 
@@ -47,6 +48,7 @@ export function createEnvironmentState({
 			state.current.data = undefined;
 			state.current.location = null;
 			state.current.lastUpdated = null;
+			state.current.timezone = undefined;
 			return;
 		}
 
@@ -59,7 +61,7 @@ export function createEnvironmentState({
 			.then((data) => {
 				state.current.data = data;
 				state.current.lastUpdated = getUTCNow();
-				state.forecast.timezone = data.timezone;
+				state.current.timezone = data.timezone;
 			})
 			.catch((err) => {
 				state.current.error = err instanceof Error ? err : new Error(String(err));
@@ -77,6 +79,7 @@ export function createEnvironmentState({
 			state.forecast.data = undefined;
 			state.forecast.location = null;
 			state.forecast.lastUpdated = null;
+			state.forecast.timezone = undefined;
 			return;
 		}
 
@@ -89,10 +92,10 @@ export function createEnvironmentState({
 			.then((data) => {
 				state.forecast.data = data;
 				state.forecast.lastUpdated = getUTCNow();
-				state.forecast.timezone = data.timezone;
+				state.forecast.timezone = data[0].timezone;
 				logger.debug('DEBUG: Fetched data from date:', {
-					fromISO: data.createdAt.toISOString(),
-					timezone: data.timezone
+					fromISO: data[0].createdAt.toISOString(),
+					timezone: data[0].timezone
 				});
 			})
 			.catch((err) => {

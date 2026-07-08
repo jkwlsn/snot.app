@@ -1,17 +1,20 @@
-import type { PollenSeries, PollenType } from '../types';
+import type { EnvironmentObservation, PollenType } from '../types';
 import type { UTCDate } from '$lib/date';
 
-export function toMultiPollenLineChartData(series: PollenSeries, selectedTypes: PollenType[]) {
-	if (!series.instants) return [];
+export function toMultiPollenLineChartData(
+	series: EnvironmentObservation[],
+	selectedTypes: PollenType[]
+) {
+	if (!series) return [];
 
-	return series.instants.map((instant) => {
+	return series.map((observation) => {
 		const dataPoint: Record<string, number | UTCDate> = {
-			createdAt: instant.createdAt
+			createdAt: observation.createdAt
 		};
 
-		instant.metrics.forEach((metric) => {
-			if (selectedTypes.includes(metric.type)) {
-				dataPoint[metric.type] = metric.value;
+		observation.pollen.forEach((p) => {
+			if (selectedTypes.includes(p.type)) {
+				dataPoint[p.type] = p.value;
 			}
 		});
 

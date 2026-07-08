@@ -1,8 +1,8 @@
 import { toUTCDate, type UTCDate } from '$lib/date';
-import type { PollenSeries, PollenType } from '../types';
+import type { EnvironmentObservation, PollenType } from '../types';
 
 export function calculateMissingDataRanges(
-	seriesData: PollenSeries | undefined,
+	seriesData: EnvironmentObservation[] | undefined,
 	selectedPollenTypes: PollenType[],
 	xDomainStart: UTCDate,
 	xDomainEnd: UTCDate
@@ -10,7 +10,7 @@ export function calculateMissingDataRanges(
 	const start = xDomainStart;
 	const end = xDomainEnd;
 
-	if (!seriesData || !seriesData.instants || seriesData.instants.length === 0) {
+	if (!seriesData || seriesData.length === 0) {
 		return [[start, end]];
 	}
 
@@ -18,19 +18,19 @@ export function calculateMissingDataRanges(
 	let gapStart: UTCDate | null = null;
 	let lastValidInstant: UTCDate | null = null;
 
-	for (let i = 0; i < seriesData.instants.length; i++) {
-		const instant = seriesData.instants[i];
-		const hasData = instant.metrics.some((m) => selectedPollenTypes.includes(m.type));
+	for (let i = 0; i < seriesData.length; i++) {
+		const observation = seriesData[i];
+		const hasData = observation.pollen.some((m) => selectedPollenTypes.includes(m.type));
 
 		if (hasData) {
-			lastValidInstant = toUTCDate(instant.createdAt);
+			lastValidInstant = toUTCDate(observation.createdAt);
 			if (gapStart) {
 				ranges.push([gapStart, lastValidInstant]);
 				gapStart = null;
 			}
 		} else if (!gapStart) {
 			// Start gap from the last known valid data point
-			gapStart = lastValidInstant ?? toUTCDate(instant.createdAt);
+			gapStart = lastValidInstant ?? toUTCDate(observation.createdAt);
 		}
 	}
 
