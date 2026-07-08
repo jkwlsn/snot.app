@@ -14,7 +14,7 @@
 	const logger = getLoggingService();
 
 	// Use forecast timezone if available, otherwise fallback to UTC
-	const forecastTimezone = $derived(env.forecast.data?.timezone ?? 'UTC');
+	const forecastTimezone = $derived(env.forecast.timezone ?? 'UTC');
 
 	function updateFrom(e: Event) {
 		const target = e.target as HTMLInputElement;
@@ -63,7 +63,7 @@
 	}
 
 	// Constraints for UI
-	const now = env.forecast.data?.createdAt ?? getUTCNow();
+	const now = env.forecast.from ?? getUTCNow();
 	const absoluteMax = addHoursUTC(now, OPENMETEO_CONFIG.maxForecastDays * 24);
 
 	// Helpers to format dates in the forecast's timezone for the UI

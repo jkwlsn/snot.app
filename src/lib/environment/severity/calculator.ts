@@ -1,25 +1,29 @@
 import { DEFAULT_SEVERITY, POLLEN_SEVERITY } from './config';
-import type { PollenInstant, PollenSeries } from '../types';
-import type {
-	PollenInstantWithSeverity,
-	PollenSeriesWithSeverity,
-	PollenSeverityLevel
-} from './types';
+import type { EnvironmentObservation } from '../types';
+import type { EnvironmentObservationWithSeverity, PollenSeverityLevel } from './types';
 
 function calculatePollenSeverity(value: number): PollenSeverityLevel {
 	return POLLEN_SEVERITY.find((level) => value >= level.threshold) ?? DEFAULT_SEVERITY;
 }
 
-export function addSeverityToInstant(instant: PollenInstant): PollenInstantWithSeverity {
+export function getPollenSeverity(severityId: PollenSeverityLevel['id']): PollenSeverityLevel {
+	return POLLEN_SEVERITY.find((severity) => severity.id === severityId) ?? DEFAULT_SEVERITY;
+}
+
+export function addSeverityToObservation(
+	observation: EnvironmentObservation
+): EnvironmentObservationWithSeverity {
 	return {
-		...instant,
-		metrics: instant.metrics.map((metric) => ({
-			...metric,
-			severity: calculatePollenSeverity(metric.value)
+		...observation,
+		pollen: observation.pollen.map((measurement) => ({
+			...measurement,
+			severity: calculatePollenSeverity(measurement.value)
 		}))
 	};
 }
 
-export function addSeverityToSeries(series: PollenSeries): PollenSeriesWithSeverity {
-	return { ...series, instants: series.instants.map(addSeverityToInstant) };
+export function addSeverityToObservations(
+	observations: EnvironmentObservation[]
+): EnvironmentObservationWithSeverity[] {
+	return observations.map(addSeverityToObservation);
 }

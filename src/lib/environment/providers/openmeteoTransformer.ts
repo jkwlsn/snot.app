@@ -1,77 +1,103 @@
 import { millisecondsInSecond } from 'date-fns/constants';
 import { OPENMETEO_CONFIG } from './config';
-import { toUTCDate, addSecondsUTC, getUTCNow } from '$lib/date';
+import { toUTCDate, addSecondsUTC } from '$lib/date';
 import type {
+	EnvironmentObservation,
 	EnvironmentTransformer,
-	PollenInstant,
-	PollenMetric,
-	PollenSeries,
+	PollenMeasurement,
 	PollenType,
 	PollenUnit
 } from '../types';
-import type { Unit } from '@openmeteo/sdk/unit';
 import type { OpenMeteoProviderResponse } from './types';
-import type { UserLocation } from '$lib/location';
+import type { Unit } from '@openmeteo/sdk/unit';
+import type { LocationCoordinates } from '$lib/location';
 
 function mapUnit(unitCode: Unit | string | undefined): PollenUnit {
-	return (typeof unitCode === 'number' ? OPENMETEO_CONFIG.unitMap[unitCode] : null) ?? 'grains_m3';
+	return typeof unitCode === 'number'
+		? (OPENMETEO_CONFIG.unitMap[unitCode] ?? 'grains_m3')
+		: 'grains_m3';
 }
 
-function transformMetric(
-	id: PollenType,
+function transformPollenMetric(
+	type: PollenType,
 	value: number | null | undefined,
 	unitCode: Unit | string | undefined
-): PollenMetric | null {
-	if (value == null) return null;
+): PollenMeasurement | null {
+	if (value == null) {
+		return null;
+	}
 
 	return {
-		type: id,
+		type,
 		value,
 		unit: mapUnit(unitCode)
 	};
 }
 
+function getLocation(data: OpenMeteoProviderResponse): LocationCoordinates {
+	return {
+		latitude: data.raw.latitude(),
+		longitude: data.raw.longitude()
+	};
+}
+
+function getTimezone(data: OpenMeteoProviderResponse): string {
+	return data.raw.timezone() ?? 'UTC';
+}
+
 export function createOpenmeteoTransformer(): EnvironmentTransformer<OpenMeteoProviderResponse> {
 	return {
-		toInstant(data: OpenMeteoProviderResponse, location: UserLocation): PollenSeries {
-			if (data.raw.current() == null) throw new Error('No current data');
+		toObservation(data: OpenMeteoProviderResponse): EnvironmentObservation {
+			const current = data.raw.current()!;
 
-			const { raw, pollenTypes } = data;
-			const current = raw.current()!;
+			if (!current) {
+				throw new Error('No current data available');
+			}
+
 			const createdAt = toUTCDate(Number(current.time()) * millisecondsInSecond);
-			const timezone = raw.timezone() ?? 'UTC';
+			const timezone = getTimezone(data);
+			const location = getLocation(data);
 
-			const metrics = pollenTypes
+			const pollen: PollenMeasurement[] = data.pollenTypes
 				.map((type: PollenType, index: number) => {
 					const variable = current.variables(index);
-					return variable ? transformMetric(type, variable.value(), variable.unit()) : null;
+					return variable ? transformPollenMetric(type, variable.value(), variable.unit()) : null;
 				})
-				.filter((m): m is PollenMetric => m !== null);
+				.filter((m): m is PollenMeasurement => m !== null);
 
 			return {
 				createdAt,
+				timezone,
 				location,
-				pollenTypes: metrics.map((m: PollenMetric) => m.type),
-				instants: [{ createdAt, timezone, metrics }],
-				timezone
+				pollen
 			};
 		},
 
-		toSeries(data: OpenMeteoProviderResponse, location: UserLocation): PollenSeries {
-			if (data.raw.hourly() == null) throw new Error('No current data');
+		toObservationSeries(data: OpenMeteoProviderResponse): EnvironmentObservation[] {
+			const hourly = data.raw.hourly()!;
 
-			const { raw, pollenTypes } = data;
-			const hourly = raw.hourly()!;
+			if (!hourly) {
+				throw new Error('No current data');
+			}
+
 			const startTime = toUTCDate(Number(hourly.time()) * millisecondsInSecond);
 			const interval = hourly.interval();
-			const timezone = raw.timezone() ?? 'UTC';
+			const timezone = getTimezone(data);
+			const location = getLocation(data);
 
-			const variables = pollenTypes
-				.map((type: PollenType, index: number) => {
+			const variables = data.pollenTypes
+				.map((type, index) => {
 					const variable = hourly.variables(index);
+
+					if (!variable) {
+						return null;
+					}
+
 					const values = variable?.valuesArray();
 
-					if (!variable || !values) return null;
+					if (!values) {
+						return null;
+					}
 
 					return { type, values, unit: mapUnit(variable.unit()) };
 				})
@@ -81,29 +107,23 @@ export function createOpenmeteoTransformer(): EnvironmentTransformer<OpenMeteoPr
 
 			const length = variables[0]?.values.length ?? 0;
 
-			const instants: PollenInstant[] = new Array(length);
+			const observations: EnvironmentObservation[] = [];
 
 			for (let i = 0; i < length; i++) {
 				const createdAt = addSecondsUTC(startTime, i * interval);
-				const metrics: PollenMetric[] = [];
+				const pollen: PollenMeasurement[] = [];
 
 				for (const v of variables) {
 					const value = v.values[i];
 					if (value != null && !isNaN(value)) {
-						metrics.push({ type: v.type, value, unit: v.unit });
+						pollen.push({ type: v.type, value, unit: v.unit });
 					}
 				}
 
-				instants[i] = { createdAt, timezone, metrics };
+				observations.push({ createdAt, timezone, location, pollen });
 			}
 
-			return {
-				createdAt: instants[0]?.createdAt ?? getUTCNow(),
-				location,
-				pollenTypes: variables.map((v) => v.type),
-				instants,
-				timezone
-			};
+			return observations;
 		}
 	};
 }

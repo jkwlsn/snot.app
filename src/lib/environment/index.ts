@@ -11,3 +11,4 @@ export { default as ForecastDateSelector } from './components/ForecastDateSelect
 export { default as MultiPollenLineChart } from './components/MultiPollenLineChart.svelte';
 export * from './utils/';
 export * from './severity';
+export * from './types';
