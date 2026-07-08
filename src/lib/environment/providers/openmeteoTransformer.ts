@@ -1,5 +1,4 @@
 import { millisecondsInSecond } from 'date-fns/constants';
-import { calculateSeverity } from '../utils';
 import { OPENMETEO_CONFIG } from './config';
 import { toUTCDate, addSecondsUTC, getUTCNow } from '$lib/date';
 import type {
@@ -28,8 +27,7 @@ function transformMetric(
 	return {
 		type: id,
 		value,
-		unit: mapUnit(unitCode),
-		severity: calculateSeverity(value)
+		unit: mapUnit(unitCode)
 	};
 }
 
@@ -92,7 +90,7 @@ export function createOpenmeteoTransformer(): EnvironmentTransformer<OpenMeteoPr
 				for (const v of variables) {
 					const value = v.values[i];
 					if (value != null && !isNaN(value)) {
-						metrics.push({ type: v.type, value, unit: v.unit, severity: calculateSeverity(value) });
+						metrics.push({ type: v.type, value, unit: v.unit });
 					}
 				}
 
