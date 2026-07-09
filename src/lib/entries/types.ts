@@ -4,12 +4,12 @@ import type { SymptomFields } from '$lib/symptoms';
 import type { CreatedAt, Repository, Stored, WithTimezone } from '$lib/types';
 import type { UTCDate } from '@date-fns/utc';
 
-export interface CreateEntry extends CreatedAt, WithTimezone, WithLocation {
+export interface CreateEntry extends WithLocation {
 	symptoms: SymptomFields;
 	pollen: PollenMeasurement[] | undefined;
 }
 
-export type Entry = Stored<CreateEntry>;
+export type Entry = Stored<CreateEntry> & CreatedAt & WithTimezone;
 
 export interface EntryRepository extends Repository<CreateEntry, Entry> {
 	getRange(from: UTCDate, to: UTCDate): Promise<Entry[]>;

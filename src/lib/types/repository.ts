@@ -1,4 +1,4 @@
-import type { WithId, StoredId } from './base';
+import type { WithId, StoredId, WithTimezone } from './base';
 
 export interface Repository<TInput, TOutput extends WithId> {
 	add(entry: TInput): Promise<StoredId>;
@@ -9,4 +9,4 @@ export interface Repository<TInput, TOutput extends WithId> {
 }
 
 // Utility to map a Domain entity (with UTCDate) to a Persistence entity (with number)
-export type Persisted<T> = Omit<T, 'createdAt'> & { createdAt: number };
+export type Persisted<T> = Omit<T, 'createdAt'> & { createdAt: number } & WithTimezone;
