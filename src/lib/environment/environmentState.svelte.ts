@@ -25,8 +25,7 @@ export function createEnvironmentState({
 			isLoading: false,
 			error: null,
 			data: undefined,
-			lastUpdated: null,
-			timezone: undefined
+			lastUpdated: null
 		},
 		forecast: {
 			location: null,
@@ -48,7 +47,6 @@ export function createEnvironmentState({
 			state.current.data = undefined;
 			state.current.location = null;
 			state.current.lastUpdated = null;
-			state.current.timezone = undefined;
 			return;
 		}
 
@@ -61,7 +59,6 @@ export function createEnvironmentState({
 			.then((data) => {
 				state.current.data = data;
 				state.current.lastUpdated = getUTCNow();
-				state.current.timezone = data.timezone;
 			})
 			.catch((err) => {
 				state.current.error = err instanceof Error ? err : new Error(String(err));
@@ -92,10 +89,10 @@ export function createEnvironmentState({
 			.then((data) => {
 				state.forecast.data = data;
 				state.forecast.lastUpdated = getUTCNow();
-				state.forecast.timezone = data[0].timezone;
+				state.forecast.timezone = data.timezone;
 				logger.debug('DEBUG: Fetched data from date:', {
-					fromISO: data[0].createdAt.toISOString(),
-					timezone: data[0].timezone
+					fromISO: data.observations[0].createdAt.toISOString(),
+					timezone: data.timezone
 				});
 			})
 			.catch((err) => {

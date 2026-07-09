@@ -3,6 +3,7 @@ import { OPENMETEO_CONFIG } from './config';
 import { toUTCDate, addSecondsUTC } from '$lib/date';
 import type {
 	EnvironmentObservation,
+	EnvironmentObservationSeries,
 	EnvironmentTransformer,
 	PollenMeasurement,
 	PollenType,
@@ -55,7 +56,6 @@ export function createOpenmeteoTransformer(): EnvironmentTransformer<OpenMeteoPr
 			}
 
 			const createdAt = toUTCDate(Number(current.time()) * millisecondsInSecond);
-			const timezone = getTimezone(data);
 			const location = getLocation(data);
 
 			const pollen: PollenMeasurement[] = data.pollenTypes
@@ -67,13 +67,12 @@ export function createOpenmeteoTransformer(): EnvironmentTransformer<OpenMeteoPr
 
 			return {
 				createdAt,
-				timezone,
 				location,
 				pollen
 			};
 		},
 
-		toObservationSeries(data: OpenMeteoProviderResponse): EnvironmentObservation[] {
+		toObservationSeries(data: OpenMeteoProviderResponse): EnvironmentObservationSeries {
 			const hourly = data.raw.hourly()!;
 
 			if (!hourly) {
@@ -82,8 +81,8 @@ export function createOpenmeteoTransformer(): EnvironmentTransformer<OpenMeteoPr
 
 			const startTime = toUTCDate(Number(hourly.time()) * millisecondsInSecond);
 			const interval = hourly.interval();
-			const timezone = getTimezone(data);
 			const location = getLocation(data);
+			const timezone = getTimezone(data);
 
 			const variables = data.pollenTypes
 				.map((type, index) => {
@@ -120,10 +119,10 @@ export function createOpenmeteoTransformer(): EnvironmentTransformer<OpenMeteoPr
 					}
 				}
 
-				observations.push({ createdAt, timezone, location, pollen });
+				observations.push({ createdAt, location, pollen });
 			}
 
-			return observations;
+			return { observations, timezone };
 		}
 	};
 }

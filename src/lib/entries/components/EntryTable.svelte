@@ -20,7 +20,7 @@
 		{ header: 'ID', accessor: (r: Entry) => r.id },
 		{
 			header: 'CreatedAt',
-			accessor: (r: Entry) => formatDisplayDate(r.createdAt, undefined, r.timezone)
+			accessor: (r: Entry) => formatDisplayDate(r.createdAt, undefined)
 		},
 		...SYMPTOMS.map((s) => ({
 			header: s.name,

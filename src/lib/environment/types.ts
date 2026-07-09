@@ -1,4 +1,4 @@
-import type { CreatedAt } from '$lib/types';
+import type { CreatedAt, WithTimezone } from '$lib/types';
 import type { LocationCoordinates, UserLocation, WithLocation } from '$lib/location';
 import type { POLLEN_UNITS, POLLENS } from './config';
 import type { UTCDate } from '$lib/date';
@@ -18,6 +18,16 @@ export interface EnvironmentObservation extends CreatedAt {
 	pollen: PollenMeasurement[];
 }
 
+export interface EnvironmentObservationSeries extends WithTimezone {
+	observations: EnvironmentObservation[];
+}
+
+// Current pollen
+export type CurrentEnvironment = EnvironmentObservation;
+
+// Forecast: a series that carries one timezone for the whole batch
+export type ForecastEnvironment = EnvironmentObservationSeries;
+
 export interface EnvironmentProvider<EnvironmentProviderResponse> {
 	readonly supportedPollens: PollenType[];
 	getCurrent(
@@ -33,41 +43,37 @@ export interface EnvironmentProvider<EnvironmentProviderResponse> {
 }
 
 export interface EnvironmentTransformer<EnvironmentProviderResponse> {
-	toObservation(data: EnvironmentProviderResponse): EnvironmentObservation;
-	toObservationSeries(data: EnvironmentProviderResponse): EnvironmentObservation[];
+	toObservation(data: EnvironmentProviderResponse): CurrentEnvironment;
+	toObservationSeries(data: EnvironmentProviderResponse): ForecastEnvironment;
 }
 
 export interface EnvironmentRepository {
 	getSupportedPollenTypes(): PollenType[];
-	getCurrent(pollenTypes: PollenType[], location: UserLocation): Promise<EnvironmentObservation>;
+	getCurrent(pollenTypes: PollenType[], location: UserLocation): Promise<CurrentEnvironment>;
 	getForecast(
 		pollenTypes: PollenType[],
 		location: UserLocation,
 		from: UTCDate,
 		to: UTCDate
-	): Promise<EnvironmentObservation[]>;
+	): Promise<ForecastEnvironment>;
 }
 
 export interface EnvironmentService {
 	getSupportedPollenTypes(): PollenType[];
-	getCurrentPollen(
-		pollenTypes: PollenType[],
-		location: UserLocation
-	): Promise<EnvironmentObservation>;
+	getCurrentPollen(pollenTypes: PollenType[], location: UserLocation): Promise<CurrentEnvironment>;
 	getForecastPollen(
 		pollenTypes: PollenType[],
 		location: UserLocation,
 		from: UTCDate,
 		to: UTCDate
-	): Promise<EnvironmentObservation[]>;
+	): Promise<ForecastEnvironment>;
 }
 
 export interface CurrentPollenState extends WithLocation {
 	error: Error | null;
 	isLoading: boolean;
-	data: EnvironmentObservation | undefined;
+	data: CurrentEnvironment | undefined;
 	lastUpdated: UTCDate | null;
-	timezone: string | undefined;
 }
 
 export interface ForecastPollenState extends WithLocation {
@@ -75,7 +81,7 @@ export interface ForecastPollenState extends WithLocation {
 	isLoading: boolean;
 	from: UTCDate;
 	to: UTCDate;
-	data: EnvironmentObservation[] | undefined;
+	data: ForecastEnvironment | undefined;
 	lastUpdated: UTCDate | null;
 	timezone: string | undefined;
 }

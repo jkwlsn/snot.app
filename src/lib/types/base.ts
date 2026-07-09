@@ -6,6 +6,9 @@ export interface WithId {
 
 export interface CreatedAt {
 	createdAt: UTCDate;
+}
+
+export interface WithTimezone {
 	timezone: string;
 }
 

@@ -6,9 +6,9 @@
 	import { getEnvironmentState } from '$lib/environment';
 
 	import { toMultiPollenLineChartData } from '$lib/environment/adapters/multiPollenLineChartAdapter';
-	import type { EnvironmentObservation } from '../types';
+	import type { EnvironmentObservationSeries } from '../types';
 
-	let { data }: { data?: EnvironmentObservation[] } = $props();
+	let { data }: { data?: EnvironmentObservationSeries } = $props();
 
 	const env = getEnvironmentState();
 	const seriesData = $derived(data ?? env.forecast.data);
