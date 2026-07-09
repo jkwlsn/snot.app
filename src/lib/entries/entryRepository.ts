@@ -1,6 +1,6 @@
 import { database as db } from './database';
 import { handleError } from '$lib/errors';
-import { toUTCDate, type UTCDate } from '$lib/date';
+import { getUTCNow, toUTCDate, type UTCDate } from '$lib/date';
 import type { Persisted } from '$lib/types/repository';
 import type { LoggingService } from '$lib/logging';
 import type { StoredId } from '$lib/types/base';
@@ -34,7 +34,8 @@ export function createEntryRepository({ logger }: { logger: LoggingService }): E
 
 	const toPersisted = (entry: CreateEntry): Persisted<CreateEntry> => ({
 		...entry,
-		createdAt: entry.createdAt.getTime()
+		createdAt: getUTCNow().getTime(),
+		timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
 	});
 
 	return {
@@ -45,10 +46,9 @@ export function createEntryRepository({ logger }: { logger: LoggingService }): E
 			run(
 				'update',
 				async () => {
-					const { createdAt, ...rest } = patch;
-					const dbPatch: Partial<Persisted<CreateEntry>> = { ...rest };
-					if (createdAt) dbPatch.createdAt = createdAt.getTime();
-					return db.entries.update(id, dbPatch).then(() => void 0);
+					return db.entries
+						.update(id, { ...patch, createdAt: getUTCNow().getTime() })
+						.then(() => void 0);
 				},
 				{ id, patch }
 			),
