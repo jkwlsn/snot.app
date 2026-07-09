@@ -1,13 +1,13 @@
-import type { EnvironmentObservation, PollenType } from '../types';
+import type { EnvironmentObservationSeries, PollenType } from '../types';
 import type { UTCDate } from '$lib/date';
 
 export function toMultiPollenLineChartData(
-	series: EnvironmentObservation[],
+	series: EnvironmentObservationSeries,
 	selectedTypes: PollenType[]
 ) {
 	if (!series) return [];
 
-	return series.map((observation) => {
+	return series.observations.map((observation) => {
 		const dataPoint: Record<string, number | UTCDate> = {
 			createdAt: observation.createdAt
 		};

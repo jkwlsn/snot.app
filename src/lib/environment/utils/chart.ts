@@ -1,8 +1,8 @@
 import { toUTCDate, type UTCDate } from '$lib/date';
-import type { EnvironmentObservation, PollenType } from '../types';
+import type { EnvironmentObservationSeries, PollenType } from '../types';
 
 export function calculateMissingDataRanges(
-	seriesData: EnvironmentObservation[] | undefined,
+	seriesData: EnvironmentObservationSeries | undefined,
 	selectedPollenTypes: PollenType[],
 	xDomainStart: UTCDate,
 	xDomainEnd: UTCDate
@@ -10,7 +10,7 @@ export function calculateMissingDataRanges(
 	const start = xDomainStart;
 	const end = xDomainEnd;
 
-	if (!seriesData || seriesData.length === 0) {
+	if (!seriesData || seriesData.observations.length === 0) {
 		return [[start, end]];
 	}
 
@@ -18,8 +18,8 @@ export function calculateMissingDataRanges(
 	let gapStart: UTCDate | null = null;
 	let lastValidInstant: UTCDate | null = null;
 
-	for (let i = 0; i < seriesData.length; i++) {
-		const observation = seriesData[i];
+	for (let i = 0; i < seriesData.observations.length; i++) {
+		const observation = seriesData.observations[i];
 		const hasData = observation.pollen.some((m) => selectedPollenTypes.includes(m.type));
 
 		if (hasData) {

@@ -14,8 +14,7 @@ export function createLoggingService({
 				message,
 				context,
 				error,
-				createdAt: getUTCNow(),
-				timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+				createdAt: getUTCNow()
 			});
 		}
 	}
