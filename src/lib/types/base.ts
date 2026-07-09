@@ -6,7 +6,6 @@ export interface WithId {
 
 export interface CreatedAt {
 	createdAt: UTCDate;
-	timezone: string;
 }
 
 export type Stored<T> = T & WithId;

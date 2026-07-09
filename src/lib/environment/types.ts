@@ -67,7 +67,6 @@ export interface CurrentPollenState extends WithLocation {
 	isLoading: boolean;
 	data: EnvironmentObservation | undefined;
 	lastUpdated: UTCDate | null;
-	timezone: string | undefined;
 }
 
 export interface ForecastPollenState extends WithLocation {
