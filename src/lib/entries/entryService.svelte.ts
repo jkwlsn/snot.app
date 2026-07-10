@@ -1,5 +1,4 @@
 import { createEntryRepository } from './entryRepository';
-import { getUTCNow } from '$lib/date';
 import type { EntryService } from '$lib/entries';
 import type { UTCDate } from '$lib/date';
 import type { LocationState } from '$lib/location';
@@ -25,8 +24,6 @@ export function createEntryService({
 		submitEntry: (symptoms: SymptomFields) => {
 			const settings = settingsService.getSettings();
 			return repo.add({
-				createdAt: getUTCNow(),
-				timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
 				location: settings.locationEnabled ? $state.snapshot(locationState.currentLocation) : null,
 				symptoms: symptoms,
 				pollen: settings.locationEnabled
