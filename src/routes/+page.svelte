@@ -5,13 +5,18 @@
 		addSeverityToObservation,
 		createPollenSeverityNotifications
 	} from '$lib/environment/severity';
+	import { getSettingsContext } from '$lib/settings';
 
 	const entries = getEntryState();
 	const env = getEnvironmentState();
+	const settings = getSettingsContext();
 
 	const notifications = $derived(
 		env.current.data
-			? createPollenSeverityNotifications(addSeverityToObservation(env.current.data), 3)
+			? createPollenSeverityNotifications(
+					addSeverityToObservation(env.current.data),
+					settings.current.pollenSeverityLevel
+				)
 			: []
 	);
 </script>

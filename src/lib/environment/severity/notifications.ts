@@ -7,12 +7,12 @@ import type {
 
 export function createPollenSeverityNotifications(
 	observation: EnvironmentObservationWithSeverity,
-	thresholdId: PollenSeverityLevel['id']
+	severityLevelId: PollenSeverityLevel['id']
 ): PollenSeverityNotification[] {
-	const severity = getPollenSeverity(thresholdId);
+	const severityLevel = getPollenSeverity(severityLevelId);
 
 	return observation.pollen
-		.filter((pollen) => pollen.value >= severity.threshold)
+		.filter((pollen) => pollen.value >= severityLevel.threshold)
 		.map((measurement) => ({
 			timestamp: observation.createdAt,
 			location: observation.location,
