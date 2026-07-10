@@ -1,4 +1,5 @@
 <script lang="ts">
+	import SeverityThresholdInput from '$lib/environment/severity/components/SeverityThresholdInput.svelte';
 	import { getSettingsContext } from '$lib/settings';
 
 	const settings = getSettingsContext();
@@ -39,6 +40,8 @@
 			<p>Note: Location access is currently denied in your browser settings.</p>
 		{/if}
 	</fieldset>
+
+	<SeverityThresholdInput />
 
 	<button type="reset">Reset to default</button>
 </form>
