@@ -59,7 +59,7 @@
 		"d3-time": "^3.1.0",
 		"date-fns": "^4.1.0",
 		"dexie": "^4.4.4",
-		"layerchart": "2.0.1",
+		"layerchart": "2.0.2",
 		"openmeteo": "^1.2.3"
 	}
 }
