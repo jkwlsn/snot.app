@@ -10,8 +10,7 @@ import type { EnvironmentState } from '$lib/environment/types';
 export function createEntryService({
 	logger,
 	locationState,
-	environmentState,
-	settingsService
+	environmentState
 }: {
 	logger: LoggingService;
 	locationState: LocationState;
@@ -22,13 +21,10 @@ export function createEntryService({
 
 	return {
 		submitEntry: (symptoms: SymptomFields) => {
-			const settings = settingsService.getSettings();
 			return repo.add({
-				location: settings.locationEnabled ? $state.snapshot(locationState.currentLocation) : null,
+				location: $state.snapshot(locationState.currentLocation) ?? null,
 				symptoms: symptoms,
-				pollen: settings.locationEnabled
-					? $state.snapshot(environmentState.current.data?.pollen)
-					: undefined
+				pollen: $state.snapshot(environmentState.current.data?.pollen) ?? undefined
 			});
 		},
 		getAllEntries: () => repo.getAll(),
