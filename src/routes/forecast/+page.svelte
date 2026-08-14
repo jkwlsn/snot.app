@@ -12,4 +12,10 @@
 <h2>Forecast</h2>
 <PollenSelector />
 <ForecastDateSelector />
-<MultiPollenLineChart data={environmentData.forecast.data} />
+<MultiPollenLineChart
+	data={environmentData.forecast.data}
+	selectedPollenTypes={environmentData.selectedPollenTypes}
+	from={environmentData.forecast.from}
+	to={environmentData.forecast.to}
+	timezone={environmentData.forecast.timezone}
+/>
