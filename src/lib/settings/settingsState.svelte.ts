@@ -1,5 +1,4 @@
 import { createContext } from 'svelte';
-import { locationState } from '$lib/location';
 import type { AppSettings, SettingsService, SettingsState } from './types';
 
 export function createSettingsState({ service }: { service: SettingsService }): SettingsState {
@@ -9,12 +8,6 @@ export function createSettingsState({ service }: { service: SettingsService }): 
 	$effect(() => {
 		const colorScheme = current.theme === 'system' ? 'light dark' : current.theme;
 		document.documentElement.style.colorScheme = colorScheme;
-	});
-
-	$effect(() => {
-		if (!current.locationEnabled) {
-			locationState.currentLocation = null;
-		}
 	});
 
 	$effect(() => {
