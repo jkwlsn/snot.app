@@ -18,8 +18,8 @@
 </script>
 
 <fieldset>
-	<legend>Sensitivity</legend>
-	<label for="severity-threshold-slider">Select sensitivity</label>
+	<legend>Pollen Severity</legend>
+	<label for="severity-threshold-slider">Select minimum severity</label>
 	<input
 		type="range"
 		id="severity-threshold-slider"
@@ -28,5 +28,5 @@
 		step={1}
 		bind:value={severityLevel}
 	/>
-	<span>{pollenSeverity}</span>
+	<output>{pollenSeverity.level}</output>
 </fieldset>
