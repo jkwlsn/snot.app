@@ -1,33 +1,25 @@
 <script lang="ts">
-	import SeverityThresholdInput from '$lib/environment/severity/components/SeverityThresholdInput.svelte';
+	import ThemeInput from './ThemeInput.svelte';
+	import SettingsFieldset from './SettingsFieldset.svelte';
 	import { LocationInput } from '$lib/location';
 	import { getSettingsContext } from '$lib/settings';
+	import { SeverityThresholdInput } from '$lib/environment';
 
 	const settings = getSettingsContext();
-
-	function handleThemeChange(event: Event) {
-		const target = event.currentTarget as HTMLSelectElement;
-		settings.update('theme', target.value as 'light' | 'dark' | 'system');
-	}
 </script>
 
 <form onreset={() => settings.reset()}>
-	<fieldset>
-		<legend>Location</legend>
+	<SettingsFieldset title="Location">
 		<LocationInput />
-	</fieldset>
+	</SettingsFieldset>
 
-	<fieldset>
-		<legend>Appearance</legend>
-		<select id="app-theme" value={settings.current.theme} onchange={handleThemeChange}>
-			<option value="system">System</option>
-			<option value="light">Light</option>
-			<option value="dark">Dark</option>
-		</select>
-		<label for="app-theme">Set app theme</label>
-	</fieldset>
+	<SettingsFieldset title="Appearance">
+		<ThemeInput />
+	</SettingsFieldset>
 
-	<SeverityThresholdInput />
+	<SettingsFieldset title="Minimum Severity">
+		<SeverityThresholdInput />
+	</SettingsFieldset>
 
 	<button type="reset">Reset to default</button>
 </form>
