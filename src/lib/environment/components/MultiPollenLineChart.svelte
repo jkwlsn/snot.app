@@ -3,24 +3,29 @@
 	import { scaleUtc } from 'd3-scale';
 	import { calculateMissingDataRanges } from '../utils/chart';
 	import { formatDisplayDate, type UTCDate } from '$lib/date';
-	import { getEnvironmentState } from '$lib/environment';
-
 	import { toMultiPollenLineChartData } from '$lib/environment/adapters/multiPollenLineChartAdapter';
-	import type { EnvironmentObservationSeries } from '../types';
+	import type { EnvironmentObservationSeries, PollenType } from '../types';
 
-	let { data }: { data?: EnvironmentObservationSeries } = $props();
-
-	const env = getEnvironmentState();
-	const seriesData = $derived(data ?? env.forecast.data);
+	let {
+		data,
+		selectedPollenTypes = [],
+		from,
+		to,
+		timezone = 'UTC'
+	}: {
+		data?: EnvironmentObservationSeries;
+		selectedPollenTypes: PollenType[];
+		from: UTCDate;
+		to: UTCDate;
+		timezone: string | undefined;
+	} = $props();
 
 	const xDomain = $derived.by((): [UTCDate, UTCDate] => {
 		// Use user-selected forecast range for axis domain
-		return [env.forecast.from, env.forecast.to];
+		return [from, to];
 	});
 
 	const xFormat = (date: UTCDate | number) => {
-		const timezone = env.forecast.timezone ?? 'UTC';
-
 		return formatDisplayDate(date, {
 			weekday: 'short',
 			day: 'numeric',
@@ -44,7 +49,7 @@
 	];
 
 	const series = $derived(
-		env.selectedPollenTypes.map((type, index) => ({
+		selectedPollenTypes.map((type, index) => ({
 			key: type,
 			color: colors[index % colors.length],
 			strokeWidth: 2
@@ -52,18 +57,18 @@
 	);
 
 	const chartData = $derived.by(() => {
-		if (!seriesData) return [];
-		return toMultiPollenLineChartData(seriesData, env.selectedPollenTypes);
+		if (!data) return [];
+		return toMultiPollenLineChartData(data, selectedPollenTypes);
 	});
 
 	const missingDataRanges = $derived(
-		calculateMissingDataRanges(seriesData, env.selectedPollenTypes, xDomain[0], xDomain[1])
+		calculateMissingDataRanges(data, selectedPollenTypes, xDomain[0], xDomain[1])
 	);
 </script>
 
 <h2>Pollen Forecast</h2>
 
-{#if seriesData && chartData.length > 0 && series.length > 0}
+{#if data && chartData.length > 0 && series.length > 0}
 	<LineChart
 		data={chartData}
 		x="createdAt"
