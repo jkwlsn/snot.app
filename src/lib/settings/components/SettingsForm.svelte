@@ -1,5 +1,6 @@
 <script lang="ts">
 	import SeverityThresholdInput from '$lib/environment/severity/components/SeverityThresholdInput.svelte';
+	import { LocationInput } from '$lib/location';
 	import { getSettingsContext } from '$lib/settings';
 
 	const settings = getSettingsContext();
@@ -11,7 +12,11 @@
 </script>
 
 <form onreset={() => settings.reset()}>
-	<h2>Settings</h2>
+	<fieldset>
+		<legend>Location</legend>
+		<LocationInput />
+	</fieldset>
+
 	<fieldset>
 		<legend>Appearance</legend>
 		<select id="app-theme" value={settings.current.theme} onchange={handleThemeChange}>
