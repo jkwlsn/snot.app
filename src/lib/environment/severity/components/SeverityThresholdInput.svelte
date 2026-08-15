@@ -17,16 +17,13 @@
 	});
 </script>
 
-<fieldset>
-	<legend>Pollen Severity</legend>
-	<label for="severity-threshold-slider">Select minimum severity</label>
-	<input
-		type="range"
-		id="severity-threshold-slider"
-		max={maxSeverityThreshold}
-		min={minSeverityThreshold}
-		step={1}
-		bind:value={severityLevel}
-	/>
-	<output>{pollenSeverity.level}</output>
-</fieldset>
+<label for="severity-threshold-slider">Select minimum severity</label>
+<input
+	type="range"
+	id="severity-threshold-slider"
+	max={maxSeverityThreshold}
+	min={minSeverityThreshold}
+	step={1}
+	bind:value={severityLevel}
+/>
+<output>{pollenSeverity.level}</output>
