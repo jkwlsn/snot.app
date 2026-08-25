@@ -52,7 +52,7 @@
 	"dependencies": {
 		"@date-fns/tz": "^1.5.0",
 		"@date-fns/utc": "^2.1.1",
-		"@layerstack/utils": "2.0.0-next.18",
+		"@layerstack/utils": "2.0.0-next.19",
 		"@openmeteo/sdk": "^1.28.0",
 		"d3-scale": "^4.0.2",
 		"d3-shape": "^3.2.0",
