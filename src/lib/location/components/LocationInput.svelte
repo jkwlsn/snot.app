@@ -20,6 +20,8 @@
 	async function handleGPS() {
 		loading = true;
 
+		clearSearchInput();
+
 		try {
 			locationState.currentLocation = await service.getBrowserLocation();
 		} catch (err: unknown) {
@@ -65,9 +67,12 @@
 
 	function selectSearchResult(location: UserLocation) {
 		locationState.currentLocation = location;
+		clearSearchInput();
+	}
+
+	function clearSearchInput() {
 		locationState.searchResults = [];
 		query = '';
-		searchFinished = false;
 	}
 
 	// Handle saved locations feature
