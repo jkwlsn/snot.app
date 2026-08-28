@@ -6,6 +6,7 @@
 		createPollenSeverityNotifications
 	} from '$lib/environment/severity';
 	import { getSettingsContext } from '$lib/settings';
+	import { locationState } from '$lib/location';
 
 	const entries = getEntryState();
 	const env = getEnvironmentState();
@@ -23,6 +24,10 @@
 
 <h2>Overview</h2>
 <EntryForm />
-<SeverityIndicator {notifications} />
+{#if locationState.currentLocation}
+	<SeverityIndicator {notifications} />
+{:else}
+	<p>Set a location to view pollen forecast.</p>
+{/if}
 <EntryBarGraph title="Average severity today" records={entries.entries} />
 <EntryCalendarGraph title="Symptom count per day" records={entries.entries} />
