@@ -171,4 +171,19 @@
 			<p>No results found for "{query}"</p>
 		{/if}
 	</div>
+
+	<!-- Saved Locations -->
+	{#if settings.current.savedLocations.length > 0}
+		<div>
+			<strong>Saved Locations</strong>
+			<ul>
+				{#each settings.current.savedLocations as savedLoc, i (i)}
+					<li>
+						<button onclick={() => loadSavedLocation(savedLoc)}>{savedLoc.label}</button>
+						<button onclick={() => removeSavedLocation(savedLoc)}> ✕ </button>
+					</li>
+				{/each}
+			</ul>
+		</div>
+	{/if}
 </section>
