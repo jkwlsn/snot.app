@@ -69,6 +69,48 @@
 		query = '';
 		searchFinished = false;
 	}
+
+	// Handle saved locations feature
+	const isCurrentLocationSaved = $derived(
+		locationState.currentLocation
+			? settings.current.savedLocations.some(
+					(loc) =>
+						loc.coordinates.latitude === locationState.currentLocation?.coordinates.latitude &&
+						loc.coordinates.longitude === locationState.currentLocation?.coordinates.longitude
+				)
+			: false
+	);
+
+	function saveCurrentLocation() {
+		// Is there a location?
+		if (!locationState.currentLocation) {
+			return;
+		}
+		// Is the location already saved?
+		if (isCurrentLocationSaved) {
+			return;
+		}
+		// Save the location
+
+		const updatedSavedLocations = [
+			...settings.current.savedLocations,
+			locationState.currentLocation
+		];
+		settings.update('savedLocations', updatedSavedLocations);
+	}
+
+	function removeSavedLocation(loc: UserLocation) {
+		const updatedSavedLocations = settings.current.savedLocations.filter(
+			(item) =>
+				item.coordinates.latitude !== loc.coordinates.latitude ||
+				item.coordinates.longitude !== loc.coordinates.longitude
+		);
+		settings.update('savedLocations', updatedSavedLocations);
+	}
+
+	function loadSavedLocation(loc: UserLocation) {
+		locationState.currentLocation = loc;
+	}
 </script>
 
 <section>
@@ -84,6 +126,9 @@
 				📍 {locationState.currentLocation.label}
 			</span>
 			<button onclick={() => (locationState.currentLocation = null)}> ✕ </button>
+			<button onclick={saveCurrentLocation} disabled={isCurrentLocationSaved}
+				>{isCurrentLocationSaved ? ' ★ Saved' : ' ☆ Save'}</button
+			>
 		</div>
 	{:else}
 		<p>No location set</p>
