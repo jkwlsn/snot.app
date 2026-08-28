@@ -7,6 +7,7 @@ export interface AppSettings {
 	theme: Theme;
 	pollenSeverityLevel: PollenSeverityLevel['id'];
 	currentLocation: UserLocation | null;
+	savedLocations: UserLocation[];
 }
 
 export interface SettingsRepository {
