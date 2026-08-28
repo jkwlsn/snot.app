@@ -1,10 +1,12 @@
 import type { PollenSeverityLevel } from '$lib/environment';
+import type { UserLocation } from '$lib/location';
 
 export type Theme = 'light' | 'dark' | 'system';
 
 export interface AppSettings {
 	theme: Theme;
 	pollenSeverityLevel: PollenSeverityLevel['id'];
+	currentLocation: UserLocation | null;
 }
 
 export interface SettingsRepository {

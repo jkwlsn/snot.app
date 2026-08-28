@@ -34,7 +34,16 @@
 	setLoggingService(logger);
 
 	const settingsService = createSettingsService({ logger });
-	setSettingsContext(createSettingsState({ service: settingsService }));
+	const settingsState = createSettingsState({ service: settingsService });
+	setSettingsContext(settingsState);
+
+	// Initialize location state from persisted settings
+	locationState.currentLocation = settingsState.current.currentLocation;
+
+	// Sync persisted location to current location
+	$effect(() => {
+		settingsState.update('currentLocation', locationState.currentLocation);
+	});
 
 	const environmentService = createEnvironmentService({
 		logger,
