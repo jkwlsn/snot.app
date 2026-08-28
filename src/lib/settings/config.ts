@@ -4,7 +4,8 @@ import type { AppSettings } from './types';
 export const DEFAULT_SETTINGS: AppSettings = {
 	theme: 'system',
 	pollenSeverityLevel: DEFAULT_SEVERITY,
-	currentLocation: null
+	currentLocation: null,
+	savedLocations: []
 };
 
 export const SETTINGS_STORAGE_KEY = 'snot_app_settings';
