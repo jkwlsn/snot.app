@@ -1,3 +1,4 @@
+import { roundTo1km } from '../utils';
 import type { GeocodeProvider } from '../types';
 
 interface NominatimForwardResponse {
@@ -25,16 +26,16 @@ export const nominatimGeocodeProvider = (): GeocodeProvider => ({
 		return data.map((d: NominatimForwardResponse) => ({
 			label: d.display_name,
 			coordinates: {
-				latitude: Number(d.lat),
-				longitude: Number(d.lon)
+				latitude: roundTo1km(Number(d.lat)),
+				longitude: roundTo1km(Number(d.lon))
 			}
 		}));
 	},
 
 	async reverse(coordinates) {
-		const response = await fetch(
-			`${BASE}/reverse?format=json&lat=${coordinates.latitude}&lon=${coordinates.longitude}`
-		);
+		const lat = roundTo1km(coordinates.latitude);
+		const lon = roundTo1km(coordinates.longitude);
+		const response = await fetch(`${BASE}/reverse?format=json&lat=${lat}&lon=${lon}&zoom=14`);
 
 		if (!response.ok) {
 			throw new Error(`Geocoding failed (${response.status})`);
@@ -48,7 +49,10 @@ export const nominatimGeocodeProvider = (): GeocodeProvider => ({
 
 		return {
 			label: data.display_name,
-			coordinates: coordinates
+			coordinates: {
+				latitude: lat,
+				longitude: lon
+			}
 		};
 	}
 });

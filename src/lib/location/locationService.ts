@@ -1,6 +1,6 @@
 import { browserGeolocationProvider } from './providers/browserGeolocation';
 import { nominatimGeocodeProvider } from './providers/nominatimGeocodeProvider';
-import { isGeolocationPermissionError } from './utils';
+import { isGeolocationPermissionError, roundTo1km } from './utils';
 import { handleError } from '$lib/errors';
 import type { LocationCoordinates, LocationService } from './types';
 import type { LoggingService } from '$lib/logging';
@@ -47,7 +47,11 @@ export function createLocationService({ logger }: { logger: LoggingService }): L
 
 	const reverseGeocode = async (coordinates: LocationCoordinates) => {
 		try {
-			const location = await geocode.reverse(coordinates);
+			const roundedCoords: LocationCoordinates = {
+				latitude: roundTo1km(coordinates.latitude),
+				longitude: roundTo1km(coordinates.longitude)
+			};
+			const location = await geocode.reverse(roundedCoords);
 			if (!location) {
 				throw new Error('Reverse Geocode returned null');
 			}
