@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { EntryBarGraph, EntryCalendarGraph, EntryForm, getEntryState } from '$lib/entries';
+	import { EntryCalendarGraph, EntryForm, getEntryState } from '$lib/entries';
 	import { getEnvironmentState, SeverityIndicator } from '$lib/environment';
 	import {
 		addSeverityToObservation,
@@ -29,5 +29,4 @@
 {:else}
 	<p>Set a location to view pollen forecast.</p>
 {/if}
-<EntryBarGraph title="Average severity today" records={entries.entries} />
 <EntryCalendarGraph title="Symptom count per day" records={entries.entries} />
