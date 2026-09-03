@@ -15,8 +15,7 @@
 	}
 </script>
 
-<fieldset>
-	<legend>Pollen Types</legend>
+<div>
 	{#each env.supportedPollenTypes as pollenId (pollenId)}
 		<label>
 			<input
@@ -27,4 +26,4 @@
 			{getPollenName(pollenId)}
 		</label>
 	{/each}
-</fieldset>
+</div>
