@@ -3,7 +3,7 @@
 	import SettingsFieldset from './SettingsFieldset.svelte';
 	import { LocationInput } from '$lib/location';
 	import { getSettingsContext } from '$lib/settings';
-	import { SeverityThresholdInput } from '$lib/environment';
+	import { PollenSelector, SeverityThresholdInput } from '$lib/environment';
 
 	const settings = getSettingsContext();
 </script>
@@ -13,12 +13,16 @@
 		<LocationInput />
 	</SettingsFieldset>
 
-	<SettingsFieldset title="Appearance">
-		<ThemeInput />
+	<SettingsFieldset title="Pollen Selector">
+		<PollenSelector />
 	</SettingsFieldset>
 
 	<SettingsFieldset title="Minimum Severity">
 		<SeverityThresholdInput />
+	</SettingsFieldset>
+
+	<SettingsFieldset title="Appearance">
+		<ThemeInput />
 	</SettingsFieldset>
 
 	<button type="reset">Reset to default</button>
