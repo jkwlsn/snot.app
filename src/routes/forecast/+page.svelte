@@ -2,8 +2,7 @@
 	import {
 		ForecastDateSelector,
 		getEnvironmentState,
-		MultiPollenLineChart,
-		PollenSelector
+		MultiPollenLineChart
 	} from '$lib/environment';
 	import { locationState } from '$lib/location';
 
@@ -11,7 +10,6 @@
 </script>
 
 <h2>Forecast</h2>
-<PollenSelector />
 <ForecastDateSelector />
 {#if locationState.currentLocation}
 	<MultiPollenLineChart

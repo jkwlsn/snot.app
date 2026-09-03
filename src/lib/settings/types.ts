@@ -1,12 +1,13 @@
-import type { PollenSeverityLevel } from '$lib/environment';
+import type { PollenSeverityLevel, PollenType } from '$lib/environment';
 import type { UserLocation } from '$lib/location';
 
 export type Theme = 'light' | 'dark' | 'system';
 
 export interface AppSettings {
 	theme: Theme;
-	pollenSeverityLevel: PollenSeverityLevel['id'];
 	currentLocation: UserLocation | null;
+	selectedPollenTypes: PollenType[];
+	pollenSeverityLevel: PollenSeverityLevel['id'];
 	savedLocations: UserLocation[];
 }
 

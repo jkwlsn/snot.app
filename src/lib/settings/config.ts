@@ -3,8 +3,9 @@ import type { AppSettings } from './types';
 
 export const DEFAULT_SETTINGS: AppSettings = {
 	theme: 'system',
-	pollenSeverityLevel: DEFAULT_SEVERITY,
 	currentLocation: null,
+	selectedPollenTypes: [],
+	pollenSeverityLevel: DEFAULT_SEVERITY,
 	savedLocations: []
 };
 
