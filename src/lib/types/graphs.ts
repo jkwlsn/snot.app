@@ -1,15 +1,15 @@
-import type { CreatedAt } from './base';
+import type { CreatedAt } from "./base";
 
 interface DataPoint {
-	value: number;
+  value: number;
 }
 
 export interface LabelledDataPoint extends DataPoint {
-	label: string;
+  label: string;
 }
 
 export interface TemporalDataPoint extends CreatedAt, DataPoint {}
 
 export interface GraphProvider<TIn, TOut> {
-	transform(records: TIn[]): TOut[];
+  transform(records: TIn[]): TOut[];
 }

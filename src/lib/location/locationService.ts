@@ -1,70 +1,70 @@
-import { browserGeolocationProvider } from './providers/browserGeolocation';
-import { nominatimGeocodeProvider } from './providers/nominatimGeocodeProvider';
-import { isGeolocationPermissionError, roundTo1km } from './utils';
-import { handleError } from '$lib/errors';
-import type { LocationCoordinates, LocationService } from './types';
-import type { LoggingService } from '$lib/logging';
+import { browserGeolocationProvider } from "./providers/browserGeolocation";
+import { nominatimGeocodeProvider } from "./providers/nominatimGeocodeProvider";
+import { isGeolocationPermissionError, roundTo1km } from "./utils";
+import { handleError } from "$lib/errors";
+import type { LocationCoordinates, LocationService } from "./types";
+import type { LoggingService } from "$lib/logging";
 
 export function createLocationService({ logger }: { logger: LoggingService }): LocationService {
-	const geolocation = browserGeolocationProvider();
-	const geocode = nominatimGeocodeProvider();
+  const geolocation = browserGeolocationProvider();
+  const geocode = nominatimGeocodeProvider();
 
-	const getBrowserLocation = async () => {
-		try {
-			const coordinates = await geolocation.getCurrentPosition();
+  const getBrowserLocation = async () => {
+    try {
+      const coordinates = await geolocation.getCurrentPosition();
 
-			if (!coordinates) {
-				throw new Error('GPS returned null');
-			}
+      if (!coordinates) {
+        throw new Error("GPS returned null");
+      }
 
-			return await reverseGeocode(coordinates);
-		} catch (err: unknown) {
-			if (isGeolocationPermissionError(err)) {
-				logger.info('User denied geolocation prompt');
-				throw err;
-			}
+      return await reverseGeocode(coordinates);
+    } catch (err: unknown) {
+      if (isGeolocationPermissionError(err)) {
+        logger.info("User denied geolocation prompt");
+        throw err;
+      }
 
-			throw handleError({
-				error: err,
-				operation: 'getBrowserLocation',
-				logger
-			});
-		}
-	};
+      throw handleError({
+        error: err,
+        operation: "getBrowserLocation",
+        logger,
+      });
+    }
+  };
 
-	const forwardGeocode = async (query: string) => {
-		try {
-			return await geocode.forward(query);
-		} catch (err) {
-			throw handleError({
-				error: err,
-				operation: 'forwardGeocode',
-				logger,
-				context: { query }
-			});
-		}
-	};
+  const forwardGeocode = async (query: string) => {
+    try {
+      return await geocode.forward(query);
+    } catch (err) {
+      throw handleError({
+        error: err,
+        operation: "forwardGeocode",
+        logger,
+        context: { query },
+      });
+    }
+  };
 
-	const reverseGeocode = async (coordinates: LocationCoordinates) => {
-		try {
-			const roundedCoords: LocationCoordinates = {
-				latitude: roundTo1km(coordinates.latitude),
-				longitude: roundTo1km(coordinates.longitude)
-			};
-			const location = await geocode.reverse(roundedCoords);
-			if (!location) {
-				throw new Error('Reverse Geocode returned null');
-			}
-			return location;
-		} catch (err) {
-			throw handleError({
-				error: err,
-				operation: 'reverseGeocode',
-				logger,
-				context: { coordinates }
-			});
-		}
-	};
+  const reverseGeocode = async (coordinates: LocationCoordinates) => {
+    try {
+      const roundedCoords: LocationCoordinates = {
+        latitude: roundTo1km(coordinates.latitude),
+        longitude: roundTo1km(coordinates.longitude),
+      };
+      const location = await geocode.reverse(roundedCoords);
+      if (!location) {
+        throw new Error("Reverse Geocode returned null");
+      }
+      return location;
+    } catch (err) {
+      throw handleError({
+        error: err,
+        operation: "reverseGeocode",
+        logger,
+        context: { coordinates },
+      });
+    }
+  };
 
-	return { getBrowserLocation, forwardGeocode, reverseGeocode };
+  return { getBrowserLocation, forwardGeocode, reverseGeocode };
 }

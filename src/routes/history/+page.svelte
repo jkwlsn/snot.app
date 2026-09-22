@@ -1,7 +1,7 @@
 <script>
-	import { getEntryState, EntryTable } from '$lib/entries';
+  import { getEntryState, EntryTable } from "$lib/entries";
 
-	const entryData = getEntryState();
+  const entryData = getEntryState();
 </script>
 
 <h2>History</h2>
