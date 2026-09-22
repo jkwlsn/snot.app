@@ -1,17 +1,17 @@
-import type { UTCDate } from '$lib/date';
+import type { UTCDate } from "$lib/date";
 
 export interface WithId {
-	id: number;
+  id: number;
 }
 
 export interface CreatedAt {
-	createdAt: UTCDate;
+  createdAt: UTCDate;
 }
 
 export interface WithTimezone {
-	timezone: string;
+  timezone: string;
 }
 
 export type Stored<T> = T & WithId;
 
-export type StoredId = WithId['id'];
+export type StoredId = WithId["id"];

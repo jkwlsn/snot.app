@@ -1,6 +1,6 @@
-import type { SYMPTOMS, SEVERITY_LEVELS } from './config';
+import type { SYMPTOMS, SEVERITY_LEVELS } from "./config";
 
-export type SymptomName = (typeof SYMPTOMS)[number]['name'];
+export type SymptomName = (typeof SYMPTOMS)[number]["name"];
 
 export type SymptomSeverity = (typeof SEVERITY_LEVELS)[number];
 

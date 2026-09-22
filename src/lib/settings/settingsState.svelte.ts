@@ -1,52 +1,52 @@
-import { createContext } from 'svelte';
-import type { AppSettings, SettingsService, SettingsState } from './types';
+import { createContext } from "svelte";
+import type { AppSettings, SettingsService, SettingsState } from "./types";
 
 export function createSettingsState({ service }: { service: SettingsService }): SettingsState {
-	let current = $state.raw<AppSettings>(service.getSettings());
-	let locationPermission = $state<PermissionState | 'unknown'>('unknown');
+  let current = $state.raw<AppSettings>(service.getSettings());
+  let locationPermission = $state<PermissionState | "unknown">("unknown");
 
-	$effect(() => {
-		const colorScheme = current.theme === 'system' ? 'light dark' : current.theme;
-		document.documentElement.style.colorScheme = colorScheme;
-	});
+  $effect(() => {
+    const colorScheme = current.theme === "system" ? "light dark" : current.theme;
+    document.documentElement.style.colorScheme = colorScheme;
+  });
 
-	$effect(() => {
-		if (typeof navigator === 'undefined' || !('permissions' in navigator)) {
-			return;
-		}
+  $effect(() => {
+    if (typeof navigator === "undefined" || !("permissions" in navigator)) {
+      return;
+    }
 
-		let permissionStatus: PermissionStatus;
-		const onChange = () => {
-			if (permissionStatus) {
-				locationPermission = permissionStatus.state;
-			}
-		};
+    let permissionStatus: PermissionStatus;
+    const onChange = () => {
+      if (permissionStatus) {
+        locationPermission = permissionStatus.state;
+      }
+    };
 
-		navigator.permissions.query({ name: 'geolocation' }).then((status) => {
-			permissionStatus = status;
-			locationPermission = status.state;
-			status.addEventListener('change', onChange);
-		});
+    navigator.permissions.query({ name: "geolocation" }).then((status) => {
+      permissionStatus = status;
+      locationPermission = status.state;
+      status.addEventListener("change", onChange);
+    });
 
-		return () => {
-			permissionStatus?.removeEventListener('change', onChange);
-		};
-	});
+    return () => {
+      permissionStatus?.removeEventListener("change", onChange);
+    };
+  });
 
-	return {
-		get current() {
-			return current;
-		},
-		get locationPermission() {
-			return locationPermission;
-		},
-		update: (key, value) => {
-			current = service.updateSettings({ [key]: value });
-		},
-		reset() {
-			current = service.resetSettings();
-		}
-	};
+  return {
+    get current() {
+      return current;
+    },
+    get locationPermission() {
+      return locationPermission;
+    },
+    update: (key, value) => {
+      current = service.updateSettings({ [key]: value });
+    },
+    reset() {
+      current = service.resetSettings();
+    },
+  };
 }
 
 export const [getSettingsContext, setSettingsContext] = createContext<SettingsState>();

@@ -1,5 +1,5 @@
 <script>
-	import { SettingsForm } from '$lib/settings';
+  import { SettingsForm } from "$lib/settings";
 </script>
 
 <h2>Settings</h2>

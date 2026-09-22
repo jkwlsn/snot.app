@@ -1,21 +1,21 @@
-import type { UTCDate } from '$lib/date';
-import type { LoggingService, LogContext } from '$lib/logging';
+import type { UTCDate } from "$lib/date";
+import type { LoggingService, LogContext } from "$lib/logging";
 
 export interface AppErrorState {
-	error: AppError | null;
+  error: AppError | null;
 }
 
 export interface AppError<T = unknown> extends Error {
-	code: string;
-	timestamp: UTCDate;
-	details?: T;
+  code: string;
+  timestamp: UTCDate;
+  details?: T;
 }
 
 export interface HandleErrorOptions {
-	error: unknown;
-	operation: string;
-	logger: LoggingService;
-	code?: string;
-	context?: LogContext;
-	show?: boolean;
+  error: unknown;
+  operation: string;
+  logger: LoggingService;
+  code?: string;
+  context?: LogContext;
+  show?: boolean;
 }
