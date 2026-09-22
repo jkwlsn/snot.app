@@ -1,41 +1,41 @@
 version: 2
 
 updates:
-  - package-ecosystem: 'npm'
-    directory: '/'
+  - package-ecosystem: "npm"
+    directory: "/"
     schedule:
-      interval: 'weekly'
-      day: 'monday'
-      time: '06:00'
-      timezone: 'Europe/London'
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Europe/London"
 
     groups:
       production-dependencies:
-        dependency-type: 'production'
+        dependency-type: "production"
         update-types:
-          - 'minor'
-          - 'patch'
+          - "minor"
+          - "patch"
 
       development-dependencies:
-        dependency-type: 'development'
+        dependency-type: "development"
         update-types:
-          - 'minor'
-          - 'patch'
+          - "minor"
+          - "patch"
 
     labels:
-      - 'dependencies'
+      - "dependencies"
 
-  - package-ecosystem: 'github-actions'
-    directory: '/'
+  - package-ecosystem: "github-actions"
+    directory: "/"
     schedule:
-      interval: 'weekly'
-      day: 'monday'
-      time: '06:00'
-      timezone: 'Europe/London'
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Europe/London"
 
     groups:
       github-actions:
         update-types:
-          - 'minor'
-          - 'patch'
-          - 'major'
+          - "minor"
+          - "patch"
+          - "major"

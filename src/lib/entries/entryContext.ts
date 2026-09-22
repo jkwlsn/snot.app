@@ -1,5 +1,5 @@
-import { createContext } from 'svelte';
-import type { EntryService, EntryState } from './types';
+import { createContext } from "svelte";
+import type { EntryService, EntryState } from "./types";
 
 export const [getEntryService, setEntryService] = createContext<EntryService>();
 

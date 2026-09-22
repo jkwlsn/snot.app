@@ -1,16 +1,16 @@
-import { browser } from '$app/environment';
-import type { AppErrorState, AppError } from './types';
+import { browser } from "$app/environment";
+import type { AppErrorState, AppError } from "./types";
 
 const initialState: AppErrorState = {
-	error: null
+  error: null,
 };
 
 export const appErrorState = $state<AppErrorState>(browser ? initialState : { error: null });
 
 export function clearAppError(): void {
-	appErrorState.error = null;
+  appErrorState.error = null;
 }
 
 export function setAppError(error: AppError): void {
-	appErrorState.error = error;
+  appErrorState.error = error;
 }
