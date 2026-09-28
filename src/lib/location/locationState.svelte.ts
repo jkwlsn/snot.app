@@ -1,6 +1,6 @@
-import type { LocationState } from './types';
+import type { LocationState } from "./types";
 
 export const locationState = $state<LocationState>({
-	currentLocation: null,
-	searchResults: []
+  currentLocation: null,
+  searchResults: [],
 });
