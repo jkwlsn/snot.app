@@ -1,20 +1,15 @@
-export const POLLENS = [
-  { id: "alder_pollen", name: "Alder", description: "Pollen from birch trees" },
-  { id: "ash_pollen", name: "Ash", description: "" },
-  { id: "birch_pollen", name: "Birch", description: "" },
-  { id: "cedar_pollen", name: "Cedar", description: "" },
-  { id: "elm_pollen", name: "Elm", description: "" },
-  { id: "hazel_pollen", name: "Hazel", description: "" },
-  { id: "oak_pollen", name: "Oak", description: "" },
-  { id: "olive_pollen", name: "Olive", description: "" },
-  { id: "pine_pollen", name: "Pine", description: "" },
-  { id: "plane_pollen", name: "Plane", description: "" },
-  { id: "poplar_pollen", name: "Poplar", description: "" },
-  { id: "grass_pollen", name: "Grass", description: "" },
-  { id: "ragweed_pollen", name: "Ragweed", description: "" },
-  { id: "mugwort_pollen", name: "Mugwort", description: "" },
-  { id: "nettle_pollen", name: "Nettle", description: "" },
-] as const;
+import type { PollenType } from "./types";
+
+export const POLLEN_IDS = ["alder", "birch", "grass", "mugwort", "olive", "ragweed"] as const;
+
+export const POLLENS: Record<PollenType, { name: string; description: string }> = {
+  alder: { name: "Alder", description: "Pollen from alder trees." },
+  birch: { name: "Birch", description: "Pollen from birch trees." },
+  grass: { name: "Grass", description: "Pollen from grass." },
+  mugwort: { name: "Mugwort", description: "Pollen from mugwort plants." },
+  olive: { name: "Olive", description: "Pollen from olive trees." },
+  ragweed: { name: "Ragweed", description: "Pollen from ragweed." },
+};
 
 export const POLLEN_UNITS = [
   { id: "grains_m3", name: "Grains/m³", description: "Pollen grains per cubic metre" },
