@@ -26,9 +26,10 @@
       timezone: forecastTimezone,
     });
 
+    let newTo = env.forecast.to;
     // Enforce: FROM < TO (with 1h min interval)
-    if (newFrom >= env.forecast.to) {
-      env.forecast.to = addHoursUTC(newFrom, 1);
+    if (newFrom >= newTo) {
+      newTo = addHoursUTC(newFrom, 1);
     }
 
     // Enforce: FROM <= absoluteMax
@@ -36,30 +37,31 @@
       newFrom = absoluteMax;
     }
 
-    env.forecast.from = newFrom;
+    env.setForecastRange(newFrom, newTo);
   }
 
   function updateTo(e: Event) {
     const target = e.target as HTMLInputElement;
-    const newTo = fromDateTimeLocalToUTC(target.value, forecastTimezone);
+    const newToValue = fromDateTimeLocalToUTC(target.value, forecastTimezone);
     logger.debug("ForecastDateSelector - updateTo", {
       rawValue: target.value,
-      parsedUTC: newTo.toISOString(),
+      parsedUTC: newToValue.toISOString(),
       timezone: forecastTimezone,
     });
 
+    let newFrom = env.forecast.from;
     // Enforce: TO > FROM (with 1h min interval)
-    if (newTo <= env.forecast.from) {
-      env.forecast.from = addHoursUTC(newTo, -1);
+    if (newToValue <= newFrom) {
+      newFrom = addHoursUTC(newToValue, -1);
     }
 
     // Enforce: TO <= absoluteMax
-    let finalTo = newTo;
+    let finalTo = newToValue;
     if (finalTo > absoluteMax) {
       finalTo = absoluteMax;
     }
 
-    env.forecast.to = finalTo;
+    env.setForecastRange(newFrom, finalTo);
   }
 
   // Constraints for UI
