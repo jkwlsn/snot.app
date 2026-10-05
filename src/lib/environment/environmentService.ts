@@ -2,6 +2,7 @@ import { createEnvironmentRepository } from "./environmentRepository";
 import { clampForecastDateRange } from "./utils/date";
 import type { UserLocation } from "$lib/location";
 import type { LoggingService } from "$lib/logging";
+import type { UTCDate } from "$lib/date";
 import type {
   PollenType,
   EnvironmentService,
@@ -10,7 +11,6 @@ import type {
   CurrentEnvironment,
   ForecastEnvironment,
 } from "./types";
-import type { UTCDate } from "@date-fns/utc";
 
 export function createEnvironmentService<TResponse>({
   logger,
