@@ -1,6 +1,6 @@
-import type { UTCDate } from "@date-fns/utc";
-import type { EnvironmentObservation, PollenMeasurement, PollenType, PollenUnit } from "../types";
+import type { UTCDate } from "$lib/date";
 import type { LocationCoordinates } from "$lib/location";
+import type { EnvironmentObservation, PollenMeasurement, PollenType, PollenUnit } from "../types";
 
 export interface PollenSeverityLevel {
   id: number;

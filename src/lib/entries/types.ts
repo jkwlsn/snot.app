@@ -2,7 +2,7 @@ import type { PollenMeasurement } from "$lib/environment/types";
 import type { WithLocation } from "$lib/location";
 import type { SymptomFields } from "$lib/symptoms";
 import type { CreatedAt, Repository, Stored, WithTimezone } from "$lib/types";
-import type { UTCDate } from "@date-fns/utc";
+import type { UTCDate } from "$lib/date";
 
 export interface CreateEntry extends WithLocation {
   symptoms: SymptomFields;
