@@ -13,8 +13,12 @@ export interface WithLocation {
 }
 
 export interface LocationState {
-  currentLocation: UserLocation | null;
-  searchResults: UserLocation[];
+  readonly currentLocation: UserLocation | null;
+  readonly searchResults: UserLocation[];
+  setCurrentLocation(location: UserLocation | null): void;
+  setSearchResults(results: UserLocation[]): void;
+  clearCurrentLocation(): void;
+  clearSearchResults(): void;
 }
 
 export interface GeolocationProvider {

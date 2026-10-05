@@ -4,9 +4,10 @@
     getEnvironmentState,
     MultiPollenLineChart,
   } from "$lib/environment";
-  import { locationState } from "$lib/location";
+  import { getLocationState } from "$lib/location";
 
   const environmentData = getEnvironmentState();
+  const locationState = getLocationState();
 </script>
 
 <h2>Forecast</h2>

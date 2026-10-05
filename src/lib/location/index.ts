@@ -1,6 +1,6 @@
 export { createLocationService } from "./locationService";
-export { locationState } from "./locationState.svelte";
-export { getLocationService, setLocationService } from "./locationContext";
+export { createLocationState } from "./locationState.svelte";
+export { getLocationService, setLocationService, getLocationState, setLocationState } from "./locationContext";
 export { default as LocationInput } from "./components/LocationInput.svelte";
 export type {
   LocationCoordinates,
