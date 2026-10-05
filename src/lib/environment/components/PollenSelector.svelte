@@ -8,12 +8,7 @@
   const settings = getSettingsContext();
 
   function toggleSelectedPollenType(pollenId: PollenType) {
-    const index = env.selectedPollenTypes.indexOf(pollenId);
-    if (index > -1) {
-      env.selectedPollenTypes.splice(index, 1);
-    } else {
-      env.selectedPollenTypes.push(pollenId);
-    }
+    env.togglePollenType(pollenId);
     settings.update("selectedPollenTypes", [...env.selectedPollenTypes]);
   }
 </script>

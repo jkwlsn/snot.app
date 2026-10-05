@@ -73,8 +73,9 @@
     setEnvironmentState(environmentState);
 
     // Initialize selectedPollenType state from persisted settings
-    environmentState.selectedPollenTypes =
-        settingsState.current.selectedPollenTypes;
+    environmentState.setSelectedPollenTypes(
+        settingsState.current.selectedPollenTypes,
+    );
 
     // Sync persisted location to current location
     $effect(() => {

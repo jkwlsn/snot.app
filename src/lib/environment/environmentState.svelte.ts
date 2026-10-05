@@ -1,8 +1,14 @@
 import { OPENMETEO_CONFIG } from "./providers/config";
-import { addHoursUTC, getUTCNow } from "$lib/date";
+import { addHoursUTC, getUTCNow, type UTCDate } from "$lib/date";
 import { getLoggingService } from "$lib/logging";
-import type { LocationState } from "$lib/location";
-import type { PollenType, EnvironmentService, EnvironmentState } from "./types";
+import type { LocationState, UserLocation } from "$lib/location";
+import type {
+  PollenType,
+  EnvironmentService,
+  EnvironmentState,
+  CurrentEnvironment,
+  ForecastEnvironment,
+} from "./types";
 
 export function createEnvironmentState({
   service,
@@ -17,91 +23,119 @@ export function createEnvironmentState({
   const supportedPollenTypes = service.getSupportedPollenTypes();
   const now = getUTCNow();
 
-  const state = $state<EnvironmentState>({
-    supportedPollenTypes,
-    selectedPollenTypes: pollenTypes ?? supportedPollenTypes,
-    current: {
-      location: null,
-      isLoading: false,
-      error: null,
-      data: undefined,
-      lastUpdated: null,
-    },
-    forecast: {
-      location: null,
-      isLoading: false,
-      error: null,
-      from: now,
-      to: addHoursUTC(now, OPENMETEO_CONFIG.maxForecastDays * 24),
-      data: undefined,
-      lastUpdated: null,
-      timezone: undefined,
-    },
+  let selectedPollenTypes = $state<PollenType[]>(pollenTypes ?? supportedPollenTypes);
+
+  // Inferred types for internal state allow mutation
+  const current = $state({
+    location: null as UserLocation | null,
+    isLoading: false,
+    error: null as Error | null,
+    data: undefined as CurrentEnvironment | undefined,
+    lastUpdated: null as UTCDate | null,
+  });
+
+  const forecast = $state({
+    location: null as UserLocation | null,
+    isLoading: false,
+    error: null as Error | null,
+    from: now,
+    to: addHoursUTC(now, OPENMETEO_CONFIG.maxForecastDays * 24),
+    data: undefined as ForecastEnvironment | undefined,
+    lastUpdated: null as UTCDate | null,
+    timezone: undefined as string | undefined,
   });
 
   $effect(() => {
     const location = locationState.currentLocation;
-    const pollen = state.supportedPollenTypes;
+    const pollen = supportedPollenTypes;
 
     if (!location) {
-      state.current.data = undefined;
-      state.current.location = null;
-      state.current.lastUpdated = null;
+      current.data = undefined;
+      current.location = null;
+      current.lastUpdated = null;
       return;
     }
 
-    state.current.isLoading = true;
-    state.current.error = null;
-    state.current.location = location;
+    current.isLoading = true;
+    current.error = null;
+    current.location = location;
 
     service
       .getCurrentPollen(pollen, location)
       .then((data) => {
-        state.current.data = data;
-        state.current.lastUpdated = getUTCNow();
+        current.data = data;
+        current.lastUpdated = getUTCNow();
       })
       .catch((err) => {
-        state.current.error = err instanceof Error ? err : new Error(String(err));
+        current.error = err instanceof Error ? err : new Error(String(err));
       })
       .finally(() => {
-        state.current.isLoading = false;
+        current.isLoading = false;
       });
   });
 
   $effect(() => {
     const location = locationState.currentLocation;
-    const pollen = state.supportedPollenTypes;
+    const pollen = supportedPollenTypes;
 
     if (!location) {
-      state.forecast.data = undefined;
-      state.forecast.location = null;
-      state.forecast.lastUpdated = null;
-      state.forecast.timezone = undefined;
+      forecast.data = undefined;
+      forecast.location = null;
+      forecast.lastUpdated = null;
+      forecast.timezone = undefined;
       return;
     }
 
-    state.forecast.isLoading = true;
-    state.forecast.error = null;
-    state.forecast.location = location;
+    forecast.isLoading = true;
+    forecast.error = null;
+    forecast.location = location;
 
     service
-      .getForecastPollen(pollen, location, state.forecast.from, state.forecast.to)
+      .getForecastPollen(pollen, location, forecast.from, forecast.to)
       .then((data) => {
-        state.forecast.data = data;
-        state.forecast.lastUpdated = getUTCNow();
-        state.forecast.timezone = data.timezone;
+        forecast.data = data;
+        forecast.lastUpdated = getUTCNow();
+        forecast.timezone = data.timezone;
         logger.debug("DEBUG: Fetched data from date:", {
           fromISO: data.observations[0].createdAt.toISOString(),
           timezone: data.timezone,
         });
       })
       .catch((err) => {
-        state.forecast.error = err instanceof Error ? err : new Error(String(err));
+        forecast.error = err instanceof Error ? err : new Error(String(err));
       })
       .finally(() => {
-        state.forecast.isLoading = false;
+        forecast.isLoading = false;
       });
   });
 
-  return state;
+  return {
+    get supportedPollenTypes() {
+      return supportedPollenTypes;
+    },
+    get selectedPollenTypes() {
+      return selectedPollenTypes;
+    },
+    get current() {
+      return current;
+    },
+    get forecast() {
+      return forecast;
+    },
+    setSelectedPollenTypes(types: PollenType[]) {
+      selectedPollenTypes = types;
+    },
+    togglePollenType(pollenId: PollenType) {
+      const index = selectedPollenTypes.indexOf(pollenId);
+      if (index > -1) {
+        selectedPollenTypes.splice(index, 1);
+      } else {
+        selectedPollenTypes.push(pollenId);
+      }
+    },
+    setForecastRange(newFrom: UTCDate, newTo: UTCDate) {
+      forecast.from = newFrom;
+      forecast.to = newTo;
+    },
+  } satisfies EnvironmentState;
 }
