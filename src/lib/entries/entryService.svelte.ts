@@ -6,6 +6,7 @@ import type { LoggingService } from "$lib/logging";
 import type { SettingsService } from "$lib/settings";
 import type { SymptomFields } from "$lib/symptoms";
 import type { EnvironmentState } from "$lib/environment/types";
+import type { StoredId } from "$lib/types/base";
 
 export function createEntryService({
   logger,
@@ -27,6 +28,7 @@ export function createEntryService({
         pollen: $state.snapshot(environmentState.current.data?.pollen) ?? undefined,
       });
     },
+    getOneEntry: (id: StoredId) => repo.getById(id),
     getAllEntries: () => repo.getAll(),
     getRangeEntries: (from: UTCDate, to: UTCDate) => repo.getRange(from, to),
     removeEntry: (id: number) => repo.remove(id),

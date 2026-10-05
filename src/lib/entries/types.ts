@@ -18,6 +18,7 @@ export interface EntryRepository extends Repository<CreateEntry, Entry> {
 export interface EntryService {
   submitEntry(symptoms: SymptomFields): Promise<number>;
   getAllEntries(): Promise<Entry[]>;
+  getOneEntry(id: number): Promise<Entry | undefined>;
   getRangeEntries(from: UTCDate, to: UTCDate): Promise<Entry[]>;
   removeEntry(id: number): Promise<void>;
 }
