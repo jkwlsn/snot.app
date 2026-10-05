@@ -1,9 +1,9 @@
 import type { CreatedAt, WithTimezone } from "$lib/types";
 import type { LocationCoordinates, UserLocation, WithLocation } from "$lib/location";
-import type { POLLEN_UNITS, POLLENS } from "./config";
+import type { POLLEN_UNITS, POLLEN_IDS } from "./config";
 import type { UTCDate } from "$lib/date";
 
-export type PollenType = (typeof POLLENS)[number]["id"];
+export type PollenType = (typeof POLLEN_IDS)[number];
 
 export type PollenUnit = (typeof POLLEN_UNITS)[number]["id"];
 
