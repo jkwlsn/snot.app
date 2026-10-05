@@ -1,5 +1,5 @@
 import { fetchWeatherApi } from "openmeteo";
-import { OPENMETEO_CONFIG } from "./config";
+import { OPENMETEO_CONFIG, OPENMETEO_POLLEN_PARAM } from "./config";
 import { toApiFormat, type UTCDate } from "$lib/date";
 import type { EnvironmentProvider, PollenType } from "../types";
 import type { OpenMeteoProviderResponse } from "./types";
@@ -13,7 +13,7 @@ export function createOpenmeteoProvider(): EnvironmentProvider<OpenMeteoProvider
       const responses = await fetchWeatherApi(OPENMETEO_CONFIG.url, {
         latitude: location.coordinates.latitude,
         longitude: location.coordinates.longitude,
-        current: pollenTypes,
+        current: pollenTypes.map((type) => OPENMETEO_POLLEN_PARAM[type]),
         timezone: "UTC",
       });
 
@@ -32,7 +32,7 @@ export function createOpenmeteoProvider(): EnvironmentProvider<OpenMeteoProvider
       const responses = await fetchWeatherApi(OPENMETEO_CONFIG.url, {
         latitude: location.coordinates.latitude,
         longitude: location.coordinates.longitude,
-        hourly: pollenTypes,
+        hourly: pollenTypes.map((type) => OPENMETEO_POLLEN_PARAM[type]),
         start_hour: toApiFormat(from),
         end_hour: toApiFormat(to),
         timezone: "auto",
