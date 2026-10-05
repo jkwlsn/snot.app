@@ -14,7 +14,7 @@ function aggregateSymptomsByDay(records: Entry[]): Map<string, number> {
   return totals;
 }
 
-export const createLayerchartCalendarGraph: GraphProvider<Entry, TemporalDataPoint> = {
+export const entryCalendarGraphProvider: GraphProvider<Entry, TemporalDataPoint> = {
   transform(records) {
     const totals = aggregateSymptomsByDay(records);
     // Use the viewer's local timezone since we are creating local Date objects

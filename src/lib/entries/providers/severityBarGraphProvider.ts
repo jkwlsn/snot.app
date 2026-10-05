@@ -15,7 +15,7 @@ const averageSeverityBySymptom = (records: Entry[]): LabelledDataPoint[] => {
   });
 };
 
-export const createLayerchartBarGraph: GraphProvider<Entry, LabelledDataPoint> = {
+export const severityBarGraphProvider: GraphProvider<Entry, LabelledDataPoint> = {
   transform(records) {
     return averageSeverityBySymptom(records);
   },
