@@ -1,6 +1,16 @@
 import { setAppError } from "./errorState.svelte";
 import { getUTCNow } from "$lib/date";
-import type { AppError, HandleErrorOptions } from "./types";
+import type { AppError } from "./types";
+import type { LogContext, LoggingService } from "$lib/logging";
+
+interface HandleErrorOptions {
+  error: unknown;
+  operation: string;
+  logger: LoggingService;
+  code?: string;
+  context?: LogContext;
+  show?: boolean;
+}
 
 function isAppError(err: unknown): err is AppError {
   return (
