@@ -70,25 +70,28 @@ export interface EnvironmentService {
 }
 
 export interface CurrentPollenState extends WithLocation {
-  error: Error | null;
-  isLoading: boolean;
-  data: CurrentEnvironment | undefined;
-  lastUpdated: UTCDate | null;
+  readonly error: Error | null;
+  readonly isLoading: boolean;
+  readonly data: CurrentEnvironment | undefined;
+  readonly lastUpdated: UTCDate | null;
 }
 
 export interface ForecastPollenState extends WithLocation {
-  error: Error | null;
-  isLoading: boolean;
-  from: UTCDate;
-  to: UTCDate;
-  data: ForecastEnvironment | undefined;
-  lastUpdated: UTCDate | null;
-  timezone: string | undefined;
+  readonly error: Error | null;
+  readonly isLoading: boolean;
+  readonly from: UTCDate;
+  readonly to: UTCDate;
+  readonly data: ForecastEnvironment | undefined;
+  readonly lastUpdated: UTCDate | null;
+  readonly timezone: string | undefined;
 }
 
 export interface EnvironmentState {
   readonly supportedPollenTypes: PollenType[];
-  selectedPollenTypes: PollenType[];
-  forecast: ForecastPollenState;
-  current: CurrentPollenState;
+  readonly selectedPollenTypes: PollenType[];
+  readonly forecast: ForecastPollenState;
+  readonly current: CurrentPollenState;
+  setSelectedPollenTypes(types: PollenType[]): void;
+  togglePollenType(pollenId: PollenType): void;
+  setForecastRange(from: UTCDate, to: UTCDate): void;
 }
