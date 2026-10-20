@@ -18,8 +18,8 @@ importers:
         specifier: 2.0.0-next.19
         version: 2.0.0-next.19
       '@openmeteo/sdk':
-        specifier: ^1.28.0
-        version: 1.28.0
+        specifier: ^1.28.1
+        version: 1.28.1
       d3-scale:
         specifier: ^4.0.2
         version: 4.0.2
@@ -766,6 +766,10 @@ packages:
 
   '@openmeteo/sdk@1.28.0':
     resolution: {integrity: sha512-7DOkY1uOAyE8bsxaugNWWB1o6qWxEG3bTGGOJkr7UWAsandEqiGmBom50ra26wgeYB7/vNXT9G7HeXk4F7Zpog==}
+    engines: {node: '>=12.0'}
+
+  '@openmeteo/sdk@1.28.1':
+    resolution: {integrity: sha512-G+FcCrZPZwBcMY95lGa4cWcogBSElYNizKCHyTEnWg8WwqaZ0qU5UAfraavZksqa53wJTlp7Uc+d6/bHLjclPA==}
     engines: {node: '>=12.0'}
 
   '@oxc-project/types@0.149.0':
@@ -4095,6 +4099,10 @@ snapshots:
     optional: true
 
   '@openmeteo/sdk@1.28.0':
+    dependencies:
+      flatbuffers: 25.9.23
+
+  '@openmeteo/sdk@1.28.1':
     dependencies:
       flatbuffers: 25.9.23
 
